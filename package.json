@@ -11,5 +11,8 @@
     "dev:worker": "cd apps/worker && npm run dev",
     "dev:web": "cd apps/web && npm start",
     "build": "npm run build --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@neon/config": "^1.1.0"
   }
 }

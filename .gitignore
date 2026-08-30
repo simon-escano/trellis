@@ -10,6 +10,7 @@ dist/
 # Environment and secrets
 .env
 *.env.local
+.neon
 
 # Logs
 *.log
