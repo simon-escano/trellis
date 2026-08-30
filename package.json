@@ -1,0 +1,15 @@
+{
+  "name": "trellis",
+  "version": "0.1.0",
+  "private": true,
+  "description": "High-Throughput Document AI & Knowledge Graph Platform",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:server": "cd apps/server && cargo run",
+    "dev:worker": "cd apps/worker && npm run dev",
+    "dev:web": "cd apps/web && npm start",
+    "build": "npm run build --workspaces --if-present"
+  }
+}

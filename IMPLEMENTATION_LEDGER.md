@@ -106,9 +106,9 @@ Payload format transferred between Rust Ingestion Mutation $\rightarrow$ Local W
 Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strictly in sequential order. Each task is marked with an atomic status checkbox (`- [ ]` / `- [x]`), prerequisites, target files, exact validation command, and conventional git commit message.
 
 ```
-[ ] Phase 0: Infrastructure & Workspace Foundation
+[x] Phase 0: Infrastructure & Workspace Foundation
     ├── [x] Task 0.1: Docker Infrastructure & PostgreSQL Initialization Schema
-    └── [ ] Task 0.2: Root Workspace Configuration & Environment Templates
+    └── [x] Task 0.2: Root Workspace Configuration & Environment Templates
 
 [ ] Phase 1: Rust GraphQL Gateway (apps/server)
     ├── [ ] Task 1.1: Server Cargo Manifest, Dependencies & Config Module
@@ -147,7 +147,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `docker compose config`
   - **Git Commit Message:** `chore(infra): add docker compose and postgres initialization schema`
 
-- [ ] **Task 0.2: Root Workspace Configuration & Environment Templates**
+- [x] **Task 0.2: Root Workspace Configuration & Environment Templates**
   - **Target Files:** `package.json`, `.gitignore`, `.env.example`
   - **Prerequisites:** Task 0.1
   - **Validation Command:** `node -e "const pkg = require('./package.json'); console.log('Monorepo root:', pkg.name)"`
