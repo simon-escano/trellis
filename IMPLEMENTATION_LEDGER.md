@@ -127,7 +127,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
 
 [ ] Phase 3: Angular 18 Reactive Web Client (apps/web)
     ├── [x] Task 3.1: Angular 18 Standalone Project Scaffolding & Theme Config
-    ├── [ ] Task 3.2: GraphQL Client & Reactive Signals State Service
+    ├── [x] Task 3.2: GraphQL Client & Reactive Signals State Service
     ├── [ ] Task 3.3: Obsidian Layout Shell, Navbar & System Metrics
     ├── [ ] Task 3.4: Ingest Document Modal & Demo Spec Loader
     ├── [ ] Task 3.5: Left Rail Document List & Animated Status Badges
@@ -237,7 +237,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `npm --prefix apps/web run build`
   - **Git Commit Message:** `chore(web): scaffold angular 18 standalone project with tailwind and dm sans`
 
-- [ ] **Task 3.2: GraphQL Client & Reactive Signals State Service**
+- [x] **Task 3.2: GraphQL Client & Reactive Signals State Service**
   - **Target Files:** `apps/web/src/app/core/models/document.model.ts`, `apps/web/src/app/app.config.ts`, `apps/web/src/app/core/services/graphql.service.ts`, `apps/web/src/app/core/services/state.service.ts`
   - **Prerequisites:** Task 3.1
   - **Validation Command:** `npm --prefix apps/web run build`
