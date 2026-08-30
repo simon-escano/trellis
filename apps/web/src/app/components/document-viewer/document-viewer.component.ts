@@ -16,26 +16,26 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
   template: `
     <article
       #container
-      class="h-full overflow-y-auto p-6 md:p-8 space-y-6"
+      class="h-full overflow-y-auto p-6 md:p-8 space-y-6 font-sans"
     >
       @if (state.activeDocument(); as doc) {
       <!-- Header Banner -->
       <div class="space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <div class="flex items-center gap-2 font-mono text-xs text-slate-400">
+          <div class="flex items-center gap-2 text-xs text-slate-400">
             <span
-              class="px-2 py-0.5 rounded bg-trellis-900 border border-trellis-800 text-trellis-cyan font-semibold uppercase tracking-wider text-[10px]"
+              class="px-2 py-0.5 rounded bg-trellis-900 border border-trellis-800 text-trellis-cyan font-medium uppercase tracking-wider text-[10px]"
               >Specification</span
             >
             <span>•</span>
-            <span class="truncate max-w-[200px]">{{ doc.id }}</span>
+            <span class="truncate max-w-[200px] font-mono">{{ doc.id }}</span>
           </div>
 
           <!-- Status & Reprocess Controls -->
           <div class="flex items-center gap-2">
             @switch (doc.status) { @case ('COMPLETED') {
             <span
-              class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5"
+              class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5"
             >
               <span
                 class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34D399]"
@@ -44,7 +44,7 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
             </span>
             } @case ('PROCESSING') {
             <span
-              class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 flex items-center gap-1.5"
+              class="px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 flex items-center gap-1.5"
             >
               <svg
                 class="w-3 h-3 animate-spin"
@@ -69,7 +69,7 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
             </span>
             } @case ('QUEUED') {
             <span
-              class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1.5"
+              class="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1.5"
             >
               <span
                 class="w-2 h-2 rounded-full bg-amber-400 animate-ping"
@@ -78,7 +78,7 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
             </span>
             } @case ('FAILED') {
             <span
-              class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30 flex items-center gap-1.5"
+              class="px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/30 flex items-center gap-1.5"
             >
               <span class="w-2 h-2 rounded-full bg-rose-400"></span>
               FAILED
@@ -88,7 +88,7 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
             <button
               (click)="state.reprocessDocument(doc.id)"
               title="Re-run AI Extraction"
-              class="px-3 py-1 rounded-lg bg-trellis-900 hover:bg-trellis-800 border border-trellis-800 text-slate-300 hover:text-white text-xs font-mono transition-all flex items-center gap-1.5"
+              class="px-3 py-1 rounded-lg bg-trellis-900 hover:bg-trellis-800 border border-trellis-800 text-slate-300 hover:text-white text-xs font-medium transition-all flex items-center gap-1.5 font-sans"
             >
               <svg
                 class="w-3.5 h-3.5"
@@ -108,11 +108,11 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
           </div>
         </div>
 
-        <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-snug">
+        <h1 class="text-2xl md:text-3xl font-medium text-white tracking-tight leading-snug">
           {{ doc.title }}
         </h1>
 
-        <div class="flex items-center gap-4 text-xs font-mono text-slate-500">
+        <div class="flex items-center gap-4 text-xs text-slate-500 font-sans">
           <span>Ingested: {{ doc.createdAt | date : "medium" }}</span>
           <span>•</span>
           <span>Updated: {{ doc.updatedAt | date : "medium" }}</span>
@@ -122,12 +122,12 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
       <!-- Failure Error Banner if any -->
       @if (doc.errorMessage) {
       <div
-        class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 space-y-1"
+        class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 space-y-1 font-sans"
       >
-        <div class="flex items-center gap-2 font-mono text-xs font-bold uppercase">
+        <div class="flex items-center gap-2 text-xs font-medium uppercase">
           <span>⚠️</span> Extraction Pipeline Error
         </div>
-        <p class="text-xs font-mono text-rose-300 leading-relaxed">
+        <p class="text-xs text-rose-300 leading-relaxed font-mono">
           {{ doc.errorMessage }}
         </p>
       </div>
@@ -135,18 +135,18 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
 
       <!-- Executive Architecture Summary Card -->
       <section
-        class="p-6 rounded-2xl bg-gradient-to-b from-trellis-900/90 to-trellis-900/50 border border-trellis-800 shadow-2xl space-y-3 relative overflow-hidden"
+        class="p-6 rounded-2xl bg-gradient-to-b from-trellis-900/90 to-trellis-900/50 border border-trellis-800 shadow-2xl space-y-3 relative overflow-hidden font-sans"
       >
         <div
           class="absolute -right-12 -top-12 w-32 h-32 bg-trellis-accent/10 rounded-full blur-3xl pointer-events-none"
         ></div>
 
-        <div class="flex items-center gap-2 text-trellis-accent font-mono text-xs font-bold uppercase tracking-wider">
+        <div class="flex items-center gap-2 text-trellis-accent text-xs font-medium uppercase tracking-wider">
           <span class="text-sm">✦</span>
           <span>Executive Architecture Summary</span>
         </div>
 
-        <p class="text-slate-200 text-sm md:text-base leading-relaxed">
+        <p class="text-slate-200 text-sm md:text-base leading-relaxed font-sans">
           {{
             doc.summary ||
               "Document is currently queued or undergoing AI extraction. Executive summary will appear once processing completes."
@@ -156,14 +156,14 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
 
       <!-- Source Text Collapsible Drawer -->
       <section
-        class="rounded-2xl border border-trellis-800 bg-trellis-950/80 overflow-hidden"
+        class="rounded-2xl border border-trellis-800 bg-trellis-950/80 overflow-hidden font-sans"
       >
         <div
           (click)="isRawCollapsed = !isRawCollapsed"
           class="px-5 py-3.5 border-b border-trellis-800/80 bg-trellis-900/40 flex items-center justify-between cursor-pointer hover:bg-trellis-900/70 transition-colors"
         >
           <div class="flex items-center gap-2">
-            <span class="text-xs font-mono text-slate-300 font-bold uppercase tracking-wider"
+            <span class="text-xs text-slate-300 font-medium uppercase tracking-wider"
               >Source Specification Text</span
             >
             <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-trellis-800 text-slate-400"
@@ -171,10 +171,10 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
             >
           </div>
 
-          <div class="flex items-center gap-2 text-slate-400 hover:text-white text-xs font-mono">
+          <div class="flex items-center gap-2 text-slate-400 hover:text-white text-xs">
             <button
               (click)="copyRawText($event, doc.rawContent)"
-              class="px-2 py-0.5 rounded hover:bg-trellis-800 text-[11px] transition-colors"
+              class="px-2 py-0.5 rounded hover:bg-trellis-800 text-[11px] transition-colors font-sans"
             >
               {{ isCopied ? "✓ Copied" : "Copy" }}
             </button>
@@ -207,7 +207,7 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
       } @else {
       <!-- Empty State -->
       <div
-        class="h-full flex flex-col items-center justify-center text-center p-8 space-y-4 text-slate-500"
+        class="h-full flex flex-col items-center justify-center text-center p-8 space-y-4 text-slate-500 font-sans"
       >
         <div
           class="w-16 h-16 rounded-2xl bg-trellis-900 border border-trellis-800 flex items-center justify-center text-3xl shadow-lg"
@@ -215,10 +215,10 @@ import { animateCardEntry } from "../../core/animation/motion.utils";
           📄
         </div>
         <div class="space-y-1">
-          <h2 class="font-bold text-base text-slate-300">
+          <h2 class="font-medium text-base text-slate-300">
             No Specification Selected
           </h2>
-          <p class="text-xs font-mono text-slate-500 max-w-sm">
+          <p class="text-xs text-slate-500 max-w-sm">
             Select a document from the left rail or click "+ Ingest Spec" to process a new technical architecture RFC.
           </p>
         </div>

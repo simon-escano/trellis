@@ -27,7 +27,7 @@ import { StateService } from "./core/services/state.service";
       <app-navbar></app-navbar>
 
       <!-- Main 3-Column Obsidian Workspace Shell -->
-      <main class="flex-1 flex overflow-hidden h-[calc(100vh-4rem)]">
+      <main class="flex-1 flex overflow-hidden h-[calc(100vh-4rem)] font-sans">
         <!-- Column 1: Left Rail (Document List) -->
         <section id="document-list-container" class="w-80 shrink-0 h-full">
           <app-document-list class="h-full block"></app-document-list>
@@ -50,13 +50,13 @@ import { StateService } from "./core/services/state.service";
           <div
             class="px-4 py-3 border-b border-trellis-800 bg-trellis-950 flex items-center justify-between"
           >
-            <div class="flex items-center gap-1 bg-trellis-900 p-1 rounded-lg border border-trellis-800 text-xs font-mono">
+            <div class="flex items-center gap-1 bg-trellis-900 p-1 rounded-lg border border-trellis-800 text-xs font-sans">
               <button
                 (click)="activeTab.set('ENTITIES')"
                 [class.bg-trellis-800]="activeTab() === 'ENTITIES'"
                 [class.text-white]="activeTab() === 'ENTITIES'"
                 [class.text-slate-400]="activeTab() !== 'ENTITIES'"
-                class="px-3 py-1 rounded-md transition-all font-semibold"
+                class="px-3 py-1 rounded-md transition-all font-medium font-sans"
               >
                 Entities ({{ state.activeDocument()?.entities?.length || 0 }})
               </button>
@@ -65,7 +65,7 @@ import { StateService } from "./core/services/state.service";
                 [class.bg-trellis-800]="activeTab() === 'GRAPH'"
                 [class.text-white]="activeTab() === 'GRAPH'"
                 [class.text-slate-400]="activeTab() !== 'GRAPH'"
-                class="px-3 py-1 rounded-md transition-all font-semibold"
+                class="px-3 py-1 rounded-md transition-all font-medium font-sans"
               >
                 Graph ({{ state.activeDocument()?.relationships?.length || 0 }})
               </button>
@@ -73,7 +73,7 @@ import { StateService } from "./core/services/state.service";
           </div>
 
           <!-- Right Rail Content -->
-          <div class="flex-1 overflow-y-auto p-4">
+          <div class="flex-1 overflow-y-auto p-4 font-sans">
             @if (state.activeDocument()) {
               @if (activeTab() === 'ENTITIES') {
                 <app-entity-inspector></app-entity-inspector>
@@ -81,9 +81,9 @@ import { StateService } from "./core/services/state.service";
                 <app-relationship-graph></app-relationship-graph>
               }
             } @else {
-              <div class="h-full flex flex-col items-center justify-center text-center p-6 text-slate-500 space-y-2">
+              <div class="h-full flex flex-col items-center justify-center text-center p-6 text-slate-500 space-y-2 font-sans">
                 <div class="text-2xl">🌿</div>
-                <p class="text-xs font-mono font-semibold text-slate-400">Knowledge Graph Inspector</p>
+                <p class="text-xs font-medium text-slate-400">Knowledge Graph Inspector</p>
                 <p class="text-[11px] text-slate-500">Select a specification to explore extracted entities and directional relationship nodes.</p>
               </div>
             }

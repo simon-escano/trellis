@@ -14,7 +14,7 @@ const DEMO_RFC_CONTENT =
   template: `
     @if (state.isIngestModalOpen()) {
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in font-sans"
       (click)="onBackdropClick($event)"
     >
       <div
@@ -23,19 +23,19 @@ const DEMO_RFC_CONTENT =
       >
         <!-- Modal Header -->
         <div
-          class="px-6 py-4 border-b border-trellis-800 flex items-center justify-between bg-trellis-950/60"
+          class="px-6 py-4 border-b border-trellis-800 flex items-center justify-between bg-trellis-950/60 font-sans"
         >
           <div class="flex items-center gap-3">
             <div
-              class="w-8 h-8 rounded-lg bg-trellis-accent/15 border border-trellis-accent/30 flex items-center justify-center text-trellis-accent font-bold"
+              class="w-8 h-8 rounded-lg bg-trellis-accent/15 border border-trellis-accent/30 flex items-center justify-center text-trellis-accent font-medium"
             >
               📄
             </div>
             <div>
-              <h2 class="font-bold text-base text-white">
+              <h2 class="font-medium text-base text-white">
                 Ingest Architecture Spec
               </h2>
-              <p class="text-xs text-slate-400 font-mono">
+              <p class="text-xs text-slate-400 font-sans">
                 Submit raw technical text for knowledge graph extraction
               </p>
             </div>
@@ -62,19 +62,19 @@ const DEMO_RFC_CONTENT =
         </div>
 
         <!-- Modal Body -->
-        <form (ngSubmit)="onSubmit()" class="p-6 space-y-4 flex-1 overflow-y-auto">
+        <form (ngSubmit)="onSubmit()" class="p-6 space-y-4 flex-1 overflow-y-auto font-sans">
           <!-- Quick Load Demo Spec Button -->
           <div
-            class="flex items-center justify-between p-3 rounded-xl bg-trellis-950/80 border border-trellis-800"
+            class="flex items-center justify-between p-3 rounded-xl bg-trellis-950/80 border border-trellis-800 font-sans"
           >
             <div class="flex items-center gap-2 text-xs text-slate-300">
-              <span class="text-trellis-accent font-bold">💡 Tip:</span>
+              <span class="text-trellis-accent font-medium">💡 Tip:</span>
               <span>Test the pipeline with our reference RFC 404 sample.</span>
             </div>
             <button
               type="button"
               (click)="loadDemoSpec()"
-              class="px-3 py-1.5 rounded-lg bg-trellis-800 hover:bg-trellis-700 text-xs font-mono text-trellis-cyan hover:text-cyan-300 border border-trellis-700 transition-all flex items-center gap-1.5 font-semibold"
+              class="px-3 py-1.5 rounded-lg bg-trellis-800 hover:bg-trellis-700 text-xs font-sans text-trellis-cyan hover:text-cyan-300 border border-trellis-700 transition-all flex items-center gap-1.5 font-medium"
             >
               <span>⚡ Load RFC 404 Spec</span>
             </button>
@@ -82,7 +82,7 @@ const DEMO_RFC_CONTENT =
 
           <!-- Document Title Input -->
           <div class="space-y-1.5">
-            <label class="block text-xs font-mono text-slate-300 uppercase tracking-wider font-semibold"
+            <label class="block text-xs text-slate-300 uppercase tracking-wider font-medium font-sans"
               >Specification Title</label
             >
             <input
@@ -97,7 +97,7 @@ const DEMO_RFC_CONTENT =
 
           <!-- Raw Content Textarea -->
           <div class="space-y-1.5">
-            <label class="block text-xs font-mono text-slate-300 uppercase tracking-wider font-semibold"
+            <label class="block text-xs text-slate-300 uppercase tracking-wider font-medium font-sans"
               >Raw Architecture Content</label
             >
             <textarea
@@ -119,18 +119,18 @@ const DEMO_RFC_CONTENT =
           }
 
           <!-- Modal Actions Footer -->
-          <div class="pt-2 flex items-center justify-end gap-3 border-t border-trellis-800">
+          <div class="pt-2 flex items-center justify-end gap-3 border-t border-trellis-800 font-sans">
             <button
               type="button"
               (click)="state.setModalOpen(false)"
-              class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-trellis-800 transition-colors"
+              class="px-4 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-trellis-800 transition-colors font-sans"
             >
               Cancel
             </button>
             <button
               type="submit"
               [disabled]="state.isIngesting() || !title.trim() || !rawContent.trim()"
-              class="flex items-center gap-2 bg-gradient-to-r from-trellis-accent to-emerald-400 text-trellis-950 font-bold px-6 py-2 rounded-xl text-sm shadow-[0_0_20px_rgba(0,229,153,0.3)] hover:shadow-[0_0_25px_rgba(0,229,153,0.5)] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99] transition-all"
+              class="flex items-center gap-2 bg-gradient-to-r from-trellis-accent to-emerald-400 text-trellis-950 font-medium px-6 py-2 rounded-xl text-sm shadow-[0_0_20px_rgba(0,229,153,0.3)] hover:shadow-[0_0_25px_rgba(0,229,153,0.5)] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99] transition-all font-sans"
             >
               @if (state.isIngesting()) {
               <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

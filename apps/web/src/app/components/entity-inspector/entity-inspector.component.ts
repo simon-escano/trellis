@@ -8,16 +8,16 @@ import { Entity, EntityCategory } from "../../core/models/document.model";
   standalone: true,
   imports: [CommonModule],
   template: `
-    <section class="space-y-4">
+    <section class="space-y-4 font-sans">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <h3
-            class="text-xs font-mono font-bold uppercase tracking-wider text-slate-300"
+            class="text-xs font-medium uppercase tracking-wider text-slate-300"
           >
             Entities
           </h3>
           <span
-            class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-trellis-900 border border-trellis-800 text-trellis-cyan font-bold"
+            class="text-[11px] px-2 py-0.5 rounded-full bg-trellis-900 border border-trellis-800 text-trellis-cyan font-medium"
           >
             {{ allEntities().length }}
           </span>
@@ -25,14 +25,14 @@ import { Entity, EntityCategory } from "../../core/models/document.model";
       </div>
 
       <!-- Category Filter Pills -->
-      <div class="flex flex-wrap gap-1.5 text-[10px] font-mono">
+      <div class="flex flex-wrap gap-1.5 text-[10px]">
         <button
           (click)="selectedCategory.set('ALL')"
           [class.bg-trellis-800]="selectedCategory() === 'ALL'"
           [class.text-white]="selectedCategory() === 'ALL'"
           [class.border-trellis-700]="selectedCategory() === 'ALL'"
           [class.text-slate-400]="selectedCategory() !== 'ALL'"
-          class="px-2 py-1 rounded-md border border-trellis-800/80 hover:border-trellis-700 transition-all font-semibold"
+          class="px-2 py-1 rounded-md border border-trellis-800/80 hover:border-trellis-700 transition-all font-medium font-sans"
         >
           ALL ({{ allEntities().length }})
         </button>
@@ -44,7 +44,7 @@ import { Entity, EntityCategory } from "../../core/models/document.model";
           [class.text-white]="selectedCategory() === cat"
           [class.border-trellis-700]="selectedCategory() === cat"
           [class.text-slate-400]="selectedCategory() !== cat"
-          class="px-2 py-1 rounded-md border border-trellis-800/80 hover:border-trellis-700 transition-all flex items-center gap-1 font-semibold"
+          class="px-2 py-1 rounded-md border border-trellis-800/80 hover:border-trellis-700 transition-all flex items-center gap-1 font-medium font-sans"
         >
           <span>{{ cat }}</span>
           <span class="opacity-70">({{ getCategoryCount(cat) }})</span>
@@ -56,11 +56,11 @@ import { Entity, EntityCategory } from "../../core/models/document.model";
       <div class="space-y-2.5">
         @for (entity of filteredEntities(); track entity.id) {
         <div
-          class="p-3.5 rounded-xl border border-trellis-800 bg-trellis-900/60 hover:bg-trellis-900 transition-all space-y-2 shadow-sm"
+          class="p-3.5 rounded-xl border border-trellis-800 bg-trellis-900/60 hover:bg-trellis-900 transition-all space-y-2 shadow-sm font-sans"
         >
           <div class="flex items-start justify-between gap-2">
             <div>
-              <h4 class="font-bold text-xs text-white leading-tight">
+              <h4 class="font-medium text-xs text-white leading-tight">
                 {{ entity.name }}
               </h4>
             </div>
@@ -68,14 +68,14 @@ import { Entity, EntityCategory } from "../../core/models/document.model";
             <!-- Category Badge -->
             <span
               [ngClass]="getCategoryBadgeClass(entity.category)"
-              class="text-[9px] font-mono font-bold px-2 py-0.5 rounded border uppercase shrink-0"
+              class="text-[9px] font-medium px-2 py-0.5 rounded border uppercase shrink-0"
             >
               {{ entity.category }}
             </span>
           </div>
 
           <!-- Confidence Score Bar -->
-          <div class="flex items-center gap-2 text-[10px] font-mono text-slate-400">
+          <div class="flex items-center gap-2 text-[10px] text-slate-400 font-sans">
             <span>Confidence:</span>
             <div class="flex-1 h-1.5 rounded-full bg-trellis-950 overflow-hidden border border-trellis-800">
               <div
@@ -83,7 +83,7 @@ import { Entity, EntityCategory } from "../../core/models/document.model";
                 [style.width.%]="entity.confidenceScore * 100"
               ></div>
             </div>
-            <span class="text-slate-300 font-bold"
+            <span class="text-slate-300 font-medium"
               >{{ (entity.confidenceScore * 100).toFixed(0) }}%</span
             >
           </div>
@@ -93,7 +93,7 @@ import { Entity, EntityCategory } from "../../core/models/document.model";
           <div class="flex flex-wrap gap-1.5 pt-1">
             @for (entry of getMetadataEntries(entity.metadata); track entry.key) {
             <span
-              class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-trellis-950/80 border border-trellis-800/80 text-slate-300"
+              class="text-[10px] px-1.5 py-0.5 rounded bg-trellis-950/80 border border-trellis-800/80 text-slate-300 font-sans"
             >
               <span class="text-slate-500">{{ entry.key }}:</span>
               {{ entry.val }}
@@ -103,7 +103,7 @@ import { Entity, EntityCategory } from "../../core/models/document.model";
           }
         </div>
         } @empty {
-        <p class="text-xs font-mono text-slate-500 text-center py-6">
+        <p class="text-xs text-slate-500 text-center py-6 font-sans">
           No entities matching "{{ selectedCategory() }}"
         </p>
         }

@@ -13,14 +13,14 @@ import { StateService } from "../../core/services/state.service";
       <!-- Left: Brand Logo & Title -->
       <div class="flex items-center gap-3">
         <div
-          class="w-9 h-9 rounded-xl bg-gradient-to-br from-trellis-accent/20 to-trellis-cyan/20 border border-trellis-accent/40 flex items-center justify-center text-trellis-accent font-black text-xl shadow-[0_0_20px_rgba(0,229,153,0.25)]"
+          class="w-9 h-9 rounded-xl bg-gradient-to-br from-trellis-accent/20 to-trellis-cyan/20 border border-trellis-accent/40 flex items-center justify-center text-trellis-accent font-medium text-xl shadow-[0_0_20px_rgba(0,229,153,0.25)]"
         >
           🌿
         </div>
         <div>
           <div class="flex items-center gap-2">
             <span
-              class="font-extrabold text-base tracking-wider text-white font-sans"
+              class="font-medium text-base tracking-wider text-white font-sans"
               >TRELLIS</span
             >
             <span
@@ -31,7 +31,7 @@ import { StateService } from "../../core/services/state.service";
               >v0.1.0</span
             >
           </div>
-          <p class="text-[11px] text-slate-400 font-mono tracking-tight">
+          <p class="text-[11px] text-slate-400 font-sans tracking-tight">
             Enterprise Knowledge Graph & Architecture Engine
           </p>
         </div>
@@ -39,11 +39,11 @@ import { StateService } from "../../core/services/state.service";
 
       <!-- Center: System Metrics Real-Time Badges -->
       <div
-        class="hidden md:flex items-center gap-2 bg-trellis-900/90 border border-trellis-800 px-3.5 py-1.5 rounded-full shadow-inner font-mono text-xs"
+        class="hidden md:flex items-center gap-2 bg-trellis-900/90 border border-trellis-800 px-3.5 py-1.5 rounded-full shadow-inner text-xs"
       >
         <div class="flex items-center gap-1.5 px-2">
-          <span class="text-slate-400">Total:</span>
-          <span class="font-semibold text-slate-100">{{
+          <span class="text-slate-400 font-sans">Total:</span>
+          <span class="font-medium text-slate-100">{{
             state.metrics().totalDocuments
           }}</span>
         </div>
@@ -52,8 +52,8 @@ import { StateService } from "../../core/services/state.service";
           <span
             class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34D399]"
           ></span>
-          <span class="text-slate-400">Processed:</span>
-          <span class="font-semibold text-emerald-400">{{
+          <span class="text-slate-400 font-sans">Processed:</span>
+          <span class="font-medium text-emerald-400">{{
             state.metrics().processedCount
           }}</span>
         </div>
@@ -63,8 +63,8 @@ import { StateService } from "../../core/services/state.service";
             class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_#FBBF24]"
             [class.animate-ping]="state.metrics().queuedCount > 0"
           ></span>
-          <span class="text-slate-400">Queued:</span>
-          <span class="font-semibold text-amber-400">{{
+          <span class="text-slate-400 font-sans">Queued:</span>
+          <span class="font-medium text-amber-400">{{
             state.metrics().queuedCount
           }}</span>
         </div>
@@ -73,8 +73,8 @@ import { StateService } from "../../core/services/state.service";
           <span
             class="w-2 h-2 rounded-full bg-rose-400 shadow-[0_0_6px_#FB7185]"
           ></span>
-          <span class="text-slate-400">Failed:</span>
-          <span class="font-semibold text-rose-400">{{
+          <span class="text-slate-400 font-sans">Failed:</span>
+          <span class="font-medium text-rose-400">{{
             state.metrics().failedCount
           }}</span>
         </div>
@@ -106,10 +106,10 @@ import { StateService } from "../../core/services/state.service";
 
         <button
           (click)="state.setModalOpen(true)"
-          class="flex items-center gap-2 bg-gradient-to-r from-trellis-accent to-emerald-400 text-trellis-950 font-bold px-4 py-2 rounded-lg text-sm shadow-[0_0_20px_rgba(0,229,153,0.3)] hover:shadow-[0_0_25px_rgba(0,229,153,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+          class="flex items-center gap-2 bg-gradient-to-r from-trellis-accent to-emerald-400 text-trellis-950 font-medium px-4 py-2 rounded-lg text-sm shadow-[0_0_20px_rgba(0,229,153,0.3)] hover:shadow-[0_0_25px_rgba(0,229,153,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all font-sans"
         >
           <svg
-            class="w-4 h-4 font-bold"
+            class="w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -117,7 +117,7 @@ import { StateService } from "../../core/services/state.service";
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              stroke-width="2.5"
+              stroke-width="2"
               d="M12 4v16m8-8H4"
             ></path>
           </svg>

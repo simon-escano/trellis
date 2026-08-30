@@ -10,19 +10,19 @@ import { Document } from "../../core/models/document.model";
   imports: [CommonModule, FormsModule],
   template: `
     <aside
-      class="h-full flex flex-col bg-trellis-950 border-r border-trellis-800 select-none"
+      class="h-full flex flex-col bg-trellis-950 border-r border-trellis-800 select-none font-sans"
     >
       <!-- Header & Search Toolbar -->
       <div class="p-4 border-b border-trellis-800 space-y-3 bg-trellis-950">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <h2
-              class="text-xs font-mono font-bold uppercase tracking-wider text-slate-300"
+              class="text-xs font-medium uppercase tracking-wider text-slate-300"
             >
               Specifications
             </h2>
             <span
-              class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-trellis-900 border border-trellis-800 text-slate-300"
+              class="text-[11px] px-2 py-0.5 rounded-full bg-trellis-900 border border-trellis-800 text-slate-300 font-medium"
             >
               {{ state.filteredDocuments().length }}
             </span>
@@ -54,7 +54,7 @@ import { Document } from "../../core/models/document.model";
         </div>
 
         <!-- Status Filter Tags -->
-        <div class="flex items-center gap-1 overflow-x-auto pb-1 text-[10px] font-mono">
+        <div class="flex items-center gap-1 overflow-x-auto pb-1 text-[10px]">
           @for (tab of ['ALL', 'COMPLETED', 'PROCESSING', 'QUEUED', 'FAILED']; track tab) {
           <button
             (click)="state.statusFilter.set(tab)"
@@ -62,7 +62,7 @@ import { Document } from "../../core/models/document.model";
             [class.text-white]="state.statusFilter() === tab"
             [class.border-trellis-700]="state.statusFilter() === tab"
             [class.text-slate-400]="state.statusFilter() !== tab"
-            class="px-2 py-0.5 rounded border border-transparent hover:border-trellis-800 hover:text-slate-200 transition-all uppercase"
+            class="px-2 py-0.5 rounded border border-transparent hover:border-trellis-800 hover:text-slate-200 transition-all uppercase font-medium"
           >
             {{ tab }}
           </button>
@@ -93,7 +93,7 @@ import { Document } from "../../core/models/document.model";
           <!-- Title & Status Badge -->
           <div class="flex items-start justify-between gap-2 mb-1.5">
             <h3
-              class="font-semibold text-xs text-slate-100 truncate flex-1 group-hover:text-white transition-colors"
+              class="font-medium text-xs text-slate-100 truncate flex-1 group-hover:text-white transition-colors"
             >
               {{ doc.title }}
             </h3>
@@ -101,14 +101,14 @@ import { Document } from "../../core/models/document.model";
             <!-- Dynamic Status Badge -->
             @switch (doc.status) { @case ('COMPLETED') {
             <span
-              class="flex items-center gap-1 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shrink-0"
+              class="flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shrink-0"
             >
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
               {{ doc.entities.length || 0 }} Entities
             </span>
             } @case ('PROCESSING') {
             <span
-              class="flex items-center gap-1 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 shrink-0"
+              class="flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 shrink-0"
             >
               <svg
                 class="w-2.5 h-2.5 animate-spin"
@@ -133,7 +133,7 @@ import { Document } from "../../core/models/document.model";
             </span>
             } @case ('QUEUED') {
             <span
-              class="flex items-center gap-1 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 shrink-0"
+              class="flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 shrink-0"
             >
               <span
                 class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"
@@ -142,7 +142,7 @@ import { Document } from "../../core/models/document.model";
             </span>
             } @case ('FAILED') {
             <span
-              class="flex items-center gap-1 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30 shrink-0"
+              class="flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30 shrink-0"
             >
               <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
               Failed
@@ -151,13 +151,13 @@ import { Document } from "../../core/models/document.model";
           </div>
 
           <!-- Snippet -->
-          <p class="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+          <p class="text-[11px] text-slate-400 line-clamp-2 leading-relaxed font-sans">
             {{ doc.summary || doc.rawContent }}
           </p>
 
           <!-- Footer Actions & Metadata -->
           <div
-            class="mt-2.5 pt-2 border-t border-trellis-800/60 flex items-center justify-between text-[10px] font-mono text-slate-500"
+            class="mt-2.5 pt-2 border-t border-trellis-800/60 flex items-center justify-between text-[10px] text-slate-500 font-sans"
           >
             <span>{{ formatDate(doc.createdAt) }}</span>
 
@@ -215,7 +215,7 @@ import { Document } from "../../core/models/document.model";
           >
             📋
           </div>
-          <p class="text-xs font-mono font-semibold text-slate-400">
+          <p class="text-xs font-medium text-slate-400">
             No specifications found
           </p>
           <p class="text-[11px] text-slate-500">
