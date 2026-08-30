@@ -115,7 +115,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
     ├── [x] Task 1.2: SQLx Database Pool & Domain Entity Models
     ├── [x] Task 1.3: Asynchronous In-Memory / Channel Queue Dispatcher
     ├── [x] Task 1.4: DataLoader Implementation & GraphQL Types
-    ├── [ ] Task 1.5: GraphQL Queries, Mutations & Schema Builder
+    ├── [x] Task 1.5: GraphQL Queries, Mutations & Schema Builder
     └── [ ] Task 1.6: Axum Server Setup, CORS & Embedded GraphiQL Playground
 
 [ ] Phase 2: TypeScript AI Extraction Worker (apps/worker)
@@ -181,7 +181,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
   - **Git Commit Message:** `feat(server): implement dataloaders for entity and relationship batching`
 
-- [ ] **Task 1.5: GraphQL Queries, Mutations & Schema Builder**
+- [x] **Task 1.5: GraphQL Queries, Mutations & Schema Builder**
   - **Target Files:** `apps/server/src/graphql/query.rs`, `apps/server/src/graphql/mutation.rs`
   - **Prerequisites:** Task 1.4
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
