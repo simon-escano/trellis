@@ -111,7 +111,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
     └── [x] Task 0.2: Root Workspace Configuration & Environment Templates
 
 [ ] Phase 1: Rust GraphQL Gateway (apps/server)
-    ├── [ ] Task 1.1: Server Cargo Manifest, Dependencies & Config Module
+    ├── [x] Task 1.1: Server Cargo Manifest, Dependencies & Config Module
     ├── [ ] Task 1.2: SQLx Database Pool & Domain Entity Models
     ├── [ ] Task 1.3: Asynchronous In-Memory / Channel Queue Dispatcher
     ├── [ ] Task 1.4: DataLoader Implementation & GraphQL Types
@@ -157,7 +157,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
 
 ## Phase 1: Rust GraphQL Gateway (`apps/server`)
 
-- [ ] **Task 1.1: Server Cargo Manifest, Dependencies & Config Module**
+- [x] **Task 1.1: Server Cargo Manifest, Dependencies & Config Module**
   - **Target Files:** `apps/server/Cargo.toml`, `apps/server/.env.example`, `apps/server/src/config.rs`
   - **Prerequisites:** Task 0.2
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
