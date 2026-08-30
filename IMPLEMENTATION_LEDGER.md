@@ -121,7 +121,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
 [ ] Phase 2: TypeScript AI Extraction Worker (apps/worker)
     ├── [x] Task 2.1: Worker Workspace Scaffolding & Dependencies
     ├── [x] Task 2.2: Database Client & Zod Extraction Contracts
-    ├── [ ] Task 2.3: AI LLM Structured Output Extraction Service
+    ├── [x] Task 2.3: AI LLM Structured Output Extraction Service
     ├── [ ] Task 2.4: Transactional PostgreSQL Knowledge Graph Writer
     └── [ ] Task 2.5: Resilient Queue Polling Loop & Graceful Lifecycle
 
@@ -209,7 +209,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `npm --prefix apps/worker run build`
   - **Git Commit Message:** `feat(worker): implement zod extraction schemas and database connection`
 
-- [ ] **Task 2.3: AI LLM Structured Output Extraction Service**
+- [x] **Task 2.3: AI LLM Structured Output Extraction Service**
   - **Target Files:** `apps/worker/src/services/llm.service.ts`
   - **Prerequisites:** Task 2.2
   - **Validation Command:** `npm --prefix apps/worker run build`
