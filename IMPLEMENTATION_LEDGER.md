@@ -126,7 +126,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
     └── [x] Task 2.5: Resilient Queue Polling Loop & Graceful Lifecycle
 
 [ ] Phase 3: Angular 18 Reactive Web Client (apps/web)
-    ├── [ ] Task 3.1: Angular 18 Standalone Project Scaffolding & Theme Config
+    ├── [x] Task 3.1: Angular 18 Standalone Project Scaffolding & Theme Config
     ├── [ ] Task 3.2: GraphQL Client & Reactive Signals State Service
     ├── [ ] Task 3.3: Obsidian Layout Shell, Navbar & System Metrics
     ├── [ ] Task 3.4: Ingest Document Modal & Demo Spec Loader
@@ -231,7 +231,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
 
 ## Phase 3: Angular 18 Reactive Web Client (`apps/web`)
 
-- [ ] **Task 3.1: Angular 18 Standalone Project Scaffolding & Theme Config**
+- [x] **Task 3.1: Angular 18 Standalone Project Scaffolding & Theme Config**
   - **Target Files:** `apps/web/package.json`, `apps/web/angular.json`, `apps/web/tsconfig.json`, `apps/web/tailwind.config.js`, `apps/web/src/index.html`, `apps/web/src/styles.css`, `apps/web/src/main.ts`
   - **Prerequisites:** Task 0.2
   - **Validation Command:** `npm --prefix apps/web run build`
