@@ -107,7 +107,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
 
 ```
 [ ] Phase 0: Infrastructure & Workspace Foundation
-    ├── [ ] Task 0.1: Docker Infrastructure & PostgreSQL Initialization Schema
+    ├── [x] Task 0.1: Docker Infrastructure & PostgreSQL Initialization Schema
     └── [ ] Task 0.2: Root Workspace Configuration & Environment Templates
 
 [ ] Phase 1: Rust GraphQL Gateway (apps/server)
@@ -141,7 +141,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
 
 ## Phase 0: Infrastructure & Workspace Foundation
 
-- [ ] **Task 0.1: Docker Infrastructure & PostgreSQL Initialization Schema**
+- [x] **Task 0.1: Docker Infrastructure & PostgreSQL Initialization Schema**
   - **Target Files:** `docker/init.sql`, `docker-compose.yml`
   - **Prerequisites:** None
   - **Validation Command:** `docker compose config`
