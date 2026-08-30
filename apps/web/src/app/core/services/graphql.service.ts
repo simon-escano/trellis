@@ -9,8 +9,8 @@ import {
 } from "../models/document.model";
 
 export const GET_DOCUMENTS = gql`
-  query GetDocuments($status: ProcessingStatus, $limit: Int, $offset: Int) {
-    getDocuments(status: $status, limit: $limit, offset: $offset) {
+  query GetDocuments($limit: Int, $offset: Int) {
+    getDocuments(limit: $limit, offset: $offset) {
       id
       title
       rawContent
@@ -52,7 +52,7 @@ export const GET_DOCUMENTS = gql`
 `;
 
 export const GET_DOCUMENT = gql`
-  query GetDocument($id: String!) {
+  query GetDocument($id: ID!) {
     getDocument(id: $id) {
       id
       title
@@ -108,25 +108,29 @@ export const GET_METRICS = gql`
 export const INGEST_DOCUMENT = gql`
   mutation IngestDocument($input: IngestDocumentInput!) {
     ingestDocument(input: $input) {
-      documentId
-      jobId
-      status
+      document {
+        id
+        title
+        status
+        createdAt
+      }
+      queueJobId
     }
   }
 `;
 
 export const REPROCESS_DOCUMENT = gql`
-  mutation ReprocessDocument($id: String!) {
+  mutation ReprocessDocument($id: ID!) {
     reprocessDocument(id: $id) {
-      documentId
-      jobId
+      id
+      title
       status
     }
   }
 `;
 
 export const DELETE_DOCUMENT = gql`
-  mutation DeleteDocument($id: String!) {
+  mutation DeleteDocument($id: ID!) {
     deleteDocument(id: $id)
   }
 `;
@@ -175,9 +179,9 @@ export class GraphQLService {
       .pipe(map((res) => res.data!.ingestDocument));
   }
 
-  reprocessDocument(id: string): Observable<IngestPayload> {
+  reprocessDocument(id: string): Observable<Document> {
     return this.apollo
-      .mutate<{ reprocessDocument: IngestPayload }>({
+      .mutate<{ reprocessDocument: Document }>({
         mutation: REPROCESS_DOCUMENT,
         variables: { id },
       })

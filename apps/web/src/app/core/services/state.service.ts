@@ -100,8 +100,9 @@ export class StateService {
       );
       this.isIngestModalOpen.set(false);
       await this.refreshAll();
-      this.selectedDocumentId.set(res.documentId);
-      return res.documentId;
+      const newId = res.document.id;
+      this.selectedDocumentId.set(newId);
+      return newId;
     } finally {
       this.isIngesting.set(false);
     }

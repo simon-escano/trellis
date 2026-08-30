@@ -61,7 +61,6 @@ export interface IngestDocumentInput {
 }
 
 export interface IngestPayload {
-  documentId: string;
-  jobId: string;
-  status: ProcessingStatus;
+  document: Document;
+  queueJobId: string;
 }
