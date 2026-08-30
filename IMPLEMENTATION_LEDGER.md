@@ -129,7 +129,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
     ├── [x] Task 3.1: Angular 18 Standalone Project Scaffolding & Theme Config
     ├── [x] Task 3.2: GraphQL Client & Reactive Signals State Service
     ├── [x] Task 3.3: Obsidian Layout Shell, Navbar & System Metrics
-    ├── [ ] Task 3.4: Ingest Document Modal & Demo Spec Loader
+    ├── [x] Task 3.4: Ingest Document Modal & Demo Spec Loader
     ├── [ ] Task 3.5: Left Rail Document List & Animated Status Badges
     └── [ ] Task 3.6: Document Detail Viewer, Entity Inspector & Relationship Graph
 
@@ -249,7 +249,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `npm --prefix apps/web run build`
   - **Git Commit Message:** `feat(web): build obsidian shell layout navbar and live metrics pills`
 
-- [ ] **Task 3.4: Ingest Document Modal & Demo Spec Loader**
+- [x] **Task 3.4: Ingest Document Modal & Demo Spec Loader**
   - **Target Files:** `apps/web/src/app/components/ingest-modal/ingest-modal.component.ts`
   - **Prerequisites:** Task 3.3
   - **Validation Command:** `npm --prefix apps/web run build`

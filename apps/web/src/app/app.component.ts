@@ -1,12 +1,13 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { NavbarComponent } from "./components/navbar/navbar.component";
+import { IngestModalComponent } from "./components/ingest-modal/ingest-modal.component";
 import { StateService } from "./core/services/state.service";
 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, NavbarComponent],
+  imports: [CommonModule, NavbarComponent, IngestModalComponent],
   template: `
     <div
       class="min-h-screen bg-trellis-950 text-slate-100 flex flex-col font-sans selection:bg-trellis-accent/30 selection:text-trellis-accent"
@@ -195,6 +196,9 @@ import { StateService } from "./core/services/state.service";
           </div>
         </section>
       </main>
+
+      <!-- Ingest Modal Component -->
+      <app-ingest-modal></app-ingest-modal>
     </div>
   `,
 })
