@@ -105,4 +105,20 @@ To guarantee clean version control throughout development:
 3. **No Automatic Push:** The AI agent must **never** execute `git push`. All commits remain local until manual user review.
 4. **Execution Flow:** Complete tasks sequentially. No jumping ahead until current step builds and passes basic verification.
 
-```
+
+### AUTONOMOUS TASK RUNNER PROTOCOL:
+When instructed to "execute the next task", execute this exact loop:
+
+1. Scan `IMPLEMENTATION_LEDGER.md` from top to bottom to find the FIRST task with `- [ ]`.
+2. Read the referenced `.trellis-specs/` file and target files for that specific task.
+3. Write/edit the required code strictly according to the data contracts.
+4. Execute the verification command for that task in the terminal.
+5. If the command fails: Analyze the terminal output, fix the code, and re-run until it passes.
+6. When the command passes:
+   - Edit `IMPLEMENTATION_LEDGER.md` to change that task's checkbox from `- [ ]` to `- [x]`.
+   - Run the specified git commit command in the terminal:
+     `git add [modified_files] IMPLEMENTATION_LEDGER.md && git commit -m "[Task commit message]"`
+7. Terminate execution and output:
+   - "Completed Task [ID]: [Title]"
+   - "Verification: PASSED"
+   - "Next pending task: Task [Next ID]: [Next Title]"
