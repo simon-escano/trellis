@@ -128,7 +128,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
 [ ] Phase 3: Angular 18 Reactive Web Client (apps/web)
     ├── [x] Task 3.1: Angular 18 Standalone Project Scaffolding & Theme Config
     ├── [x] Task 3.2: GraphQL Client & Reactive Signals State Service
-    ├── [ ] Task 3.3: Obsidian Layout Shell, Navbar & System Metrics
+    ├── [x] Task 3.3: Obsidian Layout Shell, Navbar & System Metrics
     ├── [ ] Task 3.4: Ingest Document Modal & Demo Spec Loader
     ├── [ ] Task 3.5: Left Rail Document List & Animated Status Badges
     └── [ ] Task 3.6: Document Detail Viewer, Entity Inspector & Relationship Graph
@@ -243,7 +243,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `npm --prefix apps/web run build`
   - **Git Commit Message:** `feat(web): configure apollo graphql client and reactive signals state service`
 
-- [ ] **Task 3.3: Obsidian Layout Shell, Navbar & System Metrics**
+- [x] **Task 3.3: Obsidian Layout Shell, Navbar & System Metrics**
   - **Target Files:** `apps/web/src/app/core/animation/motion.utils.ts`, `apps/web/src/app/components/navbar/navbar.component.ts`, `apps/web/src/app/app.component.ts`
   - **Prerequisites:** Task 3.2
   - **Validation Command:** `npm --prefix apps/web run build`
