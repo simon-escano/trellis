@@ -114,7 +114,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
     ├── [x] Task 1.1: Server Cargo Manifest, Dependencies & Config Module
     ├── [x] Task 1.2: SQLx Database Pool & Domain Entity Models
     ├── [x] Task 1.3: Asynchronous In-Memory / Channel Queue Dispatcher
-    ├── [ ] Task 1.4: DataLoader Implementation & GraphQL Types
+    ├── [x] Task 1.4: DataLoader Implementation & GraphQL Types
     ├── [ ] Task 1.5: GraphQL Queries, Mutations & Schema Builder
     └── [ ] Task 1.6: Axum Server Setup, CORS & Embedded GraphiQL Playground
 
@@ -175,7 +175,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
   - **Git Commit Message:** `feat(server): implement asynchronous queue dispatcher`
 
-- [ ] **Task 1.4: DataLoader Implementation & GraphQL Types**
+- [x] **Task 1.4: DataLoader Implementation & GraphQL Types**
   - **Target Files:** `apps/server/src/graphql/mod.rs`, `apps/server/src/graphql/types.rs`, `apps/server/src/graphql/dataloaders.rs`
   - **Prerequisites:** Task 1.3
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`

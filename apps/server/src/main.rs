@@ -1,5 +1,6 @@
 pub mod config;
 pub mod db;
+pub mod graphql;
 pub mod models;
 pub mod queue;
 
