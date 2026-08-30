@@ -125,13 +125,13 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
     ├── [x] Task 2.4: Transactional PostgreSQL Knowledge Graph Writer
     └── [x] Task 2.5: Resilient Queue Polling Loop & Graceful Lifecycle
 
-[ ] Phase 3: Angular 18 Reactive Web Client (apps/web)
+[x] Phase 3: Angular 18 Reactive Web Client (apps/web)
     ├── [x] Task 3.1: Angular 18 Standalone Project Scaffolding & Theme Config
     ├── [x] Task 3.2: GraphQL Client & Reactive Signals State Service
     ├── [x] Task 3.3: Obsidian Layout Shell, Navbar & System Metrics
     ├── [x] Task 3.4: Ingest Document Modal & Demo Spec Loader
     ├── [x] Task 3.5: Left Rail Document List & Animated Status Badges
-    └── [ ] Task 3.6: Document Detail Viewer, Entity Inspector & Relationship Graph
+    └── [x] Task 3.6: Document Detail Viewer, Entity Inspector & Relationship Graph
 
 [ ] Phase 4: System Integration, E2E Smoke Testing & Verification
     └── [ ] Task 4.1: End-to-End Pipeline Verification & Verification Log Finalization
@@ -261,7 +261,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `npm --prefix apps/web run build`
   - **Git Commit Message:** `feat(web): implement document sidebar list with reactive status badges`
 
-- [ ] **Task 3.6: Document Detail Viewer, Entity Inspector & Relationship Graph**
+- [x] **Task 3.6: Document Detail Viewer, Entity Inspector & Relationship Graph**
   - **Target Files:** `apps/web/src/app/components/document-viewer/document-viewer.component.ts`, `apps/web/src/app/components/entity-inspector/entity-inspector.component.ts`, `apps/web/src/app/components/relationship-graph/relationship-graph.component.ts`
   - **Prerequisites:** Task 3.5
   - **Validation Command:** `npm --prefix apps/web run build`

@@ -1,8 +1,11 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { NavbarComponent } from "./components/navbar/navbar.component";
 import { IngestModalComponent } from "./components/ingest-modal/ingest-modal.component";
 import { DocumentListComponent } from "./components/document-list/document-list.component";
+import { DocumentViewerComponent } from "./components/document-viewer/document-viewer.component";
+import { EntityInspectorComponent } from "./components/entity-inspector/entity-inspector.component";
+import { RelationshipGraphComponent } from "./components/relationship-graph/relationship-graph.component";
 import { StateService } from "./core/services/state.service";
 
 @Component({
@@ -13,6 +16,9 @@ import { StateService } from "./core/services/state.service";
     NavbarComponent,
     IngestModalComponent,
     DocumentListComponent,
+    DocumentViewerComponent,
+    EntityInspectorComponent,
+    RelationshipGraphComponent,
   ],
   template: `
     <div
@@ -30,117 +36,56 @@ import { StateService } from "./core/services/state.service";
         <!-- Column 2: Center Workspace (Document Viewer & Summary) -->
         <section
           id="document-viewer-container"
-          class="flex-1 border-r border-trellis-800 bg-trellis-900/30 flex flex-col overflow-y-auto"
+          class="flex-1 border-r border-trellis-800 bg-trellis-900/20 h-full overflow-hidden"
         >
-          @if (state.activeDocument(); as active) {
-          <div class="p-8 max-w-4xl w-full mx-auto space-y-6">
-            <div>
-              <div class="flex items-center gap-2 mb-2">
-                <span class="text-xs font-mono text-trellis-cyan uppercase"
-                  >Architecture Specification</span
-                >
-                <span class="text-slate-600">•</span>
-                <span class="text-xs font-mono text-slate-400">{{
-                  active.id
-                }}</span>
-              </div>
-              <h1 class="text-2xl font-bold text-white tracking-tight">
-                {{ active.title }}
-              </h1>
-            </div>
-
-            <!-- Executive Summary Card -->
-            <div
-              class="p-6 rounded-xl bg-trellis-900/80 border border-trellis-800 shadow-xl space-y-3"
-            >
-              <div
-                class="flex items-center gap-2 text-trellis-accent font-mono text-xs font-bold uppercase tracking-wider"
-              >
-                <span>✦</span> Executive Summary
-              </div>
-              <p class="text-slate-200 leading-relaxed text-sm">
-                {{
-                  active.summary ||
-                    "Pending AI entity extraction and summarization..."
-                }}
-              </p>
-            </div>
-
-            <!-- Raw Content Section -->
-            <div
-              class="rounded-xl border border-trellis-800 bg-trellis-950/60 overflow-hidden"
-            >
-              <div
-                class="px-4 py-3 border-b border-trellis-800 bg-trellis-900/50 flex items-center justify-between"
-              >
-                <span
-                  class="text-xs font-mono text-slate-400 font-semibold uppercase"
-                  >Source Text</span
-                >
-              </div>
-              <pre
-                class="p-4 text-xs font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-72"
-                >{{ active.rawContent }}</pre
-              >
-            </div>
-          </div>
-          } @else {
-          <div
-            class="flex-1 flex flex-col items-center justify-center text-slate-500 p-8 space-y-4"
-          >
-            <div
-              class="w-16 h-16 rounded-2xl bg-trellis-900 border border-trellis-800 flex items-center justify-center text-3xl"
-            >
-              📄
-            </div>
-            <div class="text-center">
-              <p class="font-semibold text-slate-300">
-                No Specification Selected
-              </p>
-              <p class="text-xs font-mono text-slate-500 mt-1">
-                Select an architecture spec or ingest a new document.
-              </p>
-            </div>
-          </div>
-          }
+          <app-document-viewer class="h-full block"></app-document-viewer>
         </section>
 
         <!-- Column 3: Right Rail (Knowledge Graph & Entity Inspector) -->
         <section
           id="entity-inspector-container"
-          class="w-96 bg-trellis-950 flex flex-col shrink-0 overflow-y-auto"
+          class="w-96 bg-trellis-950 flex flex-col shrink-0 h-full overflow-hidden"
         >
-          <div class="p-4 border-b border-trellis-800">
-            <h2
-              class="text-xs font-mono font-bold uppercase tracking-wider text-slate-400"
-            >
-              Knowledge Graph
-            </h2>
-          </div>
-          <div class="p-4 flex-1">
-            @if (state.activeDocument(); as active) {
-            <div class="space-y-4">
-              <div class="text-xs font-mono text-slate-400">
-                <span>Entities ({{ active.entities.length || 0 }})</span>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                @for (entity of active.entities; track entity.id) {
-                <span
-                  class="px-2 py-1 rounded bg-trellis-900 border border-trellis-800 text-xs font-mono text-slate-200"
-                >
-                  {{ entity.name }}
-                </span>
-                } @empty {
-                <p class="text-xs text-slate-500 font-mono">
-                  No entities extracted yet.
-                </p>
-                }
-              </div>
+          <!-- Tabs: Entities vs Relationships -->
+          <div
+            class="px-4 py-3 border-b border-trellis-800 bg-trellis-950 flex items-center justify-between"
+          >
+            <div class="flex items-center gap-1 bg-trellis-900 p-1 rounded-lg border border-trellis-800 text-xs font-mono">
+              <button
+                (click)="activeTab.set('ENTITIES')"
+                [class.bg-trellis-800]="activeTab() === 'ENTITIES'"
+                [class.text-white]="activeTab() === 'ENTITIES'"
+                [class.text-slate-400]="activeTab() !== 'ENTITIES'"
+                class="px-3 py-1 rounded-md transition-all font-semibold"
+              >
+                Entities ({{ state.activeDocument()?.entities?.length || 0 }})
+              </button>
+              <button
+                (click)="activeTab.set('GRAPH')"
+                [class.bg-trellis-800]="activeTab() === 'GRAPH'"
+                [class.text-white]="activeTab() === 'GRAPH'"
+                [class.text-slate-400]="activeTab() !== 'GRAPH'"
+                class="px-3 py-1 rounded-md transition-all font-semibold"
+              >
+                Graph ({{ state.activeDocument()?.relationships?.length || 0 }})
+              </button>
             </div>
+          </div>
+
+          <!-- Right Rail Content -->
+          <div class="flex-1 overflow-y-auto p-4">
+            @if (state.activeDocument()) {
+              @if (activeTab() === 'ENTITIES') {
+                <app-entity-inspector></app-entity-inspector>
+              } @else {
+                <app-relationship-graph></app-relationship-graph>
+              }
             } @else {
-            <p class="text-xs text-slate-500 font-mono text-center py-12">
-              Select a document to inspect entities.
-            </p>
+              <div class="h-full flex flex-col items-center justify-center text-center p-6 text-slate-500 space-y-2">
+                <div class="text-2xl">🌿</div>
+                <p class="text-xs font-mono font-semibold text-slate-400">Knowledge Graph Inspector</p>
+                <p class="text-[11px] text-slate-500">Select a specification to explore extracted entities and directional relationship nodes.</p>
+              </div>
             }
           </div>
         </section>
@@ -153,4 +98,5 @@ import { StateService } from "./core/services/state.service";
 })
 export class AppComponent {
   public state = inject(StateService);
+  public activeTab = signal<"ENTITIES" | "GRAPH">("ENTITIES");
 }
