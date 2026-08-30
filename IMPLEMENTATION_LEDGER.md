@@ -119,7 +119,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
     └── [x] Task 1.6: Axum Server Setup, CORS & Embedded GraphiQL Playground
 
 [ ] Phase 2: TypeScript AI Extraction Worker (apps/worker)
-    ├── [ ] Task 2.1: Worker Workspace Scaffolding & Dependencies
+    ├── [x] Task 2.1: Worker Workspace Scaffolding & Dependencies
     ├── [ ] Task 2.2: Database Client & Zod Extraction Contracts
     ├── [ ] Task 2.3: AI LLM Structured Output Extraction Service
     ├── [ ] Task 2.4: Transactional PostgreSQL Knowledge Graph Writer
@@ -197,7 +197,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
 
 ## Phase 2: TypeScript AI Extraction Worker (`apps/worker`)
 
-- [ ] **Task 2.1: Worker Workspace Scaffolding & Dependencies**
+- [x] **Task 2.1: Worker Workspace Scaffolding & Dependencies**
   - **Target Files:** `apps/worker/package.json`, `apps/worker/tsconfig.json`, `apps/worker/.env.example`, `apps/worker/src/config.ts`
   - **Prerequisites:** Task 0.2
   - **Validation Command:** `npm --prefix apps/worker run build`
