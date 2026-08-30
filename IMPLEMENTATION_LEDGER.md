@@ -110,13 +110,13 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
     ├── [x] Task 0.1: Docker Infrastructure & PostgreSQL Initialization Schema
     └── [x] Task 0.2: Root Workspace Configuration & Environment Templates
 
-[ ] Phase 1: Rust GraphQL Gateway (apps/server)
+[x] Phase 1: Rust GraphQL Gateway (apps/server)
     ├── [x] Task 1.1: Server Cargo Manifest, Dependencies & Config Module
     ├── [x] Task 1.2: SQLx Database Pool & Domain Entity Models
     ├── [x] Task 1.3: Asynchronous In-Memory / Channel Queue Dispatcher
     ├── [x] Task 1.4: DataLoader Implementation & GraphQL Types
     ├── [x] Task 1.5: GraphQL Queries, Mutations & Schema Builder
-    └── [ ] Task 1.6: Axum Server Setup, CORS & Embedded GraphiQL Playground
+    └── [x] Task 1.6: Axum Server Setup, CORS & Embedded GraphiQL Playground
 
 [ ] Phase 2: TypeScript AI Extraction Worker (apps/worker)
     ├── [ ] Task 2.1: Worker Workspace Scaffolding & Dependencies
@@ -187,7 +187,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
   - **Git Commit Message:** `feat(server): implement async-graphql schema queries and mutations`
 
-- [ ] **Task 1.6: Axum Server Setup, CORS & Embedded GraphiQL Playground**
+- [x] **Task 1.6: Axum Server Setup, CORS & Embedded GraphiQL Playground**
   - **Target Files:** `apps/server/src/main.rs`
   - **Prerequisites:** Task 1.5
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
