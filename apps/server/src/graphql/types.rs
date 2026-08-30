@@ -70,6 +70,14 @@ impl EntityRelationshipGql {
         ID(self.inner.document_id.to_string())
     }
 
+    async fn source_entity_id(&self) -> ID {
+        ID(self.inner.source_entity_id.to_string())
+    }
+
+    async fn target_entity_id(&self) -> ID {
+        ID(self.inner.target_entity_id.to_string())
+    }
+
     async fn source_entity(&self, ctx: &Context<'_>) -> async_graphql::Result<EntityGql> {
         let loader = ctx.data_unchecked::<DataLoader<SingleEntityLoader>>();
         let entity = loader
