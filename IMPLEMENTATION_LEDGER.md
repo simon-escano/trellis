@@ -118,12 +118,12 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
     ├── [x] Task 1.5: GraphQL Queries, Mutations & Schema Builder
     └── [x] Task 1.6: Axum Server Setup, CORS & Embedded GraphiQL Playground
 
-[ ] Phase 2: TypeScript AI Extraction Worker (apps/worker)
+[x] Phase 2: TypeScript AI Extraction Worker (apps/worker)
     ├── [x] Task 2.1: Worker Workspace Scaffolding & Dependencies
     ├── [x] Task 2.2: Database Client & Zod Extraction Contracts
     ├── [x] Task 2.3: AI LLM Structured Output Extraction Service
     ├── [x] Task 2.4: Transactional PostgreSQL Knowledge Graph Writer
-    └── [ ] Task 2.5: Resilient Queue Polling Loop & Graceful Lifecycle
+    └── [x] Task 2.5: Resilient Queue Polling Loop & Graceful Lifecycle
 
 [ ] Phase 3: Angular 18 Reactive Web Client (apps/web)
     ├── [ ] Task 3.1: Angular 18 Standalone Project Scaffolding & Theme Config
@@ -221,7 +221,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `npm --prefix apps/worker run build`
   - **Git Commit Message:** `feat(worker): create transactional postgres batch writer with rollback safety`
 
-- [ ] **Task 2.5: Resilient Queue Polling Loop & Graceful Lifecycle**
+- [x] **Task 2.5: Resilient Queue Polling Loop & Graceful Lifecycle**
   - **Target Files:** `apps/worker/src/queue/types.ts`, `apps/worker/src/queue/consumer.ts`, `apps/worker/src/index.ts`
   - **Prerequisites:** Task 2.4
   - **Validation Command:** `npm --prefix apps/worker run build`
