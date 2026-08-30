@@ -112,7 +112,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
 
 [ ] Phase 1: Rust GraphQL Gateway (apps/server)
     ├── [x] Task 1.1: Server Cargo Manifest, Dependencies & Config Module
-    ├── [ ] Task 1.2: SQLx Database Pool & Domain Entity Models
+    ├── [x] Task 1.2: SQLx Database Pool & Domain Entity Models
     ├── [ ] Task 1.3: Asynchronous In-Memory / Channel Queue Dispatcher
     ├── [ ] Task 1.4: DataLoader Implementation & GraphQL Types
     ├── [ ] Task 1.5: GraphQL Queries, Mutations & Schema Builder
@@ -163,7 +163,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
   - **Git Commit Message:** `chore(server): scaffold cargo workspace and dependencies`
 
-- [ ] **Task 1.2: SQLx Database Pool & Domain Entity Models**
+- [x] **Task 1.2: SQLx Database Pool & Domain Entity Models**
   - **Target Files:** `apps/server/src/db.rs`, `apps/server/src/models/mod.rs`, `apps/server/src/models/document.rs`, `apps/server/src/models/entity.rs`, `apps/server/src/models/relationship.rs`
   - **Prerequisites:** Task 1.1
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
