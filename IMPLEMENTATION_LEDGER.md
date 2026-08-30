@@ -130,7 +130,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
     ├── [x] Task 3.2: GraphQL Client & Reactive Signals State Service
     ├── [x] Task 3.3: Obsidian Layout Shell, Navbar & System Metrics
     ├── [x] Task 3.4: Ingest Document Modal & Demo Spec Loader
-    ├── [ ] Task 3.5: Left Rail Document List & Animated Status Badges
+    ├── [x] Task 3.5: Left Rail Document List & Animated Status Badges
     └── [ ] Task 3.6: Document Detail Viewer, Entity Inspector & Relationship Graph
 
 [ ] Phase 4: System Integration, E2E Smoke Testing & Verification
@@ -255,7 +255,7 @@ Following the **AUTONOMOUS TASK RUNNER PROTOCOL**, tasks must be executed strict
   - **Validation Command:** `npm --prefix apps/web run build`
   - **Git Commit Message:** `feat(web): implement glassmorphic ingest modal with demo architecture spec`
 
-- [ ] **Task 3.5: Left Rail Document List & Animated Status Badges**
+- [x] **Task 3.5: Left Rail Document List & Animated Status Badges**
   - **Target Files:** `apps/web/src/app/components/document-list/document-list.component.ts`
   - **Prerequisites:** Task 3.4
   - **Validation Command:** `npm --prefix apps/web run build`

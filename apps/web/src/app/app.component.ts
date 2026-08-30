@@ -2,12 +2,18 @@ import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { NavbarComponent } from "./components/navbar/navbar.component";
 import { IngestModalComponent } from "./components/ingest-modal/ingest-modal.component";
+import { DocumentListComponent } from "./components/document-list/document-list.component";
 import { StateService } from "./core/services/state.service";
 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, NavbarComponent, IngestModalComponent],
+  imports: [
+    CommonModule,
+    NavbarComponent,
+    IngestModalComponent,
+    DocumentListComponent,
+  ],
   template: `
     <div
       class="min-h-screen bg-trellis-950 text-slate-100 flex flex-col font-sans selection:bg-trellis-accent/30 selection:text-trellis-accent"
@@ -17,65 +23,8 @@ import { StateService } from "./core/services/state.service";
       <!-- Main 3-Column Obsidian Workspace Shell -->
       <main class="flex-1 flex overflow-hidden h-[calc(100vh-4rem)]">
         <!-- Column 1: Left Rail (Document List) -->
-        <section
-          id="document-list-container"
-          class="w-80 border-r border-trellis-800 bg-trellis-950 flex flex-col shrink-0"
-        >
-          <div
-            class="p-4 border-b border-trellis-800 flex items-center justify-between"
-          >
-            <h2
-              class="text-xs font-mono font-bold uppercase tracking-wider text-slate-400"
-            >
-              Specifications
-            </h2>
-            <span
-              class="text-xs font-mono px-2 py-0.5 rounded bg-trellis-900 border border-trellis-800 text-slate-300"
-            >
-              {{ state.filteredDocuments().length }}
-            </span>
-          </div>
-          <div class="flex-1 overflow-y-auto p-3 space-y-2">
-            @for (doc of state.filteredDocuments(); track doc.id) {
-            <div
-              (click)="state.selectDocument(doc.id)"
-              [class.bg-trellis-900]="state.selectedDocumentId() === doc.id"
-              [class.border-trellis-accent]="
-                state.selectedDocumentId() === doc.id
-              "
-              [class.border-trellis-800]="state.selectedDocumentId() !== doc.id"
-              class="p-3 rounded-lg border bg-trellis-950/60 hover:bg-trellis-900/80 cursor-pointer transition-all"
-            >
-              <div class="flex items-start justify-between gap-2 mb-1">
-                <h3 class="font-semibold text-sm text-slate-100 truncate">
-                  {{ doc.title }}
-                </h3>
-                <span
-                  [ngClass]="{
-                    'bg-emerald-500/10 text-emerald-400 border-emerald-500/30':
-                      doc.status === 'COMPLETED',
-                    'bg-amber-500/10 text-amber-400 border-amber-500/30':
-                      doc.status === 'QUEUED',
-                    'bg-cyan-500/10 text-cyan-400 border-cyan-500/30':
-                      doc.status === 'PROCESSING',
-                    'bg-rose-500/10 text-rose-400 border-rose-500/30':
-                      doc.status === 'FAILED'
-                  }"
-                  class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase"
-                >
-                  {{ doc.status }}
-                </span>
-              </div>
-              <p class="text-xs text-slate-400 line-clamp-2">
-                {{ doc.summary || "Processing spec analysis..." }}
-              </p>
-            </div>
-            } @empty {
-            <div class="text-center py-12 text-slate-500">
-              <p class="text-xs font-mono">No specifications loaded.</p>
-            </div>
-            }
-          </div>
+        <section id="document-list-container" class="w-80 shrink-0 h-full">
+          <app-document-list class="h-full block"></app-document-list>
         </section>
 
         <!-- Column 2: Center Workspace (Document Viewer & Summary) -->
