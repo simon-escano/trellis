@@ -23,7 +23,6 @@ export class InspectorComponent {
   readonly selectedEntity = this.store.selectedEntity;
   readonly activeDocument = this.store.activeDocument;
 
-  // Connected edges for selected concept
   readonly connectedRelationships = computed<EntityRelationship[]>(() => {
     const entity = this.selectedEntity();
     const doc = this.activeDocument();
@@ -62,32 +61,32 @@ export class InspectorComponent {
   getCategoryBadgeClass(category: EntityCategory): string {
     switch (category) {
       case 'CONCEPT':
-        return 'bg-trellis-accent/15 text-trellis-accent border-trellis-accent/30';
+        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25';
       case 'SERVICE':
       case 'SYSTEM':
-        return 'bg-trellis-cyan/15 text-trellis-cyan border-trellis-cyan/30';
+        return 'bg-sky-500/10 text-sky-400 border-sky-500/25';
       case 'DATA_MODEL':
-        return 'bg-trellis-amber/15 text-trellis-amber border-trellis-amber/30';
+        return 'bg-amber-500/10 text-amber-400 border-amber-500/25';
       case 'INFRASTRUCTURE':
-        return 'bg-trellis-rose/15 text-trellis-rose border-trellis-rose/30';
+        return 'bg-rose-500/10 text-rose-400 border-rose-500/25';
       case 'SECURITY_POLICY':
       case 'API_ENDPOINT':
       default:
-        return 'bg-purple-500/15 text-purple-400 border-purple-500/30';
+        return 'bg-purple-500/10 text-purple-400 border-purple-500/25';
     }
   }
 
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'COMPLETED':
-        return 'bg-trellis-accent/10 text-trellis-accent border-trellis-accent/30';
+        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25';
       case 'PROCESSING':
-        return 'bg-trellis-cyan/10 text-trellis-cyan border-trellis-cyan/30 animate-pulse';
+        return 'bg-sky-500/10 text-sky-400 border-sky-500/25 animate-pulse';
       case 'QUEUED':
-        return 'bg-trellis-amber/10 text-trellis-amber border-trellis-amber/30';
+        return 'bg-amber-500/10 text-amber-400 border-amber-500/25';
       case 'FAILED':
       default:
-        return 'bg-trellis-rose/10 text-trellis-rose border-trellis-rose/30';
+        return 'bg-rose-500/10 text-rose-400 border-rose-500/25';
     }
   }
 
@@ -100,7 +99,7 @@ export class InspectorComponent {
 
   deleteActive() {
     const doc = this.activeDocument();
-    if (doc && confirm(`Are you sure you want to delete "${doc.title}"?`)) {
+    if (doc && confirm(`Delete "${doc.title}"?`)) {
       this.store.deleteDocument(doc.id);
     }
   }

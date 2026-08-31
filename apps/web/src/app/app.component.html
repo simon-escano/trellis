@@ -1,19 +1,25 @@
-<main class="h-screen w-screen flex flex-col bg-trellis-bg text-trellis-text-primary overflow-hidden select-none">
-  <!-- Top Navigation Toolbar -->
-  <app-header (openIngestModal)="openIngestModal()"></app-header>
+<main class="h-screen w-screen flex bg-[#07090E] text-[#F8FAFC] overflow-hidden select-none font-sans relative">
+  
+  <!-- Left Sidebar (macOS / Gemini Document History Rail) -->
+  <app-sidebar (openIngestModal)="openIngestModal()"></app-sidebar>
 
-  <!-- Central Canvas & Inspector Work Area -->
-  <div class="flex-1 flex overflow-hidden relative">
+  <!-- Central Canvas Work Area with Floating Island Header -->
+  <section class="flex-1 h-full relative flex flex-col overflow-hidden">
     
-    <!-- Interactive Mind Map Canvas -->
-    <div class="flex-1 h-full relative">
-      <app-canvas></app-canvas>
+    <!-- Floating Rounded Glass Header -->
+    <div class="absolute top-4 left-0 right-0 z-30 px-6 pointer-events-none flex justify-center">
+      <app-header (openIngestModal)="openIngestModal()"></app-header>
     </div>
 
-    <!-- Executive Summary Drawer & Concept Inspector -->
-    <app-inspector></app-inspector>
-  </div>
+    <!-- Mind Map Canvas Viewport -->
+    <div class="flex-1 h-full w-full relative">
+      <app-canvas></app-canvas>
+    </div>
+  </section>
 
-  <!-- Document Ingestion Modal -->
+  <!-- Right Inspector Drawer -->
+  <app-inspector></app-inspector>
+
+  <!-- Document Ingestion Sheet Modal -->
   <app-ingest-modal [isOpen]="isIngestModalOpen()" (close)="closeIngestModal()"></app-ingest-modal>
 </main>

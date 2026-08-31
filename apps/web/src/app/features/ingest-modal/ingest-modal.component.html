@@ -1,64 +1,64 @@
 <div *ngIf="isOpen" 
-     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
+     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl animate-in fade-in duration-200 select-none">
   
   <!-- Backdrop Click Area -->
   <div (click)="onClose()" class="absolute inset-0"></div>
 
   <!-- Modal Container -->
-  <div class="relative w-full max-w-2xl rounded-2xl glass-panel border border-trellis-border bg-[#0D1420] shadow-2xl overflow-hidden z-10 max-h-[90vh] flex flex-col">
+  <div class="relative w-full max-w-2xl rounded-3xl apple-glass border border-white/[0.12] shadow-2xl overflow-hidden z-10 max-h-[92vh] flex flex-col animate-in zoom-in-95 duration-200">
     
     <!-- Modal Header -->
-    <div class="p-6 border-b border-trellis-border flex items-center justify-between">
+    <div class="p-5 border-b border-white/[0.08] flex items-center justify-between flex-shrink-0">
       <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 rounded-xl bg-trellis-accent/15 border border-trellis-accent/30 flex items-center justify-center text-trellis-accent">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        <div class="w-9 h-9 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
         </div>
         <div>
-          <h2 class="text-lg font-bold text-trellis-text-primary">Ingest Document &amp; Map Knowledge</h2>
-          <p class="text-xs text-trellis-text-muted">Transform raw prose into an interactive visual graph</p>
+          <h2 class="text-base font-bold text-white tracking-tight">Ingest Document &amp; Map Knowledge</h2>
+          <p class="text-xs text-white/50">Transform raw prose into an interactive visual graph</p>
         </div>
       </div>
 
       <button (click)="onClose()" 
-              class="p-1.5 rounded-lg text-trellis-text-muted hover:text-trellis-text-primary hover:bg-trellis-surface transition-all">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              class="w-7 h-7 rounded-full apple-button-secondary flex items-center justify-center text-white/50 hover:text-white transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
 
     <!-- Modal Body (Scrollable) -->
-    <div class="p-6 space-y-6 overflow-y-auto flex-1">
+    <div class="p-6 space-y-5 overflow-y-auto flex-1">
       
       <!-- 1-Click Multi-Persona Demo Presets -->
       <div class="space-y-2">
         <div class="flex items-center justify-between">
-          <label class="text-xs font-mono uppercase tracking-wider text-trellis-text-muted font-semibold">
+          <label class="text-[10px] font-mono uppercase tracking-wider text-white/40 font-semibold">
             One-Click Demo Presets
           </label>
-          <span class="text-[11px] text-trellis-accent font-medium">Instant Load</span>
+          <span class="text-[11px] text-emerald-400 font-medium">Instant Load</span>
         </div>
 
         <div class="grid grid-cols-3 gap-2.5">
           <button *ngFor="let preset of presets" 
                   (click)="selectPreset(preset)" 
                   type="button"
-                  [ngClass]="selectedPresetId() === preset.id ? 'border-trellis-accent bg-trellis-accent/10 shadow-lg shadow-trellis-accent/5' : 'border-trellis-border bg-[#070A0F]/60 hover:border-trellis-border-active hover:bg-trellis-surface/60'"
-                  class="p-3 rounded-xl border text-left transition-all flex flex-col justify-between group">
+                  [ngClass]="selectedPresetId() === preset.id ? 'border-emerald-500/50 bg-emerald-500/10 shadow-lg shadow-emerald-500/10' : 'border-white/[0.06] bg-black/20 hover:border-white/[0.12] hover:bg-white/[0.03]'"
+                  class="p-3 rounded-2xl border text-left transition-all flex flex-col justify-between group cursor-pointer">
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <span class="text-lg">{{ preset.personaIcon }}</span>
-                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-trellis-surface border border-trellis-border text-trellis-text-muted">
+                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-white/60">
                   {{ preset.categoryBadge }}
                 </span>
               </div>
-              <h4 class="text-xs font-bold text-trellis-text-primary group-hover:text-trellis-accent transition-colors line-clamp-1">
+              <h4 class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-1">
                 {{ preset.persona }}
               </h4>
             </div>
-            <p class="text-[11px] text-trellis-text-muted line-clamp-2 mt-1">
+            <p class="text-[11px] text-white/50 line-clamp-2 mt-1 leading-snug">
               {{ preset.title }}
             </p>
           </button>
@@ -70,9 +70,9 @@
         
         <!-- Document Title Field -->
         <div class="space-y-1.5">
-          <label class="text-xs font-mono uppercase tracking-wider text-trellis-text-muted flex justify-between">
+          <label class="text-[10px] font-mono uppercase tracking-wider text-white/40 flex justify-between">
             <span>Document Title</span>
-            <span class="text-trellis-text-muted/60">{{ title.length }}/120</span>
+            <span class="text-white/30">{{ title.length }}/120</span>
           </label>
           <input type="text" 
                  [(ngModel)]="title" 
@@ -80,42 +80,42 @@
                  maxlength="120"
                  placeholder="e.g., Quantum Computing &amp; Superconducting Qubits" 
                  required
-                 class="w-full px-3.5 py-2.5 rounded-xl bg-[#070A0F] border border-trellis-border focus:border-trellis-accent focus:outline-none text-sm text-trellis-text-primary placeholder:text-trellis-text-muted/50 transition-all font-sans" />
+                 class="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/[0.08] focus:border-emerald-500/50 focus:outline-none text-sm text-white placeholder:text-white/30 transition-all font-sans" />
         </div>
 
         <!-- Raw Content Textarea Field -->
         <div class="space-y-1.5">
-          <label class="text-xs font-mono uppercase tracking-wider text-trellis-text-muted flex justify-between">
+          <label class="text-[10px] font-mono uppercase tracking-wider text-white/40 flex justify-between">
             <span>Raw Text or Article Prose</span>
-            <span class="text-trellis-text-muted/60">{{ rawContent.length }} chars</span>
+            <span class="text-white/30">{{ rawContent.length }} chars</span>
           </label>
           <textarea [(ngModel)]="rawContent" 
                     name="rawContent" 
-                    rows="7" 
-                    placeholder="Paste full article, RFC proposal, study summary, or literature excerpt here..." 
+                    rows="6" 
+                    placeholder="Paste article, literature excerpt, study notes, or RFC text here..." 
                     required
-                    class="w-full px-3.5 py-2.5 rounded-xl bg-[#070A0F] border border-trellis-border focus:border-trellis-accent focus:outline-none text-xs leading-relaxed text-trellis-text-primary placeholder:text-trellis-text-muted/50 transition-all font-mono"></textarea>
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/[0.08] focus:border-emerald-500/50 focus:outline-none text-xs leading-relaxed text-white placeholder:text-white/30 transition-all font-mono"></textarea>
         </div>
       </form>
     </div>
 
     <!-- Modal Footer -->
-    <div class="p-5 border-t border-trellis-border bg-[#070A0F]/50 flex items-center justify-between">
-      <span class="text-[11px] text-trellis-text-muted flex items-center space-x-1.5">
-        <span class="w-2 h-2 rounded-full bg-trellis-accent"></span>
-        <span>Runs with zero-cost mock analyzer if no API key is supplied</span>
+    <div class="p-4 border-t border-white/[0.08] bg-black/20 flex items-center justify-between flex-shrink-0">
+      <span class="text-[11px] text-white/40 flex items-center space-x-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <span>Deterministic $0 mock extraction enabled</span>
       </span>
 
       <div class="flex items-center space-x-2">
         <button type="button" 
                 (click)="onClose()" 
-                class="px-4 py-2 rounded-xl text-xs font-medium text-trellis-text-muted hover:text-trellis-text-primary hover:bg-trellis-surface border border-transparent transition-all">
+                class="px-4 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white apple-button-secondary transition-all">
           Cancel
         </button>
         <button type="submit" 
                 form="ingestForm"
                 [disabled]="!title.trim() || !rawContent.trim() || store.isIngesting()"
-                class="px-5 py-2 rounded-xl text-xs font-bold text-black bg-trellis-accent hover:bg-trellis-accent/90 disabled:opacity-50 transition-all flex items-center space-x-2 shadow-lg shadow-trellis-accent/20">
+                class="px-5 py-2 rounded-xl text-xs font-semibold text-black apple-button-primary disabled:opacity-50 transition-all flex items-center space-x-2 shadow-lg cursor-pointer">
           <span *ngIf="store.isIngesting()" class="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
           <span>{{ store.isIngesting() ? 'Synthesizing...' : 'Synthesize Graph' }}</span>
         </button>

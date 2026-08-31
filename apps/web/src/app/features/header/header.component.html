@@ -1,80 +1,45 @@
-<header class="h-14 border-b border-trellis-border flex items-center justify-between px-6 glass-panel z-30 select-none">
+<div class="pointer-events-auto apple-glass-pill rounded-full px-4 py-2 flex items-center justify-between gap-4 max-w-3xl w-full mx-auto shadow-2xl transition-all select-none">
   
-  <!-- Logo & Title -->
-  <div class="flex items-center space-x-3">
-    <div class="w-8 h-8 rounded-lg bg-trellis-accent/10 border border-trellis-accent/30 flex items-center justify-center text-trellis-accent shadow-md shadow-trellis-accent/5">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
-    </div>
-    <div class="flex items-baseline space-x-2">
-      <span class="font-bold tracking-tight text-base text-trellis-text-primary">Trellis</span>
-      <span class="text-[10px] font-mono tracking-wider px-2 py-0.5 rounded-full bg-trellis-accent/10 text-trellis-accent border border-trellis-accent/20">
-        Concept Engine
+  <!-- Left: Active Document Title & Status Pill -->
+  <div class="flex items-center space-x-2.5 truncate max-w-sm">
+    <div *ngIf="store.activeDocument() as doc; else noDocActive" class="flex items-center space-x-2 truncate">
+      <span [ngClass]="getStatusDotClass(doc.status)" class="w-2 h-2 rounded-full flex-shrink-0"></span>
+      <span class="text-xs font-bold text-white tracking-tight truncate" [title]="doc.title">
+        {{ doc.title }}
+      </span>
+      <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/[0.06] text-white/60 border border-white/[0.08] capitalize">
+        {{ doc.status | lowercase }}
       </span>
     </div>
-  </div>
-
-  <!-- Center Document Selector & Active Status -->
-  <div class="flex items-center space-x-3">
-    <div *ngIf="store.documents().length > 0; else emptyDocSelector" class="flex items-center space-x-2">
-      <div class="relative">
-        <select (change)="onSelectDoc($event)" 
-                [value]="store.selectedDocumentId() || ''"
-                class="appearance-none pl-3 pr-8 py-1.5 rounded-lg bg-trellis-surface border border-trellis-border hover:border-trellis-border-active focus:border-trellis-accent focus:outline-none text-xs font-medium text-trellis-text-primary cursor-pointer transition-all max-w-[260px] truncate">
-          <option *ngFor="let doc of store.documents()" [value]="doc.id">
-            {{ doc.title }}
-          </option>
-        </select>
-        <div class="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-trellis-text-muted">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
-      </div>
-
-      <!-- Active Status Dot -->
-      <div *ngIf="store.activeDocument() as doc" class="flex items-center space-x-1.5 px-2 py-1 rounded-md bg-[#070A0F]/60 border border-trellis-border/50 text-[11px] font-mono">
-        <span [ngClass]="getStatusDotClass(doc.status)" class="w-2 h-2 rounded-full"></span>
-        <span class="text-trellis-text-muted capitalize">{{ doc.status | lowercase }}</span>
-      </div>
-    </div>
-
-    <ng-template #emptyDocSelector>
-      <span class="text-xs text-trellis-text-muted italic">No documents ingested</span>
+    <ng-template #noDocActive>
+      <span class="text-xs text-white/50 italic">Select a concept map from the sidebar</span>
     </ng-template>
   </div>
 
-  <!-- Right Metrics & Ingestion Trigger -->
-  <div class="flex items-center space-x-4">
-    
-    <!-- Realtime System Metrics Pills -->
-    <div *ngIf="store.metrics() as m" class="hidden md:flex items-center space-x-2 font-mono text-[11px]">
-      <div class="px-2.5 py-1 rounded-lg bg-trellis-surface border border-trellis-border flex items-center space-x-1.5">
-        <span class="text-trellis-text-muted">Docs:</span>
-        <span class="font-bold text-trellis-text-primary">{{ m.totalDocuments }}</span>
-      </div>
-      <div class="px-2.5 py-1 rounded-lg bg-trellis-accent/10 border border-trellis-accent/20 flex items-center space-x-1.5">
-        <span class="text-trellis-accent font-bold">{{ m.processedCount }}</span>
-        <span class="text-trellis-accent/70">Done</span>
-      </div>
-      <div *ngIf="m.queuedCount > 0" class="px-2.5 py-1 rounded-lg bg-trellis-amber/10 border border-trellis-amber/20 flex items-center space-x-1.5">
-        <span class="text-trellis-amber font-bold">{{ m.queuedCount }}</span>
-        <span class="text-trellis-amber/70">Queued</span>
-      </div>
-      <div *ngIf="m.failedCount > 0" class="px-2.5 py-1 rounded-lg bg-trellis-rose/10 border border-trellis-rose/20 flex items-center space-x-1.5">
-        <span class="text-trellis-rose font-bold">{{ m.failedCount }}</span>
-        <span class="text-trellis-rose/70">Failed</span>
-      </div>
+  <!-- Center: System Metrics Counter -->
+  <div *ngIf="store.metrics() as m" class="hidden md:flex items-center space-x-2 font-mono text-[11px]">
+    <div class="px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.06] flex items-center space-x-1.5">
+      <span class="text-white/40">Maps:</span>
+      <span class="font-semibold text-white">{{ m.totalDocuments }}</span>
     </div>
+    <div class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center space-x-1">
+      <span class="font-semibold">{{ m.processedCount }}</span>
+      <span class="text-emerald-400/60">Ready</span>
+    </div>
+    <div *ngIf="m.queuedCount > 0" class="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center space-x-1">
+      <span class="font-semibold">{{ m.queuedCount }}</span>
+      <span class="text-amber-400/60">Queued</span>
+    </div>
+  </div>
 
-    <!-- Add Document Button -->
+  <!-- Right: Ingestion CTA Button -->
+  <div class="flex items-center space-x-2">
     <button (click)="openIngestModal.emit()" 
-            class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-black bg-trellis-accent hover:bg-trellis-accent/90 transition-all flex items-center space-x-1.5 shadow-lg shadow-trellis-accent/15 cursor-pointer">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+            class="px-3.5 py-1.5 rounded-full apple-button-primary flex items-center space-x-1.5 text-xs font-semibold tracking-tight shadow-md cursor-pointer">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
       </svg>
-      <span>Ingest Document</span>
+      <span>+ Ingest</span>
     </button>
   </div>
-</header>
+</div>

@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SidebarComponent } from './features/sidebar/sidebar.component.js';
 import { HeaderComponent } from './features/header/header.component.js';
 import { CanvasComponent } from './features/canvas/canvas.component.js';
 import { InspectorComponent } from './features/inspector/inspector.component.js';
@@ -11,6 +12,7 @@ import { DocumentStore } from './core/state/document.store.js';
   standalone: true,
   imports: [
     CommonModule,
+    SidebarComponent,
     HeaderComponent,
     CanvasComponent,
     InspectorComponent,
