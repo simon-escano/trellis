@@ -128,7 +128,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
 - [ ] **Task 0.1: Monorepo Workspace Configuration & Root Scripts**
   - **Target Files:** `package.json`, `.gitignore`, `README.md`
   - **Prerequisites:** None
-  - **Validation Command:** `node -e "assert(require('./package.json').workspaces.includes('apps/*'))"`
+  - **Validation Command:** `node -e "const pkg = require('./package.json'); if (!pkg.workspaces || !pkg.workspaces.includes('apps/*')) process.exit(1);"`
   - **Git Commit Message:** `chore(workspace): initialize monorepo root structure and npm workspaces`
 
 - [ ] **Task 0.2: PostgreSQL 16 Containerization & Initial DDL**
@@ -300,6 +300,7 @@ Spec Reference: .trellis-specs/01_DATA_CONTRACTS.md (Section 1)
    - Table `entities` (id, document_id, name, category, confidence_score, metadata, created_at)
    - Table `entity_relationships` (id, document_id, source_entity_id, target_entity_id, relation_type, confidence_score, created_at)
    - Performance Indexes: status, created_at, document_id, category, metadata GIN index, source/target foreign key indexes.
+3. Boot the container with `docker compose up -d` to verify PostgreSQL initializes `docker/init.sql` cleanly with zero SQL syntax errors.
 
 ### Verification Command:
 docker compose config
@@ -609,9 +610,10 @@ Spec Reference: .trellis-specs/00_SYSTEM_MANIFEST.md (Section 4C, Section 5)
 
 ### Requirements:
 1. Initialize Angular 18 application in `apps/web` with Standalone Components (strict mode, no NgModules).
-2. Install dependencies:
+2. Configure `angular.json` using the standard Angular 18 `@angular-devkit/build-angular:application` builder (esbuild/Vite) with `"browser": "src/main.ts"` entry point (do not use legacy `@angular-devkit/build-angular:browser` Webpack schema).
+3. Install dependencies:
    - `@apollo/client`, `apollo-angular`, `graphql`, `vis-network`, `@motionone/dom`, `lucide-angular` (or SVG icon equivalents), `tailwindcss`, `postcss`, `autoprefixer`.
-3. Configure `apps/web/tailwind.config.js` with the Obsidian dark canvas color palette:
+4. Configure `apps/web/tailwind.config.js` with the Obsidian dark canvas color palette:
    - `trellis-bg`: `#070A0F`
    - `trellis-surface`: `#0D1420`
    - `trellis-border`: `#1E293B`
@@ -622,9 +624,9 @@ Spec Reference: .trellis-specs/00_SYSTEM_MANIFEST.md (Section 4C, Section 5)
    - `trellis-cyan`: `#38BDF8`
    - `trellis-amber`: `#F59E0B`
    - `trellis-rose`: `#F43F5E`
-4. In `apps/web/src/index.html`:
+5. In `apps/web/src/index.html`:
    - Import Google Font **DM Sans** (weights 400, 500, 700) and **JetBrains Mono** (400, 600).
-5. In `apps/web/src/styles.css`:
+6. In `apps/web/src/styles.css`:
    - Apply DM Sans as universal font: `font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;`.
    - Restrict JetBrains Mono strictly to monospace code/JSON utility classes (`font-mono`).
 
