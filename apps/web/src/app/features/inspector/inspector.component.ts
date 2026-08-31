@@ -13,7 +13,9 @@ import {
   lucideInfo,
 } from '@ng-icons/lucide';
 import { DocumentStore } from '../../core/state/document.store.js';
+import { ThemeService } from '../../core/services/theme.service.js';
 import { ConfirmDialogService } from '../../core/services/confirm-dialog.service.js';
+import { getCategoryBadgeStyle } from '../../core/utils/category-colors.js';
 import {
   Entity,
   EntityCategory,
@@ -42,6 +44,7 @@ import {
 })
 export class InspectorComponent {
   readonly store = inject(DocumentStore);
+  readonly themeService = inject(ThemeService);
   readonly confirmDialog = inject(ConfirmDialogService);
 
   readonly activeTab = signal<'summary' | 'concept' | 'raw'>('summary');
@@ -99,6 +102,10 @@ export class InspectorComponent {
       }
     }
     return metadata || {};
+  }
+
+  getCategoryBadgeStyle(category: string): { background: string; color: string; borderColor: string } {
+    return getCategoryBadgeStyle(category, this.themeService.isDark());
   }
 
   getCategoryBadgeClass(category: EntityCategory): string {

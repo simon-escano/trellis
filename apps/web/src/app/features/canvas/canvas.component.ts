@@ -41,6 +41,7 @@ import {
   EntityRelationship,
 } from '../../core/models/document.model.js';
 import { InspectorComponent } from '../inspector/inspector.component.js';
+import { getCategoryColor } from '../../core/utils/category-colors.js';
 
 function escapeXml(unsafe: string): string {
   if (!unsafe) return '';
@@ -172,100 +173,7 @@ function computeNodeDimensions(
   return { width, height, size, descLines, pillWidth };
 }
 
-function getCategoryColor(
-  cat: EntityCategory,
-  isDark = true
-): {
-  bg: string;
-  border: string;
-  text: string;
-  accent: string;
-} {
-  if (isDark) {
-    switch (cat) {
-      case 'CONCEPT':
-        return {
-          bg: 'rgba(255, 255, 255, 0.07)',
-          border: 'rgba(255, 255, 255, 0.18)',
-          text: '#F1F5F9',
-          accent: '#00F5A0',
-        };
-      case 'SERVICE':
-      case 'SYSTEM':
-        return {
-          bg: 'rgba(148, 163, 184, 0.08)',
-          border: 'rgba(148, 163, 184, 0.22)',
-          text: '#CBD5E1',
-          accent: '#00F5A0',
-        };
-      case 'DATA_MODEL':
-        return {
-          bg: 'rgba(203, 213, 225, 0.07)',
-          border: 'rgba(203, 213, 225, 0.18)',
-          text: '#E2E8F0',
-          accent: '#00F5A0',
-        };
-      case 'INFRASTRUCTURE':
-        return {
-          bg: 'rgba(148, 163, 184, 0.07)',
-          border: 'rgba(148, 163, 184, 0.18)',
-          text: '#94A3B8',
-          accent: '#00F5A0',
-        };
-      case 'SECURITY_POLICY':
-      case 'API_ENDPOINT':
-      default:
-        return {
-          bg: 'rgba(226, 232, 240, 0.06)',
-          border: 'rgba(226, 232, 240, 0.16)',
-          text: '#CBD5E1',
-          accent: '#00F5A0',
-        };
-    }
-  } else {
-    // Crisp light mode category colors
-    switch (cat) {
-      case 'CONCEPT':
-        return {
-          bg: 'rgba(16, 185, 129, 0.12)',
-          border: 'rgba(16, 185, 129, 0.28)',
-          text: '#065F46',
-          accent: '#059669',
-        };
-      case 'SERVICE':
-      case 'SYSTEM':
-        return {
-          bg: 'rgba(59, 130, 246, 0.12)',
-          border: 'rgba(59, 130, 246, 0.28)',
-          text: '#1E40AF',
-          accent: '#2563EB',
-        };
-      case 'DATA_MODEL':
-        return {
-          bg: 'rgba(168, 85, 247, 0.12)',
-          border: 'rgba(168, 85, 247, 0.28)',
-          text: '#6B21A8',
-          accent: '#9333EA',
-        };
-      case 'INFRASTRUCTURE':
-        return {
-          bg: 'rgba(245, 158, 11, 0.12)',
-          border: 'rgba(245, 158, 11, 0.28)',
-          text: '#92400E',
-          accent: '#D97706',
-        };
-      case 'SECURITY_POLICY':
-      case 'API_ENDPOINT':
-      default:
-        return {
-          bg: 'rgba(100, 116, 139, 0.12)',
-          border: 'rgba(100, 116, 139, 0.28)',
-          text: '#334155',
-          accent: '#475569',
-        };
-    }
-  }
-}
+// Category colors are permanently and deterministically assigned via category-colors.ts
 
 function getCategoryIconSvgGeometry(
   cat: EntityCategory,
@@ -392,16 +300,26 @@ function createNodeSvg(
       <linearGradient id="specGrad" x1="0" y1="0" x2="1" y2="0">
         ${specGradStops}
       </linearGradient>
+      <radialGradient id="catGlow" cx="0%" cy="0%" r="70%">
+        <stop offset="0%" stop-color="${color.accent}" stop-opacity="${isDark ? '0.22' : '0.14'}" />
+        <stop offset="100%" stop-color="${color.accent}" stop-opacity="0" />
+      </radialGradient>
     </defs>
     
     <!-- Clean Rounded Card Background -->
     <rect x="2" y="2" width="${dims.width - 4}" height="${dims.height - 4}" rx="18" ry="18" fill="url(#cardGrad)" stroke="${strokeColor}" stroke-width="${strokeWidth}" />
     
+    <!-- Ambient Category Color Corner Glow -->
+    <rect x="2" y="2" width="${dims.width - 4}" height="${dims.height - 4}" rx="18" ry="18" fill="url(#catGlow)" />
+
+    <!-- Top Ambient Accent Highlight Strip -->
+    <path d="M 22 2.8 L ${dims.width - 22} 2.8" stroke="${color.accent}" stroke-width="1.8" stroke-linecap="round" opacity="${isDark ? '0.85' : '0.75'}" />
+
     <!-- Top Specular Highlight Line -->
-    <path d="M 22 3.5 L ${dims.width - 22} 3.5" stroke="url(#specGrad)" stroke-width="1.2" stroke-linecap="round" />
+    <path d="M 22 4.5 L ${dims.width - 22} 4.5" stroke="url(#specGrad)" stroke-width="1" stroke-linecap="round" opacity="0.6" />
 
     <!-- Responsive Auto-Sized Category Pill -->
-    <rect x="14" y="14" width="${dims.pillWidth}" height="22" rx="11" ry="11" fill="${color.bg}" stroke="${color.border}" stroke-width="0.8" />
+    <rect x="14" y="14" width="${dims.pillWidth}" height="22" rx="11" ry="11" fill="${color.bg}" stroke="${color.border}" stroke-width="1" />
     
     <!-- Vector Category Icon -->
     ${iconGeometry}

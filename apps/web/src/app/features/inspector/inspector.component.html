@@ -53,8 +53,8 @@
         <!-- Entity Title Card -->
         <div class="apple-glass-card p-3 rounded-2xl space-y-1.5">
           <div class="flex items-center justify-between">
-            <span [ngClass]="getCategoryBadgeClass(entity.category)"
-              class="px-2 py-0.5 rounded-md text-[10px] font-mono uppercase font-medium tracking-wider border">
+            <span [ngStyle]="getCategoryBadgeStyle(entity.category)"
+              class="px-2.5 py-0.5 rounded-md text-[10px] font-mono uppercase font-semibold tracking-wider border">
               {{ entity.category.replace('_', ' ') }}
             </span>
             <button (click)="clearSelectedEntity()" class="text-slate-400 dark:text-white/40 hover:text-slate-800 dark:hover:text-white text-xs cursor-pointer p-0.5" title="Clear selection">
