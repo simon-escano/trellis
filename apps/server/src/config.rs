@@ -9,6 +9,8 @@ pub struct Config {
 impl Config {
     pub fn from_env() -> Self {
         let _ = dotenvy::dotenv();
+        let _ = dotenvy::from_filename("apps/server/.env");
+        let _ = dotenvy::from_filename("../.env");
 
         let database_url = env::var("DATABASE_URL")
             .unwrap_or_else(|_| "postgres://postgres:postgres@localhost:5432/trellis".to_string());

@@ -48,16 +48,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "trellis_server=info,tower_http=debug".into()),
+                .unwrap_or_else(|_| "info,tower_http=debug".into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
 
     let config = Config::from_env();
-    tracing::info!("Initializing Trellis GraphQL Gateway...");
+    eprintln!("[Server] Starting Trellis GraphQL Gateway on port {}...", config.port);
+    eprintln!("[Server] Connecting to database: {}", config.database_url);
 
-    let pool = init_db_pool(&config.database_url).await?;
-    tracing::info!("Database connection pool established.");
+    let pool = match init_db_pool(&config.database_url).await {
+        Ok(p) => {
+            eprintln!("[Server] Database connection pool established successfully.");
+            p
+        }
+        Err(e) => {
+            eprintln!("[Server Error] Database connection failed: {:#?}", e);
+            return Err(e.into());
+        }
+    };
 
     let entity_loader = DataLoader::new(EntityLoader::new(pool.clone()), tokio::spawn);
     let relationship_loader = DataLoader::new(RelationshipLoader::new(pool.clone()), tokio::spawn);
@@ -100,7 +109,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .layer(cors);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], config.port));
-    tracing::info!("Server running on http://localhost:{} (GraphiQL IDE at /graphql)", config.port);
+    eprintln!("[Server] Server running on http://localhost:{} (GraphiQL IDE at /graphql)", config.port);
 
     let listener = tokio::net::TcpListener::bind(addr).await?;
     axum::serve(listener, app).await?;
