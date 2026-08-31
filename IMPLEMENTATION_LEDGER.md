@@ -125,7 +125,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
 ## Section 2: Phased Micro-Task Checklist
 
 ### Phase 0: Infrastructure & Workspace Foundation
-- [ ] **Task 0.1: Monorepo Workspace Configuration & Root Scripts**
+- [x] **Task 0.1: Monorepo Workspace Configuration & Root Scripts**
   - **Target Files:** `package.json`, `.gitignore`, `README.md`
   - **Prerequisites:** None
   - **Validation Command:** `node -e "const pkg = require('./package.json'); if (!pkg.workspaces || !pkg.workspaces.includes('apps/*')) process.exit(1);"`
