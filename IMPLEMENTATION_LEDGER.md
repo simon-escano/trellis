@@ -230,7 +230,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `npm --prefix apps/web run build`
   - **Git Commit Message:** `feat(web): build interactive obsidian mind map canvas with forceAtlas2 physics`
 
-- [ ] **Task 3.4: Executive Summary Drawer & Concept Inspector**
+- [x] **Task 3.4: Executive Summary Drawer & Concept Inspector**
   - **Target Files:** `apps/web/src/app/features/inspector/inspector.component.ts`, `apps/web/src/app/features/inspector/inspector.component.html`
   - **Prerequisites:** Task 3.3
   - **Validation Command:** `npm --prefix apps/web run build`

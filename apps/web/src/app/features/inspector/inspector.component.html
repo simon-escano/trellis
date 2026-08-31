@@ -1,0 +1,236 @@
+<aside [ngClass]="isCollapsed() ? 'w-12' : 'w-96'" 
+       class="h-full border-l border-trellis-border bg-[#0D1420]/95 backdrop-blur-xl flex flex-col transition-all duration-300 relative z-20 shadow-2xl">
+  
+  <!-- Collapse Toggle Button -->
+  <button (click)="toggleCollapsed()" 
+          class="absolute -left-3.5 top-6 w-7 h-7 rounded-full bg-trellis-surface border border-trellis-border flex items-center justify-center text-trellis-text-muted hover:text-trellis-text-primary hover:border-trellis-accent transition-all shadow-md z-30">
+    <svg [ngClass]="isCollapsed() ? 'rotate-180' : ''" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+
+  <!-- Collapsed Vertical Rail -->
+  <div *ngIf="isCollapsed()" class="flex-1 flex flex-col items-center py-6 space-y-6">
+    <span class="text-xs font-mono tracking-widest text-trellis-text-muted rotate-90 whitespace-nowrap mt-8">INSPECTOR</span>
+  </div>
+
+  <!-- Expanded Drawer Content -->
+  <div *ngIf="!isCollapsed()" class="flex-1 flex flex-col h-full overflow-hidden">
+    
+    <!-- Drawer Header -->
+    <div class="p-5 border-b border-trellis-border flex-shrink-0">
+      <div *ngIf="activeDocument() as doc; else noDocHeader">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <span [ngClass]="getStatusBadgeClass(doc.status)" 
+                class="px-2.5 py-0.5 rounded-full text-xs font-mono uppercase tracking-wider border">
+            {{ doc.status }}
+          </span>
+          <span class="text-xs text-trellis-text-muted font-mono">
+            {{ doc.createdAt | date:'short' }}
+          </span>
+        </div>
+        <h2 class="text-base font-bold text-trellis-text-primary truncate" [title]="doc.title">
+          {{ doc.title }}
+        </h2>
+      </div>
+      <ng-template #noDocHeader>
+        <h2 class="text-base font-bold text-trellis-text-primary">Inspector</h2>
+        <p class="text-xs text-trellis-text-muted">No document active</p>
+      </ng-template>
+
+      <!-- Navigation Tabs -->
+      <div *ngIf="activeDocument()" class="flex items-center space-x-1 mt-4 p-1 rounded-lg bg-[#070A0F]/60 border border-trellis-border">
+        <button (click)="setTab('summary')" 
+                [ngClass]="activeTab() === 'summary' && !selectedEntity() ? 'bg-trellis-surface text-trellis-accent font-semibold shadow-sm' : 'text-trellis-text-muted hover:text-trellis-text-primary'"
+                class="flex-1 py-1 px-2 rounded-md text-xs transition-all text-center">
+          Summary
+        </button>
+        <button (click)="setTab('concept')" 
+                [ngClass]="activeTab() === 'concept' || selectedEntity() ? 'bg-trellis-surface text-trellis-cyan font-semibold shadow-sm' : 'text-trellis-text-muted hover:text-trellis-text-primary'"
+                class="flex-1 py-1 px-2 rounded-md text-xs transition-all text-center">
+          Concept {{ selectedEntity() ? '•' : '' }}
+        </button>
+        <button (click)="setTab('raw')" 
+                [ngClass]="activeTab() === 'raw' && !selectedEntity() ? 'bg-trellis-surface text-trellis-text-primary font-semibold shadow-sm' : 'text-trellis-text-muted hover:text-trellis-text-primary'"
+                class="flex-1 py-1 px-2 rounded-md text-xs transition-all text-center">
+          Source
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable Drawer Body -->
+    <div class="flex-1 overflow-y-auto p-5 space-y-6">
+      
+      <!-- Selected Concept Inspector Mode (High Priority Overlay) -->
+      <div *ngIf="selectedEntity() as entity; else standardTabs" class="space-y-5">
+        <div class="p-4 rounded-xl glass-card border border-trellis-border space-y-3">
+          <div class="flex items-start justify-between">
+            <div>
+              <span [ngClass]="getCategoryBadgeClass(entity.category)" 
+                    class="px-2.5 py-0.5 rounded-full text-xs font-mono uppercase tracking-wider border">
+                {{ entity.category }}
+              </span>
+              <h3 class="text-lg font-bold text-trellis-text-primary mt-2">
+                {{ entity.name }}
+              </h3>
+            </div>
+            <button (click)="closeEntitySelection()" 
+                    title="Close concept view"
+                    class="p-1 text-trellis-text-muted hover:text-trellis-text-primary hover:bg-trellis-surface rounded-lg">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Confidence Score Bar -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-mono">
+              <span class="text-trellis-text-muted">Relevance / Confidence</span>
+              <span class="text-trellis-accent font-bold">{{ (entity.confidenceScore * 100) | number:'1.0-1' }}%</span>
+            </div>
+            <div class="w-full h-1.5 rounded-full bg-[#070A0F] overflow-hidden">
+              <div class="h-full rounded-full bg-trellis-accent transition-all duration-500" [style.width.%]="entity.confidenceScore * 100"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Concept Metadata Attributes -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-mono uppercase tracking-wider text-trellis-text-muted">Concept Attributes</h4>
+          <div class="p-3 rounded-xl bg-[#070A0F] border border-trellis-border font-mono text-xs text-trellis-text-primary space-y-1.5 max-h-40 overflow-y-auto">
+            <div *ngFor="let item of formatMetadata(entity.metadata) | keyvalue" class="flex justify-between gap-2 border-b border-trellis-border/40 pb-1 last:border-0 last:pb-0">
+              <span class="text-trellis-cyan font-medium">{{ item.key }}:</span>
+              <span class="text-trellis-text-muted truncate" [title]="item.value">{{ item.value }}</span>
+            </div>
+            <div *ngIf="(formatMetadata(entity.metadata) | keyvalue).length === 0" class="text-trellis-text-muted italic">
+              No additional metadata attributes.
+            </div>
+          </div>
+        </div>
+
+        <!-- Connected Relationships -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-mono uppercase tracking-wider text-trellis-text-muted">
+            Connected Graph Edges ({{ connectedRelationships().length }})
+          </h4>
+          <div class="space-y-2">
+            <div *ngFor="let rel of connectedRelationships()" 
+                 class="p-2.5 rounded-lg bg-trellis-surface border border-trellis-border flex items-center justify-between text-xs">
+              <div class="flex items-center space-x-2 truncate">
+                <span class="text-trellis-text-primary font-medium truncate">
+                  {{ rel.sourceEntity.name || 'Source' }}
+                </span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-trellis-cyan/10 text-trellis-cyan border border-trellis-cyan/20">
+                  {{ rel.relationType }}
+                </span>
+                <span class="text-trellis-text-primary font-medium truncate">
+                  {{ rel.targetEntity.name || 'Target' }}
+                </span>
+              </div>
+              <span class="text-[10px] font-mono text-trellis-text-muted ml-2">
+                {{ (rel.confidenceScore * 100) | number:'1.0-0' }}%
+              </span>
+            </div>
+            <div *ngIf="connectedRelationships().length === 0" class="text-xs text-trellis-text-muted italic p-2">
+              No direct connections mapped.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Standard Tabs View -->
+      <ng-template #standardTabs>
+        <div *ngIf="activeDocument() as doc; else noDocument">
+          
+          <!-- Summary Tab -->
+          <div *ngIf="activeTab() === 'summary'" class="space-y-4">
+            <div class="p-4 rounded-xl glass-card border border-trellis-border space-y-3">
+              <div class="flex items-center space-x-2 text-trellis-accent">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="text-xs font-mono uppercase tracking-wider font-semibold">Executive Summary</h3>
+              </div>
+              
+              <div *ngIf="doc.summary" class="text-sm text-trellis-text-primary leading-relaxed space-y-2">
+                <p>{{ doc.summary }}</p>
+              </div>
+              
+              <div *ngIf="!doc.summary && (doc.status === 'PROCESSING' || doc.status === 'QUEUED')" class="text-xs text-trellis-text-muted italic py-4 text-center">
+                AI extraction is currently generating summary...
+              </div>
+
+              <div *ngIf="doc.errorMessage" class="p-3 rounded-lg bg-trellis-rose/10 border border-trellis-rose/30 text-xs text-trellis-rose">
+                <strong>Error:</strong> {{ doc.errorMessage }}
+              </div>
+            </div>
+
+            <!-- Concept Counts Breakdown -->
+            <div class="grid grid-cols-2 gap-2">
+              <div class="p-3 rounded-xl bg-trellis-surface border border-trellis-border">
+                <span class="text-xs text-trellis-text-muted font-mono">Total Concepts</span>
+                <p class="text-xl font-bold text-trellis-text-primary mt-1">{{ doc.entities.length || 0 }}</p>
+              </div>
+              <div class="p-3 rounded-xl bg-trellis-surface border border-trellis-border">
+                <span class="text-xs text-trellis-text-muted font-mono">Mapped Links</span>
+                <p class="text-xl font-bold text-trellis-text-primary mt-1">{{ doc.relationships.length || 0 }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Concept List Tab -->
+          <div *ngIf="activeTab() === 'concept'" class="space-y-2">
+            <h4 class="text-xs font-mono uppercase tracking-wider text-trellis-text-muted">All Document Concepts</h4>
+            <div *ngFor="let ent of doc.entities" 
+                 (click)="store.selectEntity(ent)"
+                 class="p-3 rounded-xl bg-trellis-surface hover:bg-trellis-surface/80 border border-trellis-border hover:border-trellis-accent/40 cursor-pointer transition-all flex items-center justify-between">
+              <div class="flex items-center space-x-2 truncate">
+                <span [ngClass]="getCategoryBadgeClass(ent.category)" class="px-2 py-0.5 rounded text-[10px] font-mono border">
+                  {{ ent.category }}
+                </span>
+                <span class="text-xs font-medium text-trellis-text-primary truncate">{{ ent.name }}</span>
+              </div>
+              <svg class="w-3.5 h-3.5 text-trellis-text-muted flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Source Raw Text Tab -->
+          <div *ngIf="activeTab() === 'raw'" class="space-y-2">
+            <h4 class="text-xs font-mono uppercase tracking-wider text-trellis-text-muted">Unstructured Document Text</h4>
+            <div class="p-3.5 rounded-xl bg-[#070A0F] border border-trellis-border font-mono text-xs text-trellis-text-muted leading-relaxed max-h-96 overflow-y-auto whitespace-pre-wrap select-text">
+              {{ doc.rawContent }}
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noDocument>
+          <div class="flex flex-col items-center justify-center py-12 text-center text-trellis-text-muted space-y-2">
+            <p class="text-xs">Select a document from the explorer to view synthesized intelligence.</p>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+
+    <!-- Drawer Footer Actions -->
+    <div *ngIf="activeDocument() as doc" class="p-4 border-t border-trellis-border bg-[#070A0F]/40 flex items-center justify-between gap-2">
+      <button (click)="reprocessActive()" 
+              [disabled]="doc.status === 'PROCESSING' || doc.status === 'QUEUED'"
+              class="flex-1 py-2 px-3 rounded-lg text-xs font-medium text-trellis-text-primary bg-trellis-surface hover:bg-trellis-surface/80 border border-trellis-border disabled:opacity-50 transition-all flex items-center justify-center space-x-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span>Reprocess</span>
+      </button>
+
+      <button (click)="deleteActive()" 
+              class="py-2 px-3 rounded-lg text-xs font-medium text-trellis-rose bg-trellis-rose/10 hover:bg-trellis-rose/20 border border-trellis-rose/30 transition-all flex items-center justify-center">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</aside>
