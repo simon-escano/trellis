@@ -186,6 +186,13 @@ Key components include primary driving forces, systemic dependencies, control po
     }
   }
 
+  async duplicateActiveDocument() {
+    const active = this.activeDocument();
+    if (!active) return;
+    const newTitle = `${active.title} (Copy)`;
+    await this.ingestDocument(newTitle, active.rawContent || '');
+  }
+
   async reprocessDocument(id: string) {
     try {
       const updated = await this.gqlService.reprocessDocument(id);
@@ -218,6 +225,9 @@ Key components include primary driving forces, systemic dependencies, control po
         this.selectedEntity.set(null);
       }
       this.gqlService.getMetrics().then((m) => this.metrics.set(m));
+      if (this.documents().length === 0) {
+        this.navigateToHome();
+      }
     } catch (err: any) {
       console.error('[DocumentStore] Delete failed:', err);
       this.error.set(err?.message || 'Delete failed');

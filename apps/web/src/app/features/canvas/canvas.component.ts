@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
+  lucideMenu,
   lucideChevronLeft,
   lucideFileText,
   lucideShare2,
@@ -20,9 +21,9 @@ import {
   lucideArrowUp,
   lucideSparkles,
   lucideLayers,
-  lucideLayoutGrid,
-  lucideCpu,
-  lucideMaximize2,
+  lucideRotateCw,
+  lucideCopy,
+  lucideTrash2,
 } from '@ng-icons/lucide';
 import { DataSet } from 'vis-data';
 import { Network, Options, Node, Edge } from 'vis-network';
@@ -163,7 +164,6 @@ function computeNodeDimensions(
   return { width, height, size, descLines, pillWidth };
 }
 
-// Neutral Apple Palette with emerald strictly as accent
 function getCategoryColor(cat: EntityCategory): {
   bg: string;
   border: string;
@@ -365,6 +365,7 @@ function createNodeSvg(
   styleUrls: ['./canvas.component.css'],
   viewProviders: [
     provideIcons({
+      lucideMenu,
       lucideChevronLeft,
       lucideFileText,
       lucideShare2,
@@ -373,9 +374,9 @@ function createNodeSvg(
       lucideArrowUp,
       lucideSparkles,
       lucideLayers,
-      lucideLayoutGrid,
-      lucideCpu,
-      lucideMaximize2,
+      lucideRotateCw,
+      lucideCopy,
+      lucideTrash2,
     }),
   ],
 })
@@ -400,6 +401,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
   readonly topicPrompt = signal<string>('');
   readonly isPromptSubmitting = signal<boolean>(false);
+  readonly isMenuOpen = signal<boolean>(false);
 
   // Dot field hover tracking (lighter dots under cursor)
   private mouseX = -1000;
@@ -434,6 +436,46 @@ export class CanvasComponent implements OnInit, OnDestroy {
     if (this.network) {
       this.network.destroy();
       this.network = null;
+    }
+  }
+
+  toggleMenu() {
+    this.isMenuOpen.update((v) => !v);
+  }
+
+  closeMenu() {
+    this.isMenuOpen.set(false);
+  }
+
+  goHome() {
+    this.closeMenu();
+    this.store.navigateToHome();
+  }
+
+  shareTopic() {
+    this.closeMenu();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href);
+    }
+  }
+
+  async duplicateTopic() {
+    this.closeMenu();
+    await this.store.duplicateActiveDocument();
+  }
+
+  async deleteTopic() {
+    this.closeMenu();
+    const doc = this.store.activeDocument();
+    if (doc && confirm(`Delete "${doc.title}"?`)) {
+      await this.store.deleteDocument(doc.id);
+    }
+  }
+
+  regenerateMap() {
+    const doc = this.store.activeDocument();
+    if (doc) {
+      this.store.reprocessDocument(doc.id);
     }
   }
 
@@ -475,8 +517,8 @@ export class CanvasComponent implements OnInit, OnDestroy {
             const dist = Math.hypot(this.mouseX - dotX, this.mouseY - dotY);
             if (dist < proximity) {
               const factor = 1 - dist / proximity;
-              alpha = 0.08 + factor * 0.65; // Dots become lighter/brighter
-              radius = 1.0 + factor * 1.3;  // Solid, crisp dot expansion
+              alpha = 0.08 + factor * 0.65;
+              radius = 1.0 + factor * 1.3;
             }
           }
 

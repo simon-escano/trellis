@@ -8,14 +8,15 @@
   <!-- Hidden File Input for PDF/Document Upload -->
   <input #fileInput type="file" accept=".pdf,.txt,.md,.json" (change)="onFileSelected($event)" class="hidden" />
 
-  <!-- Top App Navigation Header -->
-  <header class="h-14 w-full flex items-center justify-between px-6 border-b border-white/[0.06] apple-glass z-20 shrink-0">
-    <div class="flex items-center space-x-2.5">
-      <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-white/10 to-white/20 border border-white/15 flex items-center justify-center text-white/90 shadow-sm">
-        <ng-icon name="lucideLayers" class="w-4 h-4"></ng-icon>
+  <!-- Top App Navigation Header (Fully Transparent with No Border) -->
+  <header class="h-16 w-full flex items-center justify-between px-8 bg-transparent border-0 z-20 shrink-0">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-white/10 to-white/20 border border-white/15 flex items-center justify-center text-white/90 shadow-sm">
+        <ng-icon name="lucideLayers" class="w-5 h-5"></ng-icon>
       </div>
-      <span class="font-semibold text-sm tracking-tight text-white/90">Trellis</span>
-      <span class="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/10 text-white/60 tracking-wider">Beta</span>
+      <!-- Logo 24px -->
+      <span class="font-bold text-2xl tracking-tight text-white/95">Trellis</span>
+      <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/10 text-white/60 tracking-wider">Beta</span>
     </div>
 
     <div class="flex items-center space-x-4">
@@ -24,7 +25,7 @@
         <span>Docs</span>
       </a>
       <div class="w-[1px] h-3.5 bg-white/10"></div>
-      <div class="w-7 h-7 rounded-full bg-gradient-to-br from-white/20 to-white/5 border border-white/20 flex items-center justify-center text-xs font-medium text-white/80">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-white/20 to-white/5 border border-white/20 flex items-center justify-center text-xs font-medium text-white/80">
         S
       </div>
     </div>
@@ -131,9 +132,9 @@
       
       <div class="w-full max-w-2xl flex flex-col items-center">
         
-        <!-- Hero Title -->
-        <div class="w-full text-left mb-5">
-          <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-white/95">
+        <!-- Hero Title (56px) -->
+        <div class="w-full text-left mb-6">
+          <h1 class="text-4xl md:text-[56px] font-bold tracking-tight text-white/95 leading-tight">
             Welcome to Trellis..
           </h1>
         </div>
@@ -149,8 +150,8 @@
                     placeholder="What topic would you like to explore?"
                     class="w-full bg-transparent border-0 text-sm md:text-base text-white/90 placeholder-white/30 focus:outline-none resize-none leading-relaxed"></textarea>
 
-          <!-- Bottom Action Toolbar -->
-          <div class="flex items-center justify-between pt-3 border-t border-white/[0.06] mt-2">
+          <!-- Bottom Action Toolbar (No Separator Line) -->
+          <div class="flex items-center justify-between mt-3">
             
             <!-- Left Tool: Plus Button to Upload Document / PDF -->
             <button (click)="triggerPdfUpload(fileInput)"

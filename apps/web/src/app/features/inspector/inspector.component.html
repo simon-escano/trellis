@@ -1,7 +1,7 @@
 <aside [ngClass]="isCollapsed() ? 'w-12' : 'w-80 md:w-96'" 
-       class="h-full border border-white/10 apple-glass rounded-3xl shadow-2xl flex flex-col transition-all duration-300 relative z-30 flex-shrink-0 select-none overflow-hidden">
+       class="h-auto max-h-[calc(100vh-6rem)] border border-white/10 apple-glass rounded-3xl shadow-2xl flex flex-col transition-all duration-300 relative z-30 flex-shrink-0 select-none overflow-hidden">
   
-  <!-- Collapse Toggle Button on the Right Edge (since inspector is on the left) -->
+  <!-- Collapse Toggle Button on the Right Edge -->
   <button (click)="toggleCollapsed()" 
           [title]="isCollapsed() ? 'Expand Inspector' : 'Collapse Inspector'"
           class="absolute -right-3.5 top-6 w-7 h-7 rounded-full apple-glass border border-white/[0.12] flex items-center justify-center text-white/60 hover:text-white transition-all shadow-md z-40">
@@ -9,12 +9,12 @@
   </button>
 
   <!-- Collapsed Vertical Rail -->
-  <div *ngIf="isCollapsed()" class="flex-1 flex flex-col items-center py-6 space-y-6">
-    <span class="text-[10px] font-mono tracking-widest text-white/40 rotate-90 whitespace-nowrap mt-8">INSPECTOR</span>
+  <div *ngIf="isCollapsed()" class="flex flex-col items-center py-6 space-y-6">
+    <span class="text-[10px] font-mono tracking-widest text-white/40 rotate-90 whitespace-nowrap mt-8 mb-4">INSPECTOR</span>
   </div>
 
-  <!-- Expanded Drawer Content -->
-  <div *ngIf="!isCollapsed()" class="flex-1 flex flex-col h-full overflow-hidden">
+  <!-- Expanded Drawer Content (Auto Height based on content) -->
+  <div *ngIf="!isCollapsed()" class="flex flex-col overflow-hidden max-h-[calc(100vh-6rem)]">
     
     <!-- Drawer Header -->
     <div class="p-4 border-b border-white/[0.06] flex-shrink-0 space-y-3">
@@ -59,7 +59,7 @@
     </div>
 
     <!-- Drawer Scrollable Body -->
-    <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+    <div class="overflow-y-auto p-4 space-y-4 custom-scrollbar max-h-[60vh]">
 
       <!-- ================= TAB: CONCEPT SELECTED ================= -->
       <div *ngIf="activeTab() === 'concept' || selectedEntity()" class="space-y-4">
@@ -166,29 +166,13 @@
           <!-- Document Metrics Grid -->
           <div class="grid grid-cols-2 gap-2 mt-3">
             <div class="apple-glass-card p-3 rounded-xl border border-white/[0.06] text-center">
-              <span class="block text-lg font-bold font-mono text-emerald-400">{{ doc.entities?.length || 0 }}</span>
+              <span class="block text-lg font-bold font-mono text-emerald-400">{{ doc.entities ? doc.entities.length : 0 }}</span>
               <span class="text-[10px] font-mono uppercase text-white/40">Concepts</span>
             </div>
             <div class="apple-glass-card p-3 rounded-xl border border-white/[0.06] text-center">
-              <span class="block text-lg font-bold font-mono text-sky-400">{{ doc.relationships?.length || 0 }}</span>
+              <span class="block text-lg font-bold font-mono text-sky-400">{{ doc.relationships ? doc.relationships.length : 0 }}</span>
               <span class="text-[10px] font-mono uppercase text-white/40">Relations</span>
             </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="pt-3 border-t border-white/[0.06] space-y-2">
-            <button (click)="reprocessCurrentDocument()"
-                    [disabled]="doc.status === 'PROCESSING'"
-                    class="w-full py-2 px-3 rounded-xl apple-button-secondary text-xs flex items-center justify-center gap-2 text-white/80 hover:text-white transition-all disabled:opacity-40">
-              <ng-icon name="lucideRotateCw" [ngClass]="doc.status === 'PROCESSING' ? 'animate-spin' : ''"></ng-icon>
-              <span>Re-Extract Concepts</span>
-            </button>
-
-            <button (click)="deleteCurrentDocument()"
-                    class="w-full py-2 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs flex items-center justify-center gap-2 transition-all">
-              <ng-icon name="lucideTrash2"></ng-icon>
-              <span>Delete Document</span>
-            </button>
           </div>
 
         </div>
@@ -201,7 +185,7 @@
             <span>Raw Ingested Content</span>
             <span class="font-mono text-[10px]">{{ doc.rawContent ? doc.rawContent.length : 0 }} bytes</span>
           </div>
-          <pre class="p-3 bg-black/40 border border-white/[0.06] rounded-xl text-[11px] font-mono text-white/70 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-96 custom-scrollbar">{{ doc.rawContent }}</pre>
+          <pre class="p-3 bg-black/40 border border-white/[0.06] rounded-xl text-[11px] font-mono text-white/70 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-80 custom-scrollbar">{{ doc.rawContent }}</pre>
         </div>
       </div>
 

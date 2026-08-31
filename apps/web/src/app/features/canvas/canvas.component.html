@@ -1,4 +1,4 @@
-<div class="relative w-full h-full overflow-hidden bg-[#07090E] select-none">
+<div class="relative w-full h-full overflow-hidden bg-[#07090E] select-none" (click)="closeMenu()">
   
   <!-- Interactive Hover-Illuminated Dot Field Background Canvas (Lighter Dots Under Cursor) -->
   <canvas #dotsCanvas class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
@@ -6,42 +6,83 @@
   <!-- Vis Network Canvas Container -->
   <div #networkContainer class="w-full h-full cursor-grab active:cursor-grabbing relative z-10"></div>
 
-  <!-- Top Floating Glass Navigation Bar (Left-offset for Inspector & Right) -->
-  <div class="absolute top-4 left-16 right-4 flex items-center justify-between pointer-events-none z-20">
+  <!-- Top Navigation & Action Bar -->
+  <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none z-40">
     
-    <!-- Left Navigation Pill: Return to Home & Document Title -->
-    <div class="flex items-center space-x-2 pointer-events-auto apple-glass-pill p-1.5 rounded-2xl shadow-2xl border border-white/10">
-      <button (click)="store.navigateToHome()"
-              title="Return to All Topics"
-              class="h-8 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/80 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
-        <ng-icon name="lucideChevronLeft" class="w-4 h-4"></ng-icon>
-        <span>All Topics</span>
+    <!-- Top Left: Hamburger Button + Separate Floating Topic Title (No border/bg/padding) -->
+    <div class="flex items-center space-x-3 pointer-events-auto relative">
+      
+      <!-- Hamburger Menu Button -->
+      <button (click)="$event.stopPropagation(); toggleMenu()"
+              title="Topic Options Menu"
+              class="w-9 h-9 rounded-2xl apple-glass border border-white/10 flex items-center justify-center text-white/80 hover:text-white shadow-xl transition-all">
+        <ng-icon name="lucideMenu" class="w-4 h-4"></ng-icon>
       </button>
 
-      <div class="w-[1px] h-4 bg-white/10"></div>
+      <!-- Separate Floating Topic Title (Directly on Canvas without background/border/padding) -->
+      <h1 class="text-sm md:text-base font-semibold text-white/95 tracking-tight truncate max-w-xs sm:max-w-sm md:max-w-xl drop-shadow-sm">
+        {{ store.activeDocument()?.title || 'Concept Map' }}
+      </h1>
 
-      <div class="px-2.5 py-1 flex items-center space-x-2">
-        <span class="text-xs font-semibold text-white/90 truncate max-w-xs md:max-w-md">
-          {{ store.activeDocument()?.title || 'Concept Map' }}
-        </span>
-        <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/10 text-white/60">
-          {{ store.activeDocument()?.entities?.length || 0 }} nodes
-        </span>
+      <!-- Apple Glass Hamburger Dropdown Menu -->
+      <div *ngIf="isMenuOpen()" 
+           (click)="$event.stopPropagation()"
+           class="absolute top-12 left-0 w-56 p-1.5 rounded-2xl apple-glass border border-white/15 shadow-2xl bg-[#0F1420]/95 backdrop-blur-2xl z-50 space-y-0.5 animate-in fade-in zoom-in-95 duration-100">
+        
+        <button (click)="goHome()"
+                class="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-xs font-medium text-white/90 hover:text-white flex items-center space-x-2.5 transition-all">
+          <ng-icon name="lucideChevronLeft" class="w-3.5 h-3.5 text-white/60"></ng-icon>
+          <span>Go to all topics</span>
+        </button>
+
+        <button (click)="shareTopic()"
+                class="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-xs font-medium text-white/90 hover:text-white flex items-center space-x-2.5 transition-all">
+          <ng-icon name="lucideShare2" class="w-3.5 h-3.5 text-white/60"></ng-icon>
+          <span>Share</span>
+        </button>
+
+        <button (click)="duplicateTopic()"
+                class="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-xs font-medium text-white/90 hover:text-white flex items-center space-x-2.5 transition-all">
+          <ng-icon name="lucideCopy" class="w-3.5 h-3.5 text-white/60"></ng-icon>
+          <span>Duplicate Topic</span>
+        </button>
+
+        <div class="w-full h-[1px] bg-white/[0.08] my-1"></div>
+
+        <button (click)="deleteTopic()"
+                class="w-full px-3 py-2 rounded-xl hover:bg-rose-500/20 text-xs font-medium text-rose-400 hover:text-rose-300 flex items-center space-x-2.5 transition-all">
+          <ng-icon name="lucideTrash2" class="w-3.5 h-3.5 text-rose-400"></ng-icon>
+          <span>Delete Topic</span>
+        </button>
+
       </div>
+
     </div>
 
-    <!-- Right Utility Pills: Share & Export -->
+    <!-- Top Right Utility Actions: Regenerate Map (Emerald) + Export & Share Buttons -->
     <div class="flex items-center space-x-2 pointer-events-auto">
-      <div class="apple-glass-pill p-1.5 rounded-2xl shadow-2xl border border-white/10 flex items-center space-x-1">
-        <button class="h-8 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
+      
+      <!-- New Regenerate Map Button (Emerald Background) -->
+      <button (click)="regenerateMap()" 
+              [disabled]="store.activeDocument()?.status === 'PROCESSING'"
+              title="Regenerate Concept Map" 
+              class="h-8 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold flex items-center space-x-1.5 text-xs shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50">
+        <ng-icon name="lucideRotateCw" class="w-3.5 h-3.5 text-black" [ngClass]="store.activeDocument()?.status === 'PROCESSING' ? 'animate-spin' : ''"></ng-icon>
+        <span class="hidden sm:inline">Regenerate</span>
+      </button>
+
+      <!-- Export & Share Pills -->
+      <div class="apple-glass-pill p-1 rounded-2xl shadow-2xl border border-white/10 flex items-center space-x-1">
+        <button class="h-7 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
           <ng-icon name="lucideDownload" class="w-3.5 h-3.5"></ng-icon>
           <span>Export</span>
         </button>
-        <button class="h-8 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
+        <button (click)="shareTopic()" class="h-7 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
           <ng-icon name="lucideShare2" class="w-3.5 h-3.5"></ng-icon>
           <span>Share</span>
         </button>
       </div>
+
     </div>
 
   </div>
