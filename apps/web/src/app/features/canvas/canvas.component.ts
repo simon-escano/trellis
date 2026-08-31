@@ -77,6 +77,66 @@ function wrapText(
   return lines;
 }
 
+function drawRoundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) {
+  if (typeof (ctx as any).roundRect === 'function') {
+    (ctx as any).roundRect(x, y, width, height, radius);
+  } else {
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  }
+}
+
+interface NodeDimensions {
+  width: number;
+  height: number;
+  size: number;
+  descLines: string[];
+  pillWidth: number;
+}
+
+function computeNodeDimensions(
+  name: string,
+  category: EntityCategory,
+  description: string
+): NodeDimensions {
+  const safeCat = category.replace(/_/g, ' ');
+  const pillWidth = Math.max(86, safeCat.length * 6.8 + 40);
+
+  const titleLength = name.length;
+  const descLength = description ? description.length : 0;
+
+  let width = 260;
+  if (titleLength > 28 || descLength > 120) {
+    width = 295;
+  } else if (titleLength < 16 && descLength < 60) {
+    width = 230;
+  }
+
+  const maxCharsPerLine = Math.floor((width - 28) / 7.2);
+  const maxLines = descLength > 100 ? 4 : descLength > 50 ? 3 : 2;
+  const descLines = wrapText(description, maxCharsPerLine, maxLines);
+
+  const height = 64 + descLines.length * 17 + 14;
+  const size = Math.round(height * 0.46);
+
+  return { width, height, size, descLines, pillWidth };
+}
+
 function getCategoryColor(cat: EntityCategory): {
   bg: string;
   border: string;
@@ -204,6 +264,7 @@ function createNodeSvg(
   name: string,
   category: EntityCategory,
   description: string,
+  dims: NodeDimensions,
   isSelected = false
 ): string {
   const color = getCategoryColor(category);
@@ -215,14 +276,22 @@ function createNodeSvg(
 
   const safeName = escapeXml(name);
   const safeCat = escapeXml(category.replace(/_/g, ' '));
-  const descLines = wrapText(description, 36, 3);
 
-  // Calculate dynamic responsive pill width with generous breathing room
-  const pillWidth = Math.max(86, safeCat.length * 6.8 + 40);
+  const iconGeometry = getCategoryIconSvgGeometry(
+    category,
+    20,
+    16.5,
+    color.text
+  );
 
-  const iconGeometry = getCategoryIconSvgGeometry(category, 20, 16.5, color.text);
+  const descTextElements = dims.descLines
+    .map(
+      (line, idx) =>
+        `<text x="14" y="${78 + idx * 17}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="${idx === dims.descLines.length - 1 ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.74)'}">${escapeXml(line)}</text>`
+    )
+    .join('\n');
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="270" height="135" viewBox="0 0 270 135">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${dims.width}" height="${dims.height}" viewBox="0 0 ${dims.width} ${dims.height}">
     <defs>
       <linearGradient id="cardGrad-${safeName.replace(/\W/g, '')}" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#141C2C" stop-opacity="0.97" />
@@ -235,14 +304,14 @@ function createNodeSvg(
       </linearGradient>
     </defs>
     
-    <!-- Outer Card Background -->
-    <rect x="2" y="2" width="266" height="131" rx="16" ry="16" fill="url(#cardGrad-${safeName.replace(/\W/g, '')})" stroke="${strokeColor}" stroke-width="${strokeWidth}" ${glow} />
+    <!-- Outer Card Background with Dynamic Responsive Bounds -->
+    <rect x="2" y="2" width="${dims.width - 4}" height="${dims.height - 4}" rx="16" ry="16" fill="url(#cardGrad-${safeName.replace(/\W/g, '')})" stroke="${strokeColor}" stroke-width="${strokeWidth}" ${glow} />
     
     <!-- Top Specular Highlight Line -->
-    <path d="M 22 3.5 L 248 3.5" stroke="url(#specularGrad)" stroke-width="1.2" stroke-linecap="round" />
+    <path d="M 22 3.5 L ${dims.width - 22} 3.5" stroke="url(#specularGrad)" stroke-width="1.2" stroke-linecap="round" />
 
     <!-- Responsive Auto-Sized Category Pill -->
-    <rect x="14" y="14" width="${pillWidth}" height="22" rx="11" ry="11" fill="${color.bg}" stroke="${color.border}" stroke-width="0.8" />
+    <rect x="14" y="14" width="${dims.pillWidth}" height="22" rx="11" ry="11" fill="${color.bg}" stroke="${color.border}" stroke-width="0.8" />
     
     <!-- Vector Category Icon -->
     ${iconGeometry}
@@ -254,19 +323,11 @@ function createNodeSvg(
 
     <!-- Bold Concept Title -->
     <text x="14" y="58" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="700" fill="#FFFFFF">
-      ${truncate(safeName, 26)}
+      ${truncate(safeName, Math.floor(dims.width / 9))}
     </text>
 
     <!-- Substantive Multiline Description Lines -->
-    <text x="14" y="78" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="rgba(255,255,255,0.72)">
-      ${escapeXml(descLines[0] || '')}
-    </text>
-    <text x="14" y="95" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="rgba(255,255,255,0.72)">
-      ${escapeXml(descLines[1] || '')}
-    </text>
-    <text x="14" y="112" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="rgba(255,255,255,0.48)">
-      ${escapeXml(descLines[2] || '')}
-    </text>
+    ${descTextElements}
   </svg>`;
 
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
@@ -283,11 +344,26 @@ export class CanvasComponent implements OnInit, OnDestroy {
   @ViewChild('networkContainer', { static: true })
   networkContainer!: ElementRef<HTMLDivElement>;
 
+  @ViewChild('dotsCanvas', { static: true })
+  dotsCanvasRef!: ElementRef<HTMLCanvasElement>;
+
   readonly store = inject(DocumentStore);
 
   private network: Network | null = null;
   private nodesDataSet = new DataSet<Node>();
   private edgesDataSet = new DataSet<Edge>();
+  private activeRelationships: Array<{
+    id: string;
+    sourceId: string;
+    targetId: string;
+    label: string;
+  }> = [];
+
+  // Reactive interactive dot field background state
+  private dotsAnimId: number | null = null;
+  private mouseX = -1000;
+  private mouseY = -1000;
+  private isMouseOver = false;
 
   readonly isPhysicsEnabled = signal<boolean>(true);
   readonly selectedEntity = this.store.selectedEntity;
@@ -310,6 +386,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initVisNetwork();
+    this.initDotsBackground();
   }
 
   ngOnDestroy() {
@@ -317,6 +394,97 @@ export class CanvasComponent implements OnInit, OnDestroy {
       this.network.destroy();
       this.network = null;
     }
+    if (this.dotsAnimId) {
+      cancelAnimationFrame(this.dotsAnimId);
+      this.dotsAnimId = null;
+    }
+  }
+
+  private initDotsBackground() {
+    const canvas = this.dotsCanvasRef.nativeElement;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resize = () => {
+      const parent = canvas.parentElement;
+      if (!parent) return;
+      canvas.width = parent.clientWidth;
+      canvas.height = parent.clientHeight;
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    const parent = this.networkContainer.nativeElement;
+    parent.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      this.mouseX = e.clientX - rect.left;
+      this.mouseY = e.clientY - rect.top;
+      this.isMouseOver = true;
+    });
+
+    parent.addEventListener('mouseleave', () => {
+      this.isMouseOver = false;
+      this.mouseX = -1000;
+      this.mouseY = -1000;
+    });
+
+    const spacing = 36;
+    const proximityRadius = 150;
+
+    const renderDots = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const cols = Math.ceil(canvas.width / spacing) + 1;
+      const rows = Math.ceil(canvas.height / spacing) + 1;
+
+      for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
+          const dotX = c * spacing;
+          const dotY = r * spacing;
+
+          let renderX = dotX;
+          let renderY = dotY;
+          let dotRadius = 1.2;
+          let alpha = 0.08;
+          let isHovered = false;
+
+          if (this.isMouseOver) {
+            const dist = Math.hypot(this.mouseX - dotX, this.mouseY - dotY);
+            if (dist < proximityRadius) {
+              isHovered = true;
+              const factor = 1 - dist / proximityRadius;
+              const displace = factor * 7;
+              const angle = Math.atan2(dotY - this.mouseY, dotX - this.mouseX);
+
+              renderX = dotX + Math.cos(angle) * displace;
+              renderY = dotY + Math.sin(angle) * displace;
+              dotRadius = 1.2 + factor * 2.2;
+              alpha = 0.15 + factor * 0.75;
+            }
+          }
+
+          ctx.beginPath();
+          ctx.arc(renderX, renderY, dotRadius, 0, Math.PI * 2);
+
+          if (isHovered) {
+            ctx.fillStyle = `rgba(0, 245, 160, ${alpha})`;
+            ctx.shadowColor = 'rgba(0, 245, 160, 0.5)';
+            ctx.shadowBlur = 8;
+          } else {
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+          }
+
+          ctx.fill();
+        }
+      }
+
+      this.dotsAnimId = requestAnimationFrame(renderDots);
+    };
+
+    this.dotsAnimId = requestAnimationFrame(renderDots);
   }
 
   private initVisNetwork() {
@@ -328,7 +496,6 @@ export class CanvasComponent implements OnInit, OnDestroy {
     const options: Options = {
       nodes: {
         shape: 'image',
-        size: 65,
         borderWidth: 0,
         borderWidthSelected: 0,
         shapeProperties: {
@@ -351,7 +518,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
         shadow: false,
       },
       edges: {
-        width: 1.5,
+        width: 1.8,
         color: {
           color: 'rgba(255, 255, 255, 0.22)',
           highlight: '#00F5A0',
@@ -360,7 +527,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
         arrows: {
           to: {
             enabled: true,
-            scaleFactor: 0.7,
+            scaleFactor: 0.75,
           },
         },
         smooth: {
@@ -368,29 +535,20 @@ export class CanvasComponent implements OnInit, OnDestroy {
           type: 'cubicBezier',
           roundness: 0.5,
         },
-        font: {
-          color: '#E2E8F0',
-          size: 11,
-          face: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "DM Sans", sans-serif',
-          strokeWidth: 0,
-          strokeColor: 'transparent',
-          background: 'rgba(15, 23, 42, 0.92)',
-          align: 'horizontal',
-        },
       },
       physics: {
         enabled: true,
         solver: 'forceAtlas2Based',
         forceAtlas2Based: {
-          gravitationalConstant: -80,
-          centralGravity: 0.008,
-          springLength: 190,
-          springConstant: 0.045,
-          damping: 0.6,
-          avoidOverlap: 0.85,
+          gravitationalConstant: -320, // Strong anti-clustering repulsion
+          centralGravity: 0.0025,
+          springLength: 320, // Generous breathing room
+          springConstant: 0.035,
+          damping: 0.8,
+          avoidOverlap: 1.0, // Maximum overlap prevention
         },
         stabilization: {
-          iterations: 120,
+          iterations: 180,
           updateInterval: 25,
         },
       },
@@ -407,6 +565,52 @@ export class CanvasComponent implements OnInit, OnDestroy {
       data,
       options
     );
+
+    // Custom Canvas Render: Fully Rounded Frosted Pills with Generous Padding for Connection Labels
+    this.network.on('afterDrawing', (ctx: CanvasRenderingContext2D) => {
+      if (!this.network || this.activeRelationships.length === 0) return;
+
+      ctx.save();
+      ctx.font =
+        '600 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", "DM Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      for (const rel of this.activeRelationships) {
+        const posSource = this.network.getPosition(rel.sourceId);
+        const posTarget = this.network.getPosition(rel.targetId);
+
+        if (!posSource || !posTarget) continue;
+
+        const midX = (posSource.x + posTarget.x) / 2;
+        const midY = (posSource.y + posTarget.y) / 2;
+
+        const textMetrics = ctx.measureText(rel.label);
+        const textWidth = textMetrics.width;
+
+        // Generous padding: 12px horizontal, 5px vertical (pill height 22px)
+        const pillWidth = Math.max(textWidth + 24, 48);
+        const pillHeight = 22;
+        const pillRadius = 11; // Fully rounded capsule
+        const pillX = midX - pillWidth / 2;
+        const pillY = midY - pillHeight / 2;
+
+        // Draw fully rounded pill background & subtle border
+        ctx.beginPath();
+        drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, pillRadius);
+        ctx.fillStyle = 'rgba(13, 20, 32, 0.94)';
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+        ctx.stroke();
+
+        // Draw upright, high-contrast label
+        ctx.fillStyle = '#F1F5F9';
+        ctx.fillText(rel.label, midX, midY);
+      }
+
+      ctx.restore();
+    });
 
     this.network.on('selectNode', (params) => {
       if (params.nodes && params.nodes.length > 0) {
@@ -432,21 +636,34 @@ export class CanvasComponent implements OnInit, OnDestroy {
     const rawNodes: Node[] = entities.map((ent) => {
       const isSelected = ent.id === selectedEntityId;
       const desc = extractEntityDescription(ent);
-      const imageUri = createNodeSvg(ent.name, ent.category, desc, isSelected);
+      const dims = computeNodeDimensions(ent.name, ent.category, desc);
+      const imageUri = createNodeSvg(
+        ent.name,
+        ent.category,
+        desc,
+        dims,
+        isSelected
+      );
 
       return {
         id: ent.id,
         image: imageUri,
         shape: 'image',
-        size: isSelected ? 72 : 65,
+        size: isSelected ? Math.round(dims.size * 1.1) : dims.size,
       };
     });
+
+    this.activeRelationships = relationships.map((rel) => ({
+      id: rel.id,
+      sourceId: rel.sourceEntity?.id || (rel as any).source_entity_id,
+      targetId: rel.targetEntity?.id || (rel as any).target_entity_id,
+      label: formatRelationType(rel.relationType),
+    }));
 
     const rawEdges: Edge[] = relationships.map((rel) => ({
       id: rel.id,
       from: rel.sourceEntity?.id || (rel as any).source_entity_id,
       to: rel.targetEntity?.id || (rel as any).target_entity_id,
-      label: formatRelationType(rel.relationType),
     }));
 
     this.nodesDataSet.clear();
@@ -468,6 +685,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
   }
 
   private clearGraph() {
+    this.activeRelationships = [];
     this.nodesDataSet.clear();
     this.edgesDataSet.clear();
   }

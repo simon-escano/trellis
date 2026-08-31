@@ -1,11 +1,10 @@
 <div class="relative w-full h-full overflow-hidden bg-[#07090E]">
   
-  <!-- Subtle VisionOS Grid Background -->
-  <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,185,129,0.08),rgba(255,255,255,0))] pointer-events-none"></div>
-  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none"></div>
+  <!-- Interactive Reactive Dot Field Background Canvas -->
+  <canvas #dotsCanvas class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
 
   <!-- Vis Network Canvas Container -->
-  <div #networkContainer class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+  <div #networkContainer class="w-full h-full cursor-grab active:cursor-grabbing relative z-10"></div>
 
   <!-- Floating Glass Canvas Controls (Bottom Right) -->
   <div class="absolute bottom-6 right-6 flex items-center space-x-1.5 apple-glass-pill rounded-full p-1.5 shadow-2xl z-20">
