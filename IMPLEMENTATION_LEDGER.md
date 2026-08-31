@@ -191,7 +191,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `npm --prefix apps/worker run build`
   - **Git Commit Message:** `feat(worker): implement postgres pool client and zod extraction contracts`
 
-- [ ] **Task 2.3: AI LLM Structured Extraction Service & Mock Fallback**
+- [x] **Task 2.3: AI LLM Structured Extraction Service & Mock Fallback**
   - **Target Files:** `apps/worker/src/services/llm.service.ts`
   - **Prerequisites:** Task 2.2
   - **Validation Command:** `npm --prefix apps/worker run build`
