@@ -1,16 +1,17 @@
+```markdown
 # 01_DATA_CONTRACTS.md — Trellis Type Schemas & Data Contracts
 
 ## 1. Relational Database Contract (PostgreSQL DDL)
 
-Save this schema into `docker/init.sql` for container initialization:
+Save this schema into `docker/init.sql` for automated container initialization:
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Status enum for document pipeline state tracking
+-- Processing pipeline state tracking
 CREATE TYPE processing_status AS ENUM ('QUEUED', 'PROCESSING', 'COMPLETED', 'FAILED');
 
--- Entity categorization enum
+-- Concept & entity categorization enum (supports general ideas, study topics, & systems)
 CREATE TYPE entity_category AS ENUM (
     'SYSTEM',
     'SERVICE',
@@ -33,18 +34,18 @@ CREATE TABLE documents (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Extracted named entities
+-- Extracted concepts, entities, and topics
 CREATE TABLE entities (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
-    category entity_category NOT NULL,
+    category entity_category NOT NULL DEFAULT 'CONCEPT',
     confidence_score REAL NOT NULL CHECK (confidence_score >= 0.0 AND confidence_score <= 1.0),
     metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Directional knowledge graph relationships between entities
+-- Directional concept connections (e.g., "A causes B", "X powers Y", "Service calls API")
 CREATE TABLE entity_relationships (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
@@ -97,7 +98,7 @@ type Entity {
   name: String!
   category: EntityCategory!
   confidenceScore: Float!
-  metadata: String! # JSON-encoded string
+  metadata: String! # Serialized JSON string
   createdAt: String!
 }
 
@@ -134,17 +135,17 @@ type IngestPayload {
   queueJobId: String!
 }
 
-type Query {
-  getDocuments(limit: Int = 20, offset: Int = 0): [Document!]!
-  getDocument(id: ID!): Document
-  getMetrics: SystemMetrics!
-}
-
 type SystemMetrics {
   totalDocuments: Int!
   processedCount: Int!
   queuedCount: Int!
   failedCount: Int!
+}
+
+type Query {
+  getDocuments(limit: Int = 20, offset: Int = 0): [Document!]!
+  getDocument(id: ID!): Document
+  getMetrics: SystemMetrics!
 }
 
 type Mutation {
@@ -159,14 +160,14 @@ type Mutation {
 
 ## 3. Asynchronous Queue Message Contract
 
-Payload passed from Rust Gateway to AWS SQS / Worker queue:
+Payload transferred between Rust Ingestion API $\rightarrow$ Worker Channel / Queue:
 
 ```json
 {
-  "jobId": "uuid-v4",
-  "documentId": "uuid-v4",
-  "title": "RFC-780: Distributed Telemetry Protocol",
-  "rawContent": "Raw technical markdown or spec document content...",
+  "jobId": "c4b8b6a2-9e32-49bb-b1d5-2e633d289012",
+  "documentId": "8f31b64e-2895-46d4-8d9e-5e3692a7e781",
+  "title": "How Caffeine Affects Sleep Architecture",
+  "rawContent": "Caffeine acts as an adenosine receptor antagonist in the brain...",
   "enqueuedAt": "2026-08-31T04:45:00.000Z"
 }
 
@@ -174,9 +175,9 @@ Payload passed from Rust Gateway to AWS SQS / Worker queue:
 
 ---
 
-## 4. TypeScript AI Output Schema (Zod)
+## 4. TypeScript AI Extraction Contract (Zod)
 
-Implemented in `apps/worker/src/contracts/extraction.ts` to strictly validate LLM outputs before PostgreSQL insertion:
+Implemented in `apps/worker/src/contracts/extraction.ts` to strictly validate structured LLM outputs:
 
 ```typescript
 import { z } from "zod";
@@ -192,25 +193,35 @@ export const EntityCategoryEnum = z.enum([
 ]);
 
 export const ExtractedEntitySchema = z.object({
-  name: z.string().min(1).max(255).describe("Concise name of the entity"),
-  category: EntityCategoryEnum.describe("Architectural or technical category"),
-  confidenceScore: z.number().min(0).max(1).describe("Confidence score between 0.0 and 1.0"),
+  name: z.string().min(1).max(255).describe("Concise name of the concept, topic, or technical element"),
+  category: EntityCategoryEnum.default("CONCEPT").describe("Category: CONCEPT for general ideas/topics, or technical categories like SERVICE/SYSTEM for architecture"),
+  confidenceScore: z.number().min(0).max(1).default(0.95).describe("Relevance score between 0.0 and 1.0"),
   metadata: z.record(z.any()).default({}).describe("Key-value attributes or properties"),
 });
 
 export const ExtractedRelationshipSchema = z.object({
-  sourceEntityName: z.string().describe("Exact matching name of the source entity"),
-  targetEntityName: z.string().describe("Exact matching name of the target entity"),
-  relationType: z.string().max(100).describe("Active verb relationship e.g., 'STORES_IN', 'CALLS', 'AUTHENTICATES'"),
+  sourceEntityName: z.string().describe("Exact name of the source concept or node"),
+  targetEntityName: z.string().describe("Exact name of the target concept or node"),
+  relationType: z.string().max(100).describe("Clear, active connection label (e.g., 'BLOCKS', 'POWERS', 'TRIGGERS', 'WRITES_TO')"),
   confidenceScore: z.number().min(0).max(1).default(1.0),
 });
 
 export const DocumentAnalysisOutputSchema = z.object({
-  summary: z.string().min(10).describe("Concise executive summary covering key architecture points and trade-offs"),
-  entities: z.array(ExtractedEntitySchema).min(1).describe("List of extracted named entities"),
-  relationships: z.array(ExtractedRelationshipSchema).describe("Directional relationships mapping the knowledge graph"),
+  summary: z.string().min(10).describe("Engaging, easy-to-read summary breaking down key concepts and takeaways in plain language"),
+  entities: z.array(ExtractedEntitySchema).min(1).describe("List of extracted core concepts and nodes"),
+  relationships: z.array(ExtractedRelationshipSchema).describe("List of connections and dependencies mapping the visual graph"),
 });
 
 export type ExtractedEntity = z.infer<typeof ExtractedEntitySchema>;
 export type ExtractedRelationship = z.infer<typeof ExtractedRelationshipSchema>;
 export type DocumentAnalysisOutput = z.infer<typeof DocumentAnalysisOutputSchema>;
+
+```
+
+```
+
+---
+
+Save this to `.trellis-specs/01_DATA_CONTRACTS.md`. Let me know when you're ready to proceed to **`02_STEP_RUST_BACKEND.md`**.
+
+```
