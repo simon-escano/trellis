@@ -179,7 +179,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
 ---
 
 ### Phase 2: TypeScript AI Extraction Worker — `apps/worker`
-- [ ] **Task 2.1: TypeScript Worker Workspace & Configuration**
+- [x] **Task 2.1: TypeScript Worker Workspace & Configuration**
   - **Target Files:** `apps/worker/package.json`, `apps/worker/tsconfig.json`, `apps/worker/.env.example`, `apps/worker/src/config.ts`
   - **Prerequisites:** Task 0.2
   - **Validation Command:** `npm --prefix apps/worker run build`
