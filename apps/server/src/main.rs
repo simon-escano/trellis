@@ -1,5 +1,6 @@
 mod config;
 mod db;
+pub mod models;
 
 #[tokio::main]
 async fn main() {

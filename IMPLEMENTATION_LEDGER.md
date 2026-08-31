@@ -152,7 +152,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
   - **Git Commit Message:** `feat(server): implement environment configuration and sqlx postgres pool`
 
-- [ ] **Task 1.3: Domain Models & SQLx Mappings**
+- [x] **Task 1.3: Domain Models & SQLx Mappings**
   - **Target Files:** `apps/server/src/models/mod.rs`, `apps/server/src/models/document.rs`, `apps/server/src/models/entity.rs`, `apps/server/src/models/relationship.rs`
   - **Prerequisites:** Task 1.2
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
