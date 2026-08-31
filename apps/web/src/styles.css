@@ -250,43 +250,78 @@ html.light .apple-segment-active {
 }
 
 /* ------------------------------------------------------------------
-   Mobile Drawer Slide-up
+   Mobile Drawer Slide-up / Slide-left
    ------------------------------------------------------------------ */
 @keyframes drawerUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(28px); filter: blur(3px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
 }
 @keyframes drawerLeft {
-  from { opacity: 0; transform: translateX(-18px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateX(-24px) scale(0.98); filter: blur(3px); }
+  to   { opacity: 1; transform: translateX(0)     scale(1);    filter: blur(0); }
 }
 .drawer-enter-up {
-  animation: drawerUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: drawerUp 0.36s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity, filter;
 }
 .drawer-enter-left {
-  animation: drawerLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: drawerLeft 0.36s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity, filter;
 }
 
 /* ------------------------------------------------------------------
    Backdrop Fade
    ------------------------------------------------------------------ */
 @keyframes backdropFadeIn {
-  from { opacity: 0; backdrop-filter: blur(0px); }
+  from { opacity: 0; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); }
   to   { opacity: 1; }
 }
+@keyframes backdropFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); }
+}
 .backdrop-enter {
-  animation: backdropFadeIn 0.22s ease both;
+  animation: backdropFadeIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: opacity, backdrop-filter;
+}
+.backdrop-leave {
+  animation: backdropFadeOut 0.22s cubic-bezier(0.4, 0, 1, 1) both;
 }
 
 /* ------------------------------------------------------------------
    Modal / Sheet Appear (Ingest Modal, Panels)
    ------------------------------------------------------------------ */
 @keyframes modalAppear {
-  from { opacity: 0; transform: scale(0.94) translateY(16px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0); }
+  0% {
+    opacity: 0;
+    transform: scale(0.93) translateY(24px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0px);
+  }
+}
+@keyframes modalDisappear {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.95) translateY(14px);
+    filter: blur(2px);
+  }
 }
 .modal-enter {
-  animation: modalAppear 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: modalAppear 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity, filter;
+  transform-origin: center center;
+}
+.modal-leave {
+  animation: modalDisappear 0.22s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 /* ------------------------------------------------------------------

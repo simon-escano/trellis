@@ -16,6 +16,8 @@
   <!-- Global Modal: PDF / Document Ingestion Sheet -->
   <app-ingest-modal 
     *ngIf="isIngestModalOpen()" 
+    [isOpen]="isIngestModalOpen()"
+    (close)="closeIngestModal()"
     (closeModal)="closeIngestModal()">
   </app-ingest-modal>
 

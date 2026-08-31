@@ -48,6 +48,8 @@ export class IngestModalComponent {
   rawContent = '';
   selectedPresetId = signal<string | null>(null);
 
+  readonly isClosing = signal<boolean>(false);
+
   selectPreset(preset: DemoPreset) {
     this.selectedPresetId.set(preset.id);
     this.title = preset.title;
@@ -55,7 +57,12 @@ export class IngestModalComponent {
   }
 
   onClose() {
-    this.close.emit();
+    if (this.isClosing()) return;
+    this.isClosing.set(true);
+    setTimeout(() => {
+      this.close.emit();
+      this.isClosing.set(false);
+    }, 220);
   }
 
   async onSubmit() {

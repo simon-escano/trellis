@@ -1,12 +1,16 @@
 <div *ngIf="isOpen"
-  class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xl animate-in fade-in duration-200 select-none">
+  [class.backdrop-enter]="!isClosing()"
+  [class.backdrop-leave]="isClosing()"
+  class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xl select-none">
 
   <!-- Backdrop Click Area -->
   <div (click)="onClose()" class="absolute inset-0"></div>
 
   <!-- Modal Container -->
   <div
-    class="relative w-full max-w-2xl rounded-3xl apple-glass shadow-2xl overflow-hidden z-10 max-h-[92vh] flex flex-col animate-in zoom-in-95 duration-200 transition-colors">
+    [class.modal-enter]="!isClosing()"
+    [class.modal-leave]="isClosing()"
+    class="relative w-full max-w-2xl rounded-3xl apple-glass shadow-2xl overflow-hidden z-10 max-h-[92vh] flex flex-col transition-colors">
 
     <!-- Modal Header -->
     <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-white/[0.08] flex items-center justify-between flex-shrink-0">
