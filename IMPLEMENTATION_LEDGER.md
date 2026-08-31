@@ -236,7 +236,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `npm --prefix apps/web run build`
   - **Git Commit Message:** `feat(web): create executive summary drawer and concept inspector with spring physics`
 
-- [ ] **Task 3.5: Ingestion Modal with 3-Preset Persona Loader**
+- [x] **Task 3.5: Ingestion Modal with 3-Preset Persona Loader**
   - **Target Files:** `apps/web/src/app/core/data/demo-presets.ts`, `apps/web/src/app/features/ingest-modal/ingest-modal.component.ts`, `apps/web/src/app/features/ingest-modal/ingest-modal.component.html`
   - **Prerequisites:** Task 3.4
   - **Validation Command:** `npm --prefix apps/web run build`
