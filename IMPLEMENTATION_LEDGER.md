@@ -251,7 +251,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
 ---
 
 ### Phase 4: System Integration & E2E Smoke Verification
-- [ ] **Task 4.1: End-to-End Multi-Persona Verification & Documentation**
+- [x] **Task 4.1: End-to-End Multi-Persona Verification & Documentation**
   - **Target Files:** `README.md`, `docker-compose.yml`
   - **Prerequisites:** Tasks 0.1–3.6
   - **Validation Command:** `npm --prefix apps/web run build && npm --prefix apps/worker run build && cargo check --manifest-path apps/server/Cargo.toml`
