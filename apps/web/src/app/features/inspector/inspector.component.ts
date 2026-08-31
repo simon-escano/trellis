@@ -2,8 +2,6 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
-  lucideChevronRight,
-  lucideChevronLeft,
   lucideFileText,
   lucideSparkles,
   lucideLayers,
@@ -27,8 +25,6 @@ import {
   imports: [CommonModule, NgIconComponent],
   providers: [
     provideIcons({
-      lucideChevronRight,
-      lucideChevronLeft,
       lucideFileText,
       lucideSparkles,
       lucideLayers,
@@ -46,7 +42,6 @@ import {
 export class InspectorComponent {
   readonly store = inject(DocumentStore);
 
-  readonly isCollapsed = signal<boolean>(false);
   readonly activeTab = signal<'summary' | 'concept' | 'raw'>('summary');
 
   readonly selectedEntity = this.store.selectedEntity;
@@ -63,10 +58,6 @@ export class InspectorComponent {
         (rel.targetEntity?.id || (rel as any).target_entity_id) === entity.id
     );
   });
-
-  toggleCollapsed() {
-    this.isCollapsed.update((v) => !v);
-  }
 
   setTab(tab: 'summary' | 'concept' | 'raw') {
     this.activeTab.set(tab);

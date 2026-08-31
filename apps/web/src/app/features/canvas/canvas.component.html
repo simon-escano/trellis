@@ -6,10 +6,10 @@
   <!-- Vis Network Canvas Container -->
   <div #networkContainer class="w-full h-full cursor-grab active:cursor-grabbing relative z-10"></div>
 
-  <!-- Top Navigation & Action Bar -->
-  <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none z-40">
+  <!-- Top Left: Flex Column with (1) Hamburger Menu & Title Header and (2) Inspector Panel -->
+  <div class="absolute top-4 left-4 flex flex-col gap-3 pointer-events-none z-40 max-w-[calc(100vw-2rem)]">
 
-    <!-- Top Left: Hamburger Button + Separate Floating Topic Title (No border/bg/padding) -->
+    <!-- Top Left Header Row: Hamburger Button + Separate Floating Topic Title -->
     <div class="flex items-center space-x-3 pointer-events-auto relative">
 
       <!-- Hamburger Menu Button -->
@@ -20,7 +20,7 @@
 
       <!-- Separate Floating Topic Title (Directly on Canvas without background/border/padding) -->
       <h1
-        class="text-sm md:text-base font-medium text-white/95 tracking-tight truncate max-w-xs sm:max-w-sm md:max-w-xl drop-shadow-sm">
+        class="text-sm md:text-base font-medium text-white/95 tracking-tight truncate max-w-xs sm:max-w-sm md:max-w-md drop-shadow-sm">
         {{ store.activeDocument()?.title || 'Concept Map' }}
       </h1>
 
@@ -58,32 +58,37 @@
 
     </div>
 
-    <!-- Top Right Utility Actions: Regenerate Map (Emerald) + Export & Share Buttons -->
-    <div class="flex items-center space-x-2 pointer-events-auto">
+    <!-- Inspector Panel (Inside Top Left Flex Box) -->
+    <div class="pointer-events-auto">
+      <app-inspector></app-inspector>
+    </div>
 
-      <!-- New Regenerate Map Button (Emerald Background) -->
-      <button (click)="regenerateMap()" [disabled]="store.activeDocument()?.status === 'PROCESSING'"
-        title="Regenerate Concept Map"
-        class="h-8 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-medium flex items-center space-x-1.5 text-xs shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50">
-        <ng-icon name="lucideRotateCw" class="w-3.5 h-3.5 text-black"
-          [ngClass]="store.activeDocument()?.status === 'PROCESSING' ? 'animate-spin' : ''"></ng-icon>
-        <span class="hidden sm:inline">Regenerate</span>
+  </div>
+
+  <!-- Top Right Utility Actions: Regenerate Map (Emerald) + Export & Share Buttons -->
+  <div class="absolute top-4 right-4 flex items-center space-x-2 pointer-events-auto z-40">
+
+    <!-- New Regenerate Map Button (Emerald Background) -->
+    <button (click)="regenerateMap()" [disabled]="store.activeDocument()?.status === 'PROCESSING'"
+      title="Regenerate Concept Map"
+      class="h-8 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-medium flex items-center space-x-1.5 text-xs shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50">
+      <ng-icon name="lucideRotateCw" class="w-3.5 h-3.5 text-black"
+        [ngClass]="store.activeDocument()?.status === 'PROCESSING' ? 'animate-spin' : ''"></ng-icon>
+      <span class="hidden sm:inline">Regenerate</span>
+    </button>
+
+    <!-- Export & Share Pills -->
+    <div class="apple-glass-pill p-1 rounded-2xl shadow-2xl border border-white/10 flex items-center space-x-1">
+      <button
+        class="h-7 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
+        <ng-icon name="lucideDownload" class="w-3.5 h-3.5"></ng-icon>
+        <span>Export</span>
       </button>
-
-      <!-- Export & Share Pills -->
-      <div class="apple-glass-pill p-1 rounded-2xl shadow-2xl border border-white/10 flex items-center space-x-1">
-        <button
-          class="h-7 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
-          <ng-icon name="lucideDownload" class="w-3.5 h-3.5"></ng-icon>
-          <span>Export</span>
-        </button>
-        <button (click)="shareTopic()"
-          class="h-7 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
-          <ng-icon name="lucideShare2" class="w-3.5 h-3.5"></ng-icon>
-          <span>Share</span>
-        </button>
-      </div>
-
+      <button (click)="shareTopic()"
+        class="h-7 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
+        <ng-icon name="lucideShare2" class="w-3.5 h-3.5"></ng-icon>
+        <span>Share</span>
+      </button>
     </div>
 
   </div>

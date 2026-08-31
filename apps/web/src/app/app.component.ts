@@ -2,7 +2,6 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeComponent } from './features/home/home.component.js';
 import { CanvasComponent } from './features/canvas/canvas.component.js';
-import { InspectorComponent } from './features/inspector/inspector.component.js';
 import { IngestModalComponent } from './features/ingest-modal/ingest-modal.component.js';
 import { DocumentStore } from './core/state/document.store.js';
 
@@ -13,7 +12,6 @@ import { DocumentStore } from './core/state/document.store.js';
     CommonModule,
     HomeComponent,
     CanvasComponent,
-    InspectorComponent,
     IngestModalComponent,
   ],
   templateUrl: './app.component.html',

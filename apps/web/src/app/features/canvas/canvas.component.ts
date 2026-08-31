@@ -33,6 +33,7 @@ import {
   EntityCategory,
   EntityRelationship,
 } from '../../core/models/document.model.js';
+import { InspectorComponent } from '../inspector/inspector.component.js';
 
 function escapeXml(unsafe: string): string {
   if (!unsafe) return '';
@@ -360,7 +361,7 @@ function createNodeSvg(
 @Component({
   selector: 'app-canvas',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIconComponent],
+  imports: [CommonModule, FormsModule, NgIconComponent, InspectorComponent],
   templateUrl: './canvas.component.html',
   styleUrls: ['./canvas.component.css'],
   viewProviders: [

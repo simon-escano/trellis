@@ -6,13 +6,10 @@
   <!-- View 2: Fullscreen Topic Concept Map View (Sidebar hidden for maximum immersive room) -->
   <ng-container *ngIf="store.currentView() === 'canvas'">
     
-    <!-- Fullscreen Concept Graph Canvas -->
+    <!-- Fullscreen Concept Graph Canvas with embedded Top Left Flex Header & Inspector -->
     <main class="w-full h-full relative z-0">
       <app-canvas></app-canvas>
     </main>
-
-    <!-- Floating Left Inspector Panel (Positioned below top-left hamburger menu & title) -->
-    <app-inspector class="absolute top-16 left-4 z-30 pointer-events-auto"></app-inspector>
 
   </ng-container>
 
