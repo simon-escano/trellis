@@ -170,7 +170,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
   - **Git Commit Message:** `feat(server): implement async-graphql schema with batch dataloaders`
 
-- [ ] **Task 1.6: Axum HTTP Server, CORS & GraphiQL Playground**
+- [x] **Task 1.6: Axum HTTP Server, CORS & GraphiQL Playground**
   - **Target Files:** `apps/server/src/main.rs`
   - **Prerequisites:** Task 1.5
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`

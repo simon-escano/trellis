@@ -6,8 +6,8 @@ edition = "2021"
 [dependencies]
 # Async Runtime & Web Framework
 tokio = { version = "1.38", features = ["full"] }
-axum = { version = "0.7", features = ["macros"] }
-tower-http = { version = "0.5", features = ["cors", "trace"] }
+axum = { version = "0.8", features = ["macros"] }
+tower-http = { version = "0.6", features = ["cors", "trace"] }
 
 # GraphQL
 async-graphql = { version = "7.0", features = ["chrono", "uuid", "dataloader"] }
