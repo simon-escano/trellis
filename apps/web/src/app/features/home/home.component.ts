@@ -72,6 +72,28 @@ export class HomeComponent implements OnInit, OnDestroy {
   readonly selectedTab = signal<'my_topics' | 'examples'>('my_topics');
   readonly isMobileSidebarOpen = signal<boolean>(false);
 
+  // Maximum character limit evaluated based on LLM performance (~1,000 tokens)
+  readonly maxChars = 4000;
+  readonly promptLength = computed(() => this.topicPrompt().length);
+  readonly charProgress = computed(() => Math.min(100, (this.promptLength() / this.maxChars) * 100));
+  readonly isNearLimit = computed(() => this.promptLength() >= this.maxChars * 0.8);
+  readonly isOverLimit = computed(() => this.promptLength() > this.maxChars);
+  readonly remainingChars = computed(() => this.maxChars - this.promptLength());
+
+  readonly strokeDashoffset = computed(() => {
+    const circumference = 56.5487; // 2 * pi * 9
+    const progress = Math.min(100, Math.max(0, this.charProgress()));
+    return circumference - (circumference * progress) / 100;
+  });
+
+  readonly spinnerColor = computed(() => {
+    const len = this.promptLength();
+    if (len > this.maxChars) return '#EF4444';
+    if (len >= this.maxChars * 0.95) return '#F43F5E';
+    if (len >= this.maxChars * 0.8) return '#F59E0B';
+    return '#10B981';
+  });
+
   readonly presets = DEMO_PRESETS;
 
   // Dot field hover tracking (exact same as CanvasComponent)
@@ -215,7 +237,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   async submitPrompt() {
     const prompt = this.topicPrompt().trim();
-    if (!prompt || this.isSubmitting()) return;
+    if (!prompt || this.isSubmitting() || this.isOverLimit()) return;
 
     this.isSubmitting.set(true);
     try {
@@ -231,7 +253,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   onKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      this.submitPrompt();
+      if (!this.isOverLimit()) {
+        this.submitPrompt();
+      }
     }
   }
 

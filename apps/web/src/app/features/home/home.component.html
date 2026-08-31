@@ -206,15 +206,51 @@
               <span class="text-[11px] sm:text-xs">Add PDF / Doc</span>
             </button>
 
-            <!-- Right Tool: Send Action Button -->
-            <button (click)="submitPrompt()" [disabled]="!topicPrompt().trim() || isSubmitting()"
-              [ngClass]="topicPrompt().trim() && !isSubmitting() ? 'bg-slate-900 text-white dark:bg-white dark:text-black hover:opacity-90 shadow-md cursor-pointer' : 'bg-slate-200 text-slate-400 dark:bg-white/10 dark:text-white/30 cursor-not-allowed'"
-              class="w-8 h-8 rounded-xl flex items-center justify-center transition-all">
-              <ng-icon *ngIf="!isSubmitting()" name="lucideArrowUp" class="w-4 h-4"></ng-icon>
-              <div *ngIf="isSubmitting()"
-                class="w-3.5 h-3.5 border-2 border-slate-400 dark:border-white/20 border-t-slate-900 dark:border-t-white rounded-full animate-spin">
+            <!-- Right Tool: Character Spinner + Send Button -->
+            <div class="flex items-center space-x-2">
+
+              <!-- Max Chars Circular Progress Spinner -->
+              <div *ngIf="promptLength() > 0"
+                class="flex items-center space-x-1.5 transition-all duration-200"
+                [title]="promptLength() + ' / ' + maxChars + ' characters'">
+                
+                <!-- Character count display when near or over limit -->
+                <span *ngIf="isNearLimit()"
+                  class="text-[11px] font-mono transition-colors"
+                  [ngClass]="isOverLimit() ? 'text-rose-500 font-semibold' : 'text-amber-500 dark:text-amber-400'">
+                  {{ remainingChars() }}
+                </span>
+
+                <!-- Circular SVG Progress Meter -->
+                <div class="relative w-5 h-5 flex items-center justify-center">
+                  <svg class="w-5 h-5 -rotate-90" viewBox="0 0 24 24">
+                    <!-- Background Track -->
+                    <circle cx="12" cy="12" r="9" fill="none"
+                      class="stroke-slate-200 dark:stroke-white/10" stroke-width="2.5" />
+                    <!-- Animated Progress Stroke -->
+                    <circle cx="12" cy="12" r="9" fill="none"
+                      [attr.stroke]="spinnerColor()"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-dasharray="56.5487"
+                      [attr.stroke-dashoffset]="strokeDashoffset()"
+                      class="transition-[stroke-dashoffset,stroke] duration-150" />
+                  </svg>
+                </div>
               </div>
-            </button>
+
+              <!-- Send Action Button -->
+              <button (click)="submitPrompt()"
+                [disabled]="!topicPrompt().trim() || isSubmitting() || isOverLimit()"
+                [ngClass]="topicPrompt().trim() && !isSubmitting() && !isOverLimit() ? 'bg-slate-900 text-white dark:bg-white dark:text-black hover:opacity-90 shadow-md cursor-pointer' : 'bg-slate-200 text-slate-400 dark:bg-white/10 dark:text-white/30 cursor-not-allowed'"
+                class="w-8 h-8 rounded-xl flex items-center justify-center transition-all">
+                <ng-icon *ngIf="!isSubmitting()" name="lucideArrowUp" class="w-4 h-4"></ng-icon>
+                <div *ngIf="isSubmitting()"
+                  class="w-3.5 h-3.5 border-2 border-slate-400 dark:border-white/20 border-t-slate-900 dark:border-t-white rounded-full animate-spin">
+                </div>
+              </button>
+
+            </div>
 
           </div>
 

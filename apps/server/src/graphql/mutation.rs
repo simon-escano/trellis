@@ -20,13 +20,20 @@ impl MutationRoot {
         let dispatcher = ctx.data::<QueueDispatcher>()?;
 
         let doc_id = Uuid::new_v4();
+        let safe_title = if input.title.chars().count() > 250 {
+            let truncated: String = input.title.chars().take(247).collect();
+            format!("{}...", truncated)
+        } else {
+            input.title
+        };
+
         let doc = sqlx::query_as::<_, Document>(
             "INSERT INTO documents (id, title, raw_content, status, created_at, updated_at)
              VALUES ($1, $2, $3, $4, NOW(), NOW())
              RETURNING id, title, raw_content, summary, status, error_message, created_at, updated_at",
         )
         .bind(doc_id)
-        .bind(&input.title)
+        .bind(&safe_title)
         .bind(&input.raw_content)
         .bind(ProcessingStatus::Queued)
         .fetch_one(pool)

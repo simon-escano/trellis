@@ -149,12 +149,26 @@ export class DocumentStore {
       return newDoc;
     }
 
-    // Synthesize structured content for new freeform topic
-    const synthesizedContent = `# ${trimmed}
+    // Synthesize or extract structured content for new freeform topic
+    let title: string;
+    let rawContent: string;
+
+    if (trimmed.length <= 80 && !trimmed.includes('\n')) {
+      title = trimmed;
+      rawContent = `# ${trimmed}
 Overview: An exploration of the fundamental concepts, core components, architectural relationships, and operational mechanisms governing ${trimmed}.
 Key components include primary driving forces, systemic dependencies, control policies, and feedback interfaces.`;
+    } else {
+      // For longer context, extract the first sentence/line as a clean title (max 80 chars)
+      const firstLine = trimmed.split(/[\n.?!]/)[0].trim();
+      title =
+        firstLine.length > 0 && firstLine.length <= 80
+          ? firstLine
+          : trimmed.slice(0, 77).trim() + '...';
+      rawContent = trimmed;
+    }
 
-    const newDoc = await this.ingestDocument(trimmed, synthesizedContent);
+    const newDoc = await this.ingestDocument(title, rawContent);
     this.openDocument(newDoc.id);
     return newDoc;
   }
