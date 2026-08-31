@@ -218,7 +218,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `npm --prefix apps/web run build`
   - **Git Commit Message:** `chore(web): scaffold angular 18 standalone app with obsidian dark tailwind theme and dm sans`
 
-- [ ] **Task 3.2: GraphQL Apollo Client & Signal Store State Management**
+- [x] **Task 3.2: GraphQL Apollo Client & Signal Store State Management**
   - **Target Files:** `apps/web/src/app/core/models/document.model.ts`, `apps/web/src/app/core/services/graphql.service.ts`, `apps/web/src/app/core/state/document.store.ts`
   - **Prerequisites:** Task 3.1
   - **Validation Command:** `npm --prefix apps/web run build`
