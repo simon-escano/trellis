@@ -131,7 +131,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `node -e "const pkg = require('./package.json'); if (!pkg.workspaces || !pkg.workspaces.includes('apps/*')) process.exit(1);"`
   - **Git Commit Message:** `chore(workspace): initialize monorepo root structure and npm workspaces`
 
-- [ ] **Task 0.2: PostgreSQL 16 Containerization & Initial DDL**
+- [x] **Task 0.2: PostgreSQL 16 Containerization & Initial DDL**
   - **Target Files:** `docker-compose.yml`, `docker/init.sql`
   - **Prerequisites:** Task 0.1
   - **Validation Command:** `docker compose config`
