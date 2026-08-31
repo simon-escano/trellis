@@ -242,7 +242,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `npm --prefix apps/web run build`
   - **Git Commit Message:** `feat(web): implement document ingestion modal with 3-persona one-click demo presets`
 
-- [ ] **Task 3.6: Header Toolbar, System Metrics & Live Status Stream**
+- [x] **Task 3.6: Header Toolbar, System Metrics & Live Status Stream**
   - **Target Files:** `apps/web/src/app/features/header/header.component.ts`, `apps/web/src/app/features/header/header.component.html`, `apps/web/src/app/app.component.ts`, `apps/web/src/app/app.component.html`
   - **Prerequisites:** Task 3.5
   - **Validation Command:** `npm --prefix apps/web run build`

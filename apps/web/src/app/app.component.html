@@ -1,0 +1,19 @@
+<main class="h-screen w-screen flex flex-col bg-trellis-bg text-trellis-text-primary overflow-hidden select-none">
+  <!-- Top Navigation Toolbar -->
+  <app-header (openIngestModal)="openIngestModal()"></app-header>
+
+  <!-- Central Canvas & Inspector Work Area -->
+  <div class="flex-1 flex overflow-hidden relative">
+    
+    <!-- Interactive Mind Map Canvas -->
+    <div class="flex-1 h-full relative">
+      <app-canvas></app-canvas>
+    </div>
+
+    <!-- Executive Summary Drawer & Concept Inspector -->
+    <app-inspector></app-inspector>
+  </div>
+
+  <!-- Document Ingestion Modal -->
+  <app-ingest-modal [isOpen]="isIngestModalOpen()" (close)="closeIngestModal()"></app-ingest-modal>
+</main>

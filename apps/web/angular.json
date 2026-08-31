@@ -29,7 +29,11 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "vis-network",
+              "vis-data"
+            ]
           },
           "configurations": {
             "production": {
