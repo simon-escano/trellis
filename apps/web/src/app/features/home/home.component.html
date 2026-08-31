@@ -1,4 +1,5 @@
-<div class="flex flex-col w-full h-full min-h-screen bg-[#F4F6FB] dark:bg-[#07090E] text-slate-900 dark:text-white relative select-none overflow-hidden transition-colors duration-200">
+<div
+  class="flex flex-col w-full h-full min-h-screen bg-[#F4F6FB] dark:bg-[#07090E] text-slate-900 dark:text-white relative select-none overflow-hidden transition-colors duration-200">
 
   <!-- Interactive Hover-Illuminated Dot Field Background Canvas -->
   <canvas #dotsCanvas class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
@@ -16,8 +17,10 @@
       </button>
 
       <!-- Freestanding Trellis Logo matching text height -->
-      <svg viewBox="0 0 1080 812.94" fill="currentColor" class="h-5 sm:h-6 w-auto text-emerald-500 dark:text-emerald-400 shrink-0">
-        <path d="m1070.02,109.66c-27.08-75.16-105.85-121.08-184.52-107.19-64.8,11.44-112.65,57.53-130.42,114.32-12.95,41.39-45.75,73.54-87.41,85.56l-91.89,26.5c-23.37,6.74-48.18,6.74-71.55,0l-91.9-26.5c-41.56-11.99-74.48-43.95-87.32-85.26C307.16,59.67,258.61,13.23,193.14,2.24,114.15-11.02,35.59,35.83,9.33,111.49c-31.74,91.44,20.46,189.29,112.27,214.89,54.9,15.31,111.04,1.18,151.63-32.9,33.4-28.05,77.9-38.98,119.8-26.9l20.09,5.79c55.28,15.94,93.34,66.53,93.34,124.07v3.83c0,43.34-21.75,83.77-57.91,107.65-49.79,32.87-80.85,91.82-73.74,157.39,8.62,79.47,74.79,142.33,154.58,147.29,96.61,6.01,176.83-70.57,176.83-165.88,0-57.36-29.06-107.93-73.25-137.8-36.44-24.63-59.41-64.7-59.41-108.69v-3.79c0-57.53,38.06-108.12,93.35-124.07l19.33-5.57c42.22-12.18,87.09-1.28,120.81,26.91,41.08,34.34,97.97,48.25,153.24,32.14,91.51-26.68,142.57-125.13,109.76-216.2Z"/>
+      <svg viewBox="0 0 1080 812.94" fill="currentColor"
+        class="h-5 sm:h-6 w-auto text-emerald-500 dark:text-emerald-400 shrink-0">
+        <path
+          d="m1070.02,109.66c-27.08-75.16-105.85-121.08-184.52-107.19-64.8,11.44-112.65,57.53-130.42,114.32-12.95,41.39-45.75,73.54-87.41,85.56l-91.89,26.5c-23.37,6.74-48.18,6.74-71.55,0l-91.9-26.5c-41.56-11.99-74.48-43.95-87.32-85.26C307.16,59.67,258.61,13.23,193.14,2.24,114.15-11.02,35.59,35.83,9.33,111.49c-31.74,91.44,20.46,189.29,112.27,214.89,54.9,15.31,111.04,1.18,151.63-32.9,33.4-28.05,77.9-38.98,119.8-26.9l20.09,5.79c55.28,15.94,93.34,66.53,93.34,124.07v3.83c0,43.34-21.75,83.77-57.91,107.65-49.79,32.87-80.85,91.82-73.74,157.39,8.62,79.47,74.79,142.33,154.58,147.29,96.61,6.01,176.83-70.57,176.83-165.88,0-57.36-29.06-107.93-73.25-137.8-36.44-24.63-59.41-64.7-59.41-108.69v-3.79c0-57.53,38.06-108.12,93.35-124.07l19.33-5.57c42.22-12.18,87.09-1.28,120.81,26.91,41.08,34.34,97.97,48.25,153.24,32.14,91.51-26.68,142.57-125.13,109.76-216.2Z" />
       </svg>
       <!-- Logo -->
       <span class="font-medium text-xl sm:text-2xl tracking-tight text-slate-900 dark:text-white/95">Trellis</span>
@@ -25,9 +28,11 @@
 
     <div class="flex items-center space-x-2 sm:space-x-4">
       <!-- Dark / Light Theme Toggle Button -->
-      <button (click)="themeService.toggleTheme()" [title]="themeService.isDark() ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+      <button (click)="themeService.toggleTheme()"
+        [title]="themeService.isDark() ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
         class="w-8 h-8 rounded-xl apple-button-secondary flex items-center justify-center transition-all cursor-pointer">
-        <ng-icon [name]="themeService.isDark() ? 'lucideSun' : 'lucideMoon'" class="w-4 h-4 text-amber-400 dark:text-amber-300"></ng-icon>
+        <ng-icon [name]="themeService.isDark() ? 'lucideSun' : 'lucideMoon'"
+          class="w-4 h-4 text-amber-400 dark:text-amber-300"></ng-icon>
       </button>
 
       <a href="https://github.com" target="_blank"
@@ -54,13 +59,13 @@
 
     <!-- Floating Rounded Left Sidebar: Past Explored Topics & Examples -->
     <!-- (Desktop: static relative sidebar; Mobile: sliding overlay drawer) -->
-    <aside
-      [ngClass]="isMobileSidebarOpen() ? 'fixed left-3 top-16 bottom-3 z-50 flex' : 'hidden md:flex'"
+    <aside [ngClass]="isMobileSidebarOpen() ? 'fixed left-3 top-16 bottom-3 z-50 flex' : 'hidden md:flex'"
       class="w-72 sm:w-80 h-[calc(100%-1.5rem)] md:h-full border border-slate-200/80 dark:border-white/10 apple-glass rounded-3xl shadow-2xl flex-col p-4 shrink-0 overflow-hidden transition-all duration-200">
 
       <div class="flex items-center justify-between md:hidden mb-2">
         <span class="text-xs font-medium text-slate-500 dark:text-white/60">Topics &amp; Examples</span>
-        <button (click)="closeMobileSidebar()" class="text-slate-400 dark:text-white/40 hover:text-slate-900 dark:hover:text-white p-1">
+        <button (click)="closeMobileSidebar()"
+          class="text-slate-400 dark:text-white/40 hover:text-slate-900 dark:hover:text-white p-1">
           <ng-icon name="lucideX" class="w-4 h-4"></ng-icon>
         </button>
       </div>
@@ -101,7 +106,8 @@
             <span>{{ filteredDocuments().length }}</span>
           </div>
 
-          <div *ngIf="filteredDocuments().length === 0" class="p-4 text-center text-xs text-slate-400 dark:text-white/30">
+          <div *ngIf="filteredDocuments().length === 0"
+            class="p-4 text-center text-xs text-slate-400 dark:text-white/30">
             No topics yet. Ingest a document or start a topic!
           </div>
 
@@ -113,7 +119,8 @@
                 <ng-icon name="lucideFileText" class="w-4 h-4"></ng-icon>
               </div>
               <div class="flex-1 min-w-0">
-                <h4 class="text-xs font-medium text-slate-800 dark:text-white/85 group-hover:text-slate-900 dark:group-hover:text-white truncate transition-colors">
+                <h4
+                  class="text-xs font-medium text-slate-800 dark:text-white/85 group-hover:text-slate-900 dark:group-hover:text-white truncate transition-colors">
                   {{ doc.title }}
                 </h4>
                 <div class="flex items-center space-x-2 text-[10px] text-slate-500 dark:text-white/40 mt-1">
@@ -142,10 +149,12 @@
                 <ng-icon name="lucideSparkles" class="w-4 h-4 text-emerald-500 dark:text-emerald-400"></ng-icon>
               </div>
               <div class="flex-1 min-w-0">
-                <h4 class="text-xs font-medium text-slate-800 dark:text-white/85 group-hover:text-slate-900 dark:group-hover:text-white truncate transition-colors">
+                <h4
+                  class="text-xs font-medium text-slate-800 dark:text-white/85 group-hover:text-slate-900 dark:group-hover:text-white truncate transition-colors">
                   {{ preset.title }}
                 </h4>
-                <p class="text-[10px] text-slate-500 dark:text-white/40 line-clamp-1 mt-0.5">{{ preset.description }}</p>
+                <p class="text-[10px] text-slate-500 dark:text-white/40 line-clamp-1 mt-0.5">{{ preset.description }}
+                </p>
               </div>
             </div>
           </div>
@@ -156,18 +165,22 @@
     </aside>
 
     <!-- Center Main Content: LLM Prompt Box & Suggestions -->
-    <main class="flex-1 h-full overflow-y-auto custom-scrollbar p-3 sm:p-6 md:p-12 flex flex-col items-center justify-center">
+    <main
+      class="flex-1 h-full overflow-y-auto custom-scrollbar p-3 sm:p-6 md:p-12 flex flex-col items-center justify-center">
 
       <div class="w-full max-w-2xl flex flex-col items-center">
 
         <!-- Hero Title with Trellis Logo in between "to" and "Trellis" -->
         <div class="w-full text-left mb-4 sm:mb-6">
-          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-medium tracking-tight text-slate-900 dark:text-white/95 leading-tight flex items-center flex-wrap gap-x-2 sm:gap-x-3">
+          <h1
+            class="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-medium tracking-tight text-slate-900 dark:text-white/95 leading-tight flex items-center flex-wrap gap-x-2 sm:gap-x-3">
             <span>Welcome to</span>
-            <svg viewBox="0 0 1080 812.94" fill="currentColor" class="h-[0.75em] w-auto text-emerald-500 dark:text-emerald-400 shrink-0 inline-block align-middle">
-              <path d="m1070.02,109.66c-27.08-75.16-105.85-121.08-184.52-107.19-64.8,11.44-112.65,57.53-130.42,114.32-12.95,41.39-45.75,73.54-87.41,85.56l-91.89,26.5c-23.37,6.74-48.18,6.74-71.55,0l-91.9-26.5c-41.56-11.99-74.48-43.95-87.32-85.26C307.16,59.67,258.61,13.23,193.14,2.24,114.15-11.02,35.59,35.83,9.33,111.49c-31.74,91.44,20.46,189.29,112.27,214.89,54.9,15.31,111.04,1.18,151.63-32.9,33.4-28.05,77.9-38.98,119.8-26.9l20.09,5.79c55.28,15.94,93.34,66.53,93.34,124.07v3.83c0,43.34-21.75,83.77-57.91,107.65-49.79,32.87-80.85,91.82-73.74,157.39,8.62,79.47,74.79,142.33,154.58,147.29,96.61,6.01,176.83-70.57,176.83-165.88,0-57.36-29.06-107.93-73.25-137.8-36.44-24.63-59.41-64.7-59.41-108.69v-3.79c0-57.53,38.06-108.12,93.35-124.07l19.33-5.57c42.22-12.18,87.09-1.28,120.81,26.91,41.08,34.34,97.97,48.25,153.24,32.14,91.51-26.68,142.57-125.13,109.76-216.2Z"/>
+            <svg viewBox="0 0 1080 812.94" fill="currentColor"
+              class="h-[0.75em] w-auto text-emerald-500 dark:text-emerald-400 shrink-0 inline-block align-middle">
+              <path
+                d="m1070.02,109.66c-27.08-75.16-105.85-121.08-184.52-107.19-64.8,11.44-112.65,57.53-130.42,114.32-12.95,41.39-45.75,73.54-87.41,85.56l-91.89,26.5c-23.37,6.74-48.18,6.74-71.55,0l-91.9-26.5c-41.56-11.99-74.48-43.95-87.32-85.26C307.16,59.67,258.61,13.23,193.14,2.24,114.15-11.02,35.59,35.83,9.33,111.49c-31.74,91.44,20.46,189.29,112.27,214.89,54.9,15.31,111.04,1.18,151.63-32.9,33.4-28.05,77.9-38.98,119.8-26.9l20.09,5.79c55.28,15.94,93.34,66.53,93.34,124.07v3.83c0,43.34-21.75,83.77-57.91,107.65-49.79,32.87-80.85,91.82-73.74,157.39,8.62,79.47,74.79,142.33,154.58,147.29,96.61,6.01,176.83-70.57,176.83-165.88,0-57.36-29.06-107.93-73.25-137.8-36.44-24.63-59.41-64.7-59.41-108.69v-3.79c0-57.53,38.06-108.12,93.35-124.07l19.33-5.57c42.22-12.18,87.09-1.28,120.81,26.91,41.08,34.34,97.97,48.25,153.24,32.14,91.51-26.68,142.57-125.13,109.76-216.2Z" />
             </svg>
-            <span>Trellis..</span>
+            <span>Trellis</span>
           </h1>
         </div>
 
@@ -196,7 +209,8 @@
               class="w-8 h-8 rounded-xl flex items-center justify-center transition-all">
               <ng-icon *ngIf="!isSubmitting()" name="lucideArrowUp" class="w-4 h-4"></ng-icon>
               <div *ngIf="isSubmitting()"
-                class="w-3.5 h-3.5 border-2 border-slate-400 dark:border-white/20 border-t-slate-900 dark:border-t-white rounded-full animate-spin"></div>
+                class="w-3.5 h-3.5 border-2 border-slate-400 dark:border-white/20 border-t-slate-900 dark:border-t-white rounded-full animate-spin">
+              </div>
             </button>
 
           </div>
