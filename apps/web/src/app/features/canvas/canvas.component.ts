@@ -43,6 +43,15 @@ function truncate(str: string, len: number): string {
   return str.length > len ? str.substring(0, len - 1) + '…' : str;
 }
 
+function formatRelationType(rel: string): string {
+  if (!rel) return '';
+  return rel
+    .toLowerCase()
+    .split('_')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
 function wrapText(
   text: string,
   maxCharsPerLine = 34,
@@ -77,30 +86,30 @@ function getCategoryColor(cat: EntityCategory): {
   switch (cat) {
     case 'CONCEPT':
       return {
-        bg: 'rgba(0, 245, 160, 0.12)',
-        border: 'rgba(0, 245, 160, 0.4)',
+        bg: 'rgba(0, 245, 160, 0.14)',
+        border: 'rgba(0, 245, 160, 0.45)',
         text: '#00F5A0',
         accent: '#00F5A0',
       };
     case 'SERVICE':
     case 'SYSTEM':
       return {
-        bg: 'rgba(56, 189, 248, 0.12)',
-        border: 'rgba(56, 189, 248, 0.4)',
+        bg: 'rgba(56, 189, 248, 0.14)',
+        border: 'rgba(56, 189, 248, 0.45)',
         text: '#38BDF8',
         accent: '#38BDF8',
       };
     case 'DATA_MODEL':
       return {
-        bg: 'rgba(251, 191, 36, 0.12)',
-        border: 'rgba(251, 191, 36, 0.4)',
+        bg: 'rgba(251, 191, 36, 0.14)',
+        border: 'rgba(251, 191, 36, 0.45)',
         text: '#FBBF24',
         accent: '#FBBF24',
       };
     case 'INFRASTRUCTURE':
       return {
-        bg: 'rgba(251, 113, 133, 0.12)',
-        border: 'rgba(251, 113, 133, 0.4)',
+        bg: 'rgba(251, 113, 133, 0.14)',
+        border: 'rgba(251, 113, 133, 0.45)',
         text: '#FB7185',
         accent: '#FB7185',
       };
@@ -108,8 +117,8 @@ function getCategoryColor(cat: EntityCategory): {
     case 'API_ENDPOINT':
     default:
       return {
-        bg: 'rgba(192, 132, 252, 0.12)',
-        border: 'rgba(192, 132, 252, 0.4)',
+        bg: 'rgba(192, 132, 252, 0.14)',
+        border: 'rgba(192, 132, 252, 0.45)',
         text: '#C084FC',
         accent: '#C084FC',
       };
@@ -208,8 +217,8 @@ function createNodeSvg(
   const safeCat = escapeXml(category.replace(/_/g, ' '));
   const descLines = wrapText(description, 36, 3);
 
-  // Calculate dynamic responsive pill width based on text length
-  const pillWidth = Math.max(78, safeCat.length * 6.5 + 32);
+  // Calculate dynamic responsive pill width with generous breathing room
+  const pillWidth = Math.max(86, safeCat.length * 6.8 + 40);
 
   const iconGeometry = getCategoryIconSvgGeometry(category, 20, 16.5, color.text);
 
@@ -233,13 +242,13 @@ function createNodeSvg(
     <path d="M 22 3.5 L 248 3.5" stroke="url(#specularGrad)" stroke-width="1.2" stroke-linecap="round" />
 
     <!-- Responsive Auto-Sized Category Pill -->
-    <rect x="14" y="14" width="${pillWidth}" height="21" rx="10.5" ry="10.5" fill="${color.bg}" stroke="${color.border}" stroke-width="0.8" />
+    <rect x="14" y="14" width="${pillWidth}" height="22" rx="11" ry="11" fill="${color.bg}" stroke="${color.border}" stroke-width="0.8" />
     
     <!-- Vector Category Icon -->
     ${iconGeometry}
     
-    <!-- Category Label -->
-    <text x="37" y="28.5" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="700" fill="${color.text}" letter-spacing="0.5">
+    <!-- Category Label with generous spacing from icon -->
+    <text x="42" y="29" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="9.5" font-weight="700" fill="${color.text}" letter-spacing="0.5">
       ${safeCat}
     </text>
 
@@ -321,12 +330,30 @@ export class CanvasComponent implements OnInit, OnDestroy {
         shape: 'image',
         size: 65,
         borderWidth: 0,
+        borderWidthSelected: 0,
+        shapeProperties: {
+          useBorderWithImage: false,
+          useImageSize: false,
+          interpolation: true,
+        },
+        color: {
+          background: 'rgba(0,0,0,0)',
+          border: 'rgba(0,0,0,0)',
+          highlight: {
+            background: 'rgba(0,0,0,0)',
+            border: 'rgba(0,0,0,0)',
+          },
+          hover: {
+            background: 'rgba(0,0,0,0)',
+            border: 'rgba(0,0,0,0)',
+          },
+        },
         shadow: false,
       },
       edges: {
         width: 1.5,
         color: {
-          color: 'rgba(255, 255, 255, 0.2)',
+          color: 'rgba(255, 255, 255, 0.22)',
           highlight: '#00F5A0',
           hover: '#38BDF8',
         },
@@ -342,12 +369,13 @@ export class CanvasComponent implements OnInit, OnDestroy {
           roundness: 0.5,
         },
         font: {
-          color: '#94A3B8',
-          size: 10,
-          face: 'JetBrains Mono, monospace',
-          strokeWidth: 3,
-          strokeColor: '#07090E',
-          align: 'middle',
+          color: '#E2E8F0',
+          size: 11,
+          face: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "DM Sans", sans-serif',
+          strokeWidth: 0,
+          strokeColor: 'transparent',
+          background: 'rgba(15, 23, 42, 0.92)',
+          align: 'horizontal',
         },
       },
       physics: {
@@ -418,7 +446,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
       id: rel.id,
       from: rel.sourceEntity?.id || (rel as any).source_entity_id,
       to: rel.targetEntity?.id || (rel as any).target_entity_id,
-      label: rel.relationType,
+      label: formatRelationType(rel.relationType),
     }));
 
     this.nodesDataSet.clear();
