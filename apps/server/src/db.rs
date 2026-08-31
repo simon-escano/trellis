@@ -16,18 +16,33 @@ pub async fn init_db_pool(database_url: &str) -> Result<PgPool, Error> {
 }
 
 async fn run_migrations(pool: &PgPool) -> Result<(), Error> {
+    sqlx::query(r#"CREATE EXTENSION IF NOT EXISTS "uuid-ossp";"#)
+        .execute(pool)
+        .await?;
+
     sqlx::query(
         r#"
-        CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
         CREATE TABLE IF NOT EXISTS users (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
             email VARCHAR(255) UNIQUE NOT NULL,
             password_hash VARCHAR(255) NOT NULL,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
+        "#,
+    )
+    .execute(pool)
+    .await?;
 
+    sqlx::query(
+        r#"
         ALTER TABLE documents ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES users(id) ON DELETE CASCADE;
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
+    sqlx::query(
+        r#"
         CREATE INDEX IF NOT EXISTS idx_documents_user_id ON documents(user_id);
         "#,
     )
