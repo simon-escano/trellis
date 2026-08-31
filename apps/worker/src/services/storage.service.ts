@@ -9,9 +9,10 @@ export async function saveAnalysisResults(
   documentId: string,
   data: DocumentAnalysisOutput
 ): Promise<void> {
-  const client = await pool.connect();
+  let client: import("pg").PoolClient | null = null;
 
   try {
+    client = await pool.connect();
     await client.query("BEGIN;");
 
     // 1. Update document status and summary
@@ -80,7 +81,13 @@ export async function saveAnalysisResults(
       `[Storage] Successfully persisted analysis for document ${documentId} (${data.entities.length} concepts, ${data.relationships.length} connections).`
     );
   } catch (err: any) {
-    await client.query("ROLLBACK;");
+    if (client) {
+      try {
+        await client.query("ROLLBACK;");
+      } catch (_) {}
+      client.release(err);
+      client = null;
+    }
     console.error(
       `[Storage] Transaction rolled back for document ${documentId}:`,
       err
@@ -105,6 +112,8 @@ export async function saveAnalysisResults(
 
     throw err;
   } finally {
-    client.release();
+    if (client) {
+      client.release();
+    }
   }
 }

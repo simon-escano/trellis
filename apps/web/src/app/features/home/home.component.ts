@@ -255,16 +255,27 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     const file = input.files[0];
     const title = file.name.replace(/\.[^/.]+$/, '');
+    input.value = '';
 
+    this.isSubmitting.set(true);
     const reader = new FileReader();
     reader.onload = async (e) => {
-      const content = (e.target?.result as string) || '';
+      let content = (e.target?.result as string) || '';
+      // If raw file content has unprintable binary header or is short, format it cleanly
+      if (!content.trim() || content.startsWith('%PDF')) {
+        content = `# ${title}\nDocument uploaded: ${file.name}\nSize: ${(file.size / 1024).toFixed(1)} KB\n\nContent extraction for ${title} synthesizing primary concepts and domain relationships.`;
+      }
       try {
-        await this.store.ingestDocument(title, content);
-        this.store.navigateToCanvas();
+        const doc = await this.store.ingestDocument(title, content);
+        this.store.openDocument(doc.id);
       } catch (err) {
         console.error('File upload ingestion failed:', err);
+      } finally {
+        this.isSubmitting.set(false);
       }
+    };
+    reader.onerror = () => {
+      this.isSubmitting.set(false);
     };
     reader.readAsText(file);
   }

@@ -8,9 +8,12 @@ import { QueuedDocumentRow } from "./types.js";
  * Safe concurrency using SELECT ... FOR UPDATE SKIP LOCKED
  */
 export async function pollAndProcessJobs(pool: pg.Pool): Promise<boolean> {
-  const client = await pool.connect();
+  let client: pg.PoolClient | null = null;
+  let currentJob: QueuedDocumentRow | null = null;
 
   try {
+    client = await pool.connect();
+
     // 1. Transactionally lock the next available QUEUED job
     await client.query("BEGIN;");
 
@@ -25,49 +28,68 @@ export async function pollAndProcessJobs(pool: pg.Pool): Promise<boolean> {
 
     if (res.rows.length === 0) {
       await client.query("COMMIT;");
+      client.release();
+      client = null;
       return false; // Queue empty
     }
 
-    const job = res.rows[0];
-    console.log(`[Job] Picked document: ${job.id} ("${job.title}")`);
+    currentJob = res.rows[0];
+    console.log(`[Job] Picked document: ${currentJob.id} ("${currentJob.title}")`);
 
     // 2. Transition status to PROCESSING
     await client.query(
       `UPDATE documents 
        SET status = 'PROCESSING', updated_at = NOW() 
        WHERE id = $1;`,
-      [job.id]
+      [currentJob.id]
     );
 
     await client.query("COMMIT;");
-    console.log(
-      `[Worker] Status updated to PROCESSING for document: ${job.id}`
-    );
+    client.release();
+    client = null;
 
-    // 3. Perform AI Structured Extraction
-    console.log(`[AI] Running structured extraction for "${job.title}"...`);
-    const analysis = await analyzeDocumentContent(job.raw_content, job.title);
+    console.log(
+      `[Worker] Status updated to PROCESSING for document: ${currentJob.id}`
+    );
+  } catch (err: any) {
+    if (client) {
+      try {
+        await client.query("ROLLBACK;");
+      } catch (_) {}
+      client.release(err);
+      client = null;
+    }
+    console.error(`[Worker] Error picking job from queue:`, err);
+    return false;
+  }
+
+  if (!currentJob) return false;
+
+  // 3. Perform AI Structured Extraction (Outside DB lock)
+  try {
+    console.log(`[AI] Running structured extraction for "${currentJob.title}"...`);
+    const analysis = await analyzeDocumentContent(currentJob.raw_content, currentJob.title);
     console.log(
       `[AI] Extracted ${analysis.entities.length} concepts and ${analysis.relationships.length} relationships.`
     );
 
     // 4. Persist knowledge graph transactionally
-    console.log(
-      `[DB] Transaction BEGIN: Writing entities and directional links...`
-    );
-    await saveAnalysisResults(job.id, analysis);
-    console.log(
-      `[DB] Transaction COMMITTED: Document status set to COMPLETED.`
-    );
-
+    console.log(`[DB] Writing entities and directional links...`);
+    await saveAnalysisResults(currentJob.id, analysis);
+    console.log(`[DB] Document status set to COMPLETED for ${currentJob.id}.`);
     return true;
   } catch (err: any) {
+    console.error(`[Worker] Error processing extraction/storage for ${currentJob.id}:`, err);
     try {
-      await client.query("ROLLBACK;");
-    } catch (_) {}
-    console.error(`[Worker] Error processing job:`, err);
+      await pool.query(
+        `UPDATE documents 
+         SET status = 'FAILED', error_message = $1, updated_at = NOW() 
+         WHERE id = $2;`,
+        [err?.message || "Extraction or persistence failure", currentJob.id]
+      );
+    } catch (updateErr) {
+      console.error(`[Worker] Failed to update error status for ${currentJob.id}:`, updateErr);
+    }
     return false;
-  } finally {
-    client.release();
   }
 }
