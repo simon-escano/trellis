@@ -3,7 +3,7 @@ use async_graphql::http::GraphiQLSource;
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{
     extract::Extension,
-    http::{header, HeaderValue, Method, StatusCode},
+    http::StatusCode,
     response::{Html, IntoResponse, Json},
     routing::get,
     Router,
@@ -94,13 +94,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .data(single_entity_loader)
         .finish();
 
-    let cors = CorsLayer::new()
-        .allow_origin([
-            "http://localhost:4200".parse::<HeaderValue>()?,
-            "http://127.0.0.1:4200".parse::<HeaderValue>()?,
-        ])
-        .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
-        .allow_headers([header::CONTENT_TYPE, header::AUTHORIZATION, header::ACCEPT]);
+    let cors = CorsLayer::permissive();
 
     let app = Router::new()
         .route("/health", get(health_check))

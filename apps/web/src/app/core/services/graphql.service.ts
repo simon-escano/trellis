@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApolloClient, InMemoryCache, HttpLink, gql } from '@apollo/client/core';
 import { Document, SystemMetrics } from '../models/document.model';
+import { environment } from '../../../environments/environment';
 
 export const GET_DOCUMENTS_QUERY = gql`
   query GetDocuments($limit: Int, $offset: Int) {
@@ -163,6 +164,29 @@ export const DELETE_DOCUMENT_MUTATION = gql`
   }
 `;
 
+function resolveGraphQLUri(): string {
+  if (typeof window !== 'undefined') {
+    const win = window as any;
+    if (win.__TRELLIS_API_URL__) {
+      return win.__TRELLIS_API_URL__;
+    }
+    const stored = localStorage.getItem('TRELLIS_API_URL');
+    if (stored) {
+      return stored;
+    }
+  }
+
+  if (environment.apiUrl && environment.apiUrl.trim().length > 0) {
+    return environment.apiUrl;
+  }
+
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:8080/graphql';
+  }
+
+  return '/graphql';
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -172,7 +196,7 @@ export class GraphQLService {
   constructor() {
     this.client = new ApolloClient({
       link: new HttpLink({
-        uri: 'http://localhost:8080/graphql',
+        uri: resolveGraphQLUri(),
       }),
       cache: new InMemoryCache(),
       defaultOptions: {
