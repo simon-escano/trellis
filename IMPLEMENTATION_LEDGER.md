@@ -197,7 +197,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `npm --prefix apps/worker run build`
   - **Git Commit Message:** `feat(worker): implement ai structured extraction service with zero-cost mock fallback`
 
-- [ ] **Task 2.4: Transactional PostgreSQL Knowledge Graph Writer**
+- [x] **Task 2.4: Transactional PostgreSQL Knowledge Graph Writer**
   - **Target Files:** `apps/worker/src/services/storage.service.ts`
   - **Prerequisites:** Task 2.3
   - **Validation Command:** `npm --prefix apps/worker run build`
