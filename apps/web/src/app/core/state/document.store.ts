@@ -87,8 +87,13 @@ export class DocumentStore {
       ]);
       this.documents.set(docs);
       this.metrics.set(metrics);
-      if (docs.length > 0 && !this.selectedDocumentId()) {
-        this.selectedDocumentId.set(docs[0].id);
+      if (docs.length > 0) {
+        if (!this.selectedDocumentId() || !docs.some((d) => d.id === this.selectedDocumentId())) {
+          this.selectedDocumentId.set(docs[0].id);
+        }
+      } else {
+        this.selectedDocumentId.set(null);
+        this.selectedEntity.set(null);
       }
     } catch (err: any) {
       console.error('[DocumentStore] Failed to load data:', err);

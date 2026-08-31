@@ -197,7 +197,7 @@ impl MutationRoot {
                 sqlx::query_as::<_, Document>(
                     "UPDATE documents
                      SET status = $2, summary = NULL, error_message = NULL, updated_at = NOW()
-                     WHERE id = $1 AND (user_id = $3 OR user_id IS NULL)
+                     WHERE id = $1 AND user_id = $3
                      RETURNING id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at",
                 )
                 .bind(doc_id)
@@ -246,7 +246,7 @@ impl MutationRoot {
 
         let result = if let Some(auth_user) = auth_user_opt {
             if !auth_user.is_guest {
-                sqlx::query("DELETE FROM documents WHERE id = $1 AND (user_id = $2 OR user_id IS NULL)")
+                sqlx::query("DELETE FROM documents WHERE id = $1 AND user_id = $2")
                     .bind(doc_id)
                     .bind(auth_user.id)
                     .execute(pool)

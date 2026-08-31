@@ -58,10 +58,11 @@ impl QueryRoot {
 
         let docs = if let Some(auth_user) = auth_user_opt {
             if !auth_user.is_guest {
+                // Authenticated user: ONLY see their own documents
                 sqlx::query_as::<_, Document>(
                     "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
                      FROM documents
-                     WHERE user_id = $1 OR user_id IS NULL
+                     WHERE user_id = $1
                      ORDER BY created_at DESC
                      LIMIT $2 OFFSET $3",
                 )
@@ -71,9 +72,11 @@ impl QueryRoot {
                 .fetch_all(pool)
                 .await?
             } else {
+                // Guest user: ONLY see guest/demo documents where user_id IS NULL
                 sqlx::query_as::<_, Document>(
                     "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
                      FROM documents
+                     WHERE user_id IS NULL
                      ORDER BY created_at DESC
                      LIMIT $1 OFFSET $2",
                 )
@@ -83,9 +86,11 @@ impl QueryRoot {
                 .await?
             }
         } else {
+            // Unauthenticated visitor: ONLY see guest/demo documents where user_id IS NULL
             sqlx::query_as::<_, Document>(
                 "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
                  FROM documents
+                 WHERE user_id IS NULL
                  ORDER BY created_at DESC
                  LIMIT $1 OFFSET $2",
             )
@@ -106,16 +111,18 @@ impl QueryRoot {
 
         let doc = if let Some(auth_user) = auth_user_opt {
             if !auth_user.is_guest {
+                // Authenticated user: ONLY get their own document
                 sqlx::query_as::<_, Document>(
                     "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
                      FROM documents
-                     WHERE id = $1 AND (user_id = $2 OR user_id IS NULL)",
+                     WHERE id = $1 AND user_id = $2",
                 )
                 .bind(doc_id)
                 .bind(auth_user.id)
                 .fetch_optional(pool)
                 .await?
             } else {
+                // Guest: ONLY get unowned/demo document
                 sqlx::query_as::<_, Document>(
                     "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
                      FROM documents
@@ -126,6 +133,7 @@ impl QueryRoot {
                 .await?
             }
         } else {
+            // Unauthenticated: ONLY get unowned/demo document
             sqlx::query_as::<_, Document>(
                 "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
                  FROM documents
@@ -152,7 +160,7 @@ impl QueryRoot {
                         COUNT(*) FILTER (WHERE status = 'QUEUED')::BIGINT as queued_count,
                         COUNT(*) FILTER (WHERE status = 'FAILED')::BIGINT as failed_count
                      FROM documents
-                     WHERE user_id = $1 OR user_id IS NULL",
+                     WHERE user_id = $1",
                 )
                 .bind(auth_user.id)
                 .fetch_one(pool)
@@ -164,7 +172,8 @@ impl QueryRoot {
                         COUNT(*) FILTER (WHERE status = 'COMPLETED')::BIGINT as processed_count,
                         COUNT(*) FILTER (WHERE status = 'QUEUED')::BIGINT as queued_count,
                         COUNT(*) FILTER (WHERE status = 'FAILED')::BIGINT as failed_count
-                     FROM documents",
+                     FROM documents
+                     WHERE user_id IS NULL",
                 )
                 .fetch_one(pool)
                 .await?
@@ -176,7 +185,8 @@ impl QueryRoot {
                     COUNT(*) FILTER (WHERE status = 'COMPLETED')::BIGINT as processed_count,
                     COUNT(*) FILTER (WHERE status = 'QUEUED')::BIGINT as queued_count,
                     COUNT(*) FILTER (WHERE status = 'FAILED')::BIGINT as failed_count
-                 FROM documents",
+                 FROM documents
+                 WHERE user_id IS NULL",
             )
             .fetch_one(pool)
             .await?
