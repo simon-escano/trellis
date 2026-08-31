@@ -1,7 +1,7 @@
 # ==========================================
 # Stage 1: Build Rust GraphQL Server
 # ==========================================
-FROM rust:1.80-slim-bookworm AS server-builder
+FROM rust:slim-bookworm AS server-builder
 WORKDIR /usr/src/server
 
 RUN apt-get update && apt-get install -y pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
