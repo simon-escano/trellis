@@ -1,19 +1,25 @@
-<main class="h-screen w-screen flex bg-[#07090E] text-[#F8FAFC] overflow-hidden select-none font-sans relative">
-  
-  <!-- Left Sidebar (macOS / Gemini Document History Rail) -->
-  <app-sidebar (openIngestModal)="openIngestModal()"></app-sidebar>
+<div class="flex w-screen h-screen overflow-hidden bg-[#07090E] text-white font-sans antialiased select-none relative">
 
-  <!-- Central Canvas Work Area -->
-  <section class="flex-1 h-full relative flex flex-col overflow-hidden">
-    <!-- Mind Map Canvas Viewport -->
-    <div class="flex-1 h-full w-full relative">
+  <!-- View 1: Homepage View (with Left Topic History Sidebar & LLM Prompt Container) -->
+  <app-home *ngIf="store.currentView() === 'home'" class="w-full h-full"></app-home>
+
+  <!-- View 2: Fullscreen Topic Concept Map View (Sidebar hidden for maximum immersive room) -->
+  <ng-container *ngIf="store.currentView() === 'canvas'">
+    
+    <!-- Fullscreen Concept Graph Canvas -->
+    <main class="w-full h-full relative z-0">
       <app-canvas></app-canvas>
-    </div>
-  </section>
+    </main>
 
-  <!-- Right Inspector Drawer -->
-  <app-inspector></app-inspector>
+    <!-- Floating Right Inspector Panel (Opens when an entity is selected) -->
+    <app-inspector class="absolute top-4 right-4 bottom-4 z-30 pointer-events-auto"></app-inspector>
 
-  <!-- Document Ingestion Sheet Modal -->
-  <app-ingest-modal [isOpen]="isIngestModalOpen()" (close)="closeIngestModal()"></app-ingest-modal>
-</main>
+  </ng-container>
+
+  <!-- Global Modal: PDF / Document Ingestion Sheet -->
+  <app-ingest-modal 
+    *ngIf="isIngestModalOpen()" 
+    (closeModal)="closeIngestModal()">
+  </app-ingest-modal>
+
+</div>

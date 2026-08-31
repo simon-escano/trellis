@@ -57,4 +57,32 @@ Apache Kafka serves as the central durable event backbone. Topic partitions are 
 
 Downstream Telemetry Workers consume event batches asynchronously from Kafka consumer groups. These workers perform deduplication, enrich event payloads, and persist analytics transactions into PostgreSQL Primary storage for long-term historical reporting. High-frequency counters and ephemeral session state are cached inside a distributed Redis cluster to provide sub-millisecond query latencies for user-facing dashboards.`,
   },
+  {
+    id: 'quantum-computing',
+    persona: 'Quantum Physics',
+    iconName: 'lucideSparkles',
+    categoryBadge: 'Quantum Researcher',
+    title: 'Quantum Computing & Entanglement Fundamentals',
+    description:
+      'Explore qubit superposition, Hadamard gates, quantum teleportation, and decoherence mitigation.',
+    rawContent: `Quantum computing leverages the fundamental principles of quantum mechanics to process information exponentially faster than classical Turing machines for specific problem classes. Unlike classical bits that exist in deterministic states of 0 or 1, quantum bits (qubits) exist in linear superpositions of orthogonal basis states.
+
+When qubits interact through unitary quantum logic gates—such as the Hadamard gate and Controlled-NOT (CNOT) gate—they can enter an entangled state, creating non-local correlations known as Bell states. In an entangled pair, measuring the state of one qubit instantaneously determines the state of the other, regardless of spatial separation.
+
+However, maintaining quantum coherence requires extreme isolation. Environmental noise, thermal fluctuations, and stray electromagnetic fields trigger quantum decoherence, collapsing delicate superposition states into classical probabilities. Modern quantum architectures mitigate decoherence using surface codes, topological protection, and dilution refrigerators operating at near absolute zero.`,
+  },
+  {
+    id: 'neuro-memory',
+    persona: 'Cognitive Neuroscience',
+    iconName: 'lucideBrainCircuit',
+    categoryBadge: 'Neuroscientist',
+    title: 'Neuroscience of Memory Consolidation',
+    description:
+      'Investigate hippocampal sharp-wave ripples, synaptic plasticity, and long-term potentiation.',
+    rawContent: `Memory consolidation is the biological process by which temporary sensory experiences are transformed into stable, long-term neural representations. The initial acquisition of declarative memories depends upon the hippocampus, specifically the trisynaptic circuit encompassing the dentate gyrus, CA3, and CA1 subfields.
+
+During waking experience, high-frequency neural firing induces Long-Term Potentiation (LTP) through NMDA receptor activation and AMPA receptor recruitment at dendritic spines. This strengthens synaptic transmission between co-active neurons, forming an initial engram.
+
+During subsequent non-REM slow-wave sleep, the hippocampus replays these engram sequences at accelerated speeds through sharp-wave ripples. These high-frequency hippocampal oscillations synchronize with cortical slow oscillations and thalamocortical sleep spindles, driving the progressive transfer and integration of memory traces into distributed neocortical networks for lifelong storage.`,
+  },
 ];

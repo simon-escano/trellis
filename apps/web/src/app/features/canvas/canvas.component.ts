@@ -9,6 +9,21 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import {
+  lucideChevronLeft,
+  lucideFileText,
+  lucideShare2,
+  lucideDownload,
+  lucidePlus,
+  lucideArrowUp,
+  lucideSparkles,
+  lucideLayers,
+  lucideLayoutGrid,
+  lucideCpu,
+  lucideMaximize2,
+} from '@ng-icons/lucide';
 import { DataSet } from 'vis-data';
 import { Network, Options, Node, Edge } from 'vis-network';
 import { DocumentStore } from '../../core/state/document.store.js';
@@ -55,10 +70,10 @@ function formatRelationType(rel: string): string {
 function wrapText(
   text: string,
   maxCharsPerLine = 34,
-  maxLines = 3
+  maxLines = 4
 ): string[] {
   if (!text) return [];
-  const words = text.split(/\s+/);
+  const words = text.trim().split(/\s+/);
   const lines: string[] = [];
   let currentLine = '';
 
@@ -68,12 +83,23 @@ function wrapText(
     } else {
       if (currentLine) lines.push(currentLine);
       currentLine = word;
-      if (lines.length >= maxLines - 1) break;
+      if (lines.length >= maxLines) break;
     }
   }
   if (currentLine && lines.length < maxLines) {
     lines.push(currentLine);
   }
+
+  // Clean trailing dangling conjunctions from final line
+  if (lines.length > 0) {
+    let last = lines[lines.length - 1];
+    last = last.replace(/\s+(and|or|for|to|with|the|in|at|of|by)\s*$/i, '');
+    if (!last.endsWith('.')) {
+      last = last.replace(/[,;:]+$/, '') + '.';
+    }
+    lines[lines.length - 1] = last;
+  }
+
   return lines;
 }
 
@@ -120,23 +146,24 @@ function computeNodeDimensions(
   const titleLength = name.length;
   const descLength = description ? description.length : 0;
 
-  let width = 255;
+  let width = 260;
   if (titleLength > 28 || descLength > 120) {
-    width = 290;
+    width = 295;
   } else if (titleLength < 16 && descLength < 60) {
-    width = 230;
+    width = 235;
   }
 
   const maxCharsPerLine = Math.floor((width - 28) / 7.2);
   const maxLines = descLength > 100 ? 4 : descLength > 50 ? 3 : 2;
   const descLines = wrapText(description, maxCharsPerLine, maxLines);
 
-  const height = 64 + descLines.length * 17 + 14;
+  const height = 66 + descLines.length * 17 + 14;
   const size = Math.round(height * 0.46);
 
   return { width, height, size, descLines, pillWidth };
 }
 
+// Neutral Apple Palette with emerald strictly as accent
 function getCategoryColor(cat: EntityCategory): {
   bg: string;
   border: string;
@@ -146,41 +173,41 @@ function getCategoryColor(cat: EntityCategory): {
   switch (cat) {
     case 'CONCEPT':
       return {
-        bg: 'rgba(0, 245, 160, 0.14)',
-        border: 'rgba(0, 245, 160, 0.45)',
-        text: '#00F5A0',
+        bg: 'rgba(255, 255, 255, 0.07)',
+        border: 'rgba(255, 255, 255, 0.18)',
+        text: '#F1F5F9',
         accent: '#00F5A0',
       };
     case 'SERVICE':
     case 'SYSTEM':
       return {
-        bg: 'rgba(56, 189, 248, 0.14)',
-        border: 'rgba(56, 189, 248, 0.45)',
-        text: '#38BDF8',
-        accent: '#38BDF8',
+        bg: 'rgba(148, 163, 184, 0.08)',
+        border: 'rgba(148, 163, 184, 0.22)',
+        text: '#CBD5E1',
+        accent: '#00F5A0',
       };
     case 'DATA_MODEL':
       return {
-        bg: 'rgba(251, 191, 36, 0.14)',
-        border: 'rgba(251, 191, 36, 0.45)',
-        text: '#FBBF24',
-        accent: '#FBBF24',
+        bg: 'rgba(203, 213, 225, 0.07)',
+        border: 'rgba(203, 213, 225, 0.18)',
+        text: '#E2E8F0',
+        accent: '#00F5A0',
       };
     case 'INFRASTRUCTURE':
       return {
-        bg: 'rgba(251, 113, 133, 0.14)',
-        border: 'rgba(251, 113, 133, 0.45)',
-        text: '#FB7185',
-        accent: '#FB7185',
+        bg: 'rgba(148, 163, 184, 0.07)',
+        border: 'rgba(148, 163, 184, 0.18)',
+        text: '#94A3B8',
+        accent: '#00F5A0',
       };
     case 'SECURITY_POLICY':
     case 'API_ENDPOINT':
     default:
       return {
-        bg: 'rgba(192, 132, 252, 0.14)',
-        border: 'rgba(192, 132, 252, 0.45)',
-        text: '#C084FC',
-        accent: '#C084FC',
+        bg: 'rgba(226, 232, 240, 0.06)',
+        border: 'rgba(226, 232, 240, 0.16)',
+        text: '#CBD5E1',
+        accent: '#00F5A0',
       };
   }
 }
@@ -206,7 +233,7 @@ function getCategoryIconSvgGeometry(
     case 'SERVICE':
       return `<g transform="translate(${x}, ${y}) scale(0.65)">
         <circle cx="12" cy="12" r="3" fill="none" stroke="${color}" stroke-width="2.5"/>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="${color}" stroke-width="2"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="${color}" stroke-width="2"/>
       </g>`;
     case 'DATA_MODEL':
       return `<g transform="translate(${x}, ${y}) scale(0.65)">
@@ -268,7 +295,7 @@ function createNodeSvg(
   isSelected = false
 ): string {
   const color = getCategoryColor(category);
-  const strokeColor = isSelected ? '#FFFFFF' : color.border;
+  const strokeColor = isSelected ? '#00F5A0' : 'rgba(255, 255, 255, 0.12)';
   const strokeWidth = isSelected ? 2.5 : 1.2;
 
   const safeName = escapeXml(name);
@@ -284,7 +311,7 @@ function createNodeSvg(
   const descTextElements = dims.descLines
     .map(
       (line, idx) =>
-        `<text x="14" y="${78 + idx * 17}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="${idx === dims.descLines.length - 1 ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.76)'}">${escapeXml(line)}</text>`
+        `<text x="14" y="${78 + idx * 17}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="${idx === dims.descLines.length - 1 ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.78)'}">${escapeXml(line)}</text>`
     )
     .join('\n');
 
@@ -295,7 +322,7 @@ function createNodeSvg(
         <stop offset="100%" stop-color="#080C14" />
       </linearGradient>
       <linearGradient id="specGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="rgba(255,255,255,0.3)" />
+        <stop offset="0%" stop-color="rgba(255,255,255,0.25)" />
         <stop offset="50%" stop-color="rgba(255,255,255,0.05)" />
         <stop offset="100%" stop-color="rgba(255,255,255,0.2)" />
       </linearGradient>
@@ -333,13 +360,31 @@ function createNodeSvg(
 @Component({
   selector: 'app-canvas',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, NgIconComponent],
   templateUrl: './canvas.component.html',
   styleUrls: ['./canvas.component.css'],
+  viewProviders: [
+    provideIcons({
+      lucideChevronLeft,
+      lucideFileText,
+      lucideShare2,
+      lucideDownload,
+      lucidePlus,
+      lucideArrowUp,
+      lucideSparkles,
+      lucideLayers,
+      lucideLayoutGrid,
+      lucideCpu,
+      lucideMaximize2,
+    }),
+  ],
 })
 export class CanvasComponent implements OnInit, OnDestroy {
   @ViewChild('networkContainer', { static: true })
   networkContainer!: ElementRef<HTMLDivElement>;
+
+  @ViewChild('dotsCanvas', { static: true })
+  dotsCanvasRef!: ElementRef<HTMLCanvasElement>;
 
   readonly store = inject(DocumentStore);
 
@@ -353,9 +398,13 @@ export class CanvasComponent implements OnInit, OnDestroy {
     label: string;
   }> = [];
 
-  // Hardware-accelerated sub-pixel cursor spotlight tracking
-  readonly mousePos = signal<{ x: number; y: number }>({ x: -1000, y: -1000 });
-  readonly isMouseOver = signal<boolean>(false);
+  readonly topicPrompt = signal<string>('');
+  readonly isPromptSubmitting = signal<boolean>(false);
+
+  // Dot field hover tracking (lighter dots under cursor)
+  private mouseX = -1000;
+  private mouseY = -1000;
+  private isMouseOver = false;
 
   readonly isPhysicsEnabled = signal<boolean>(true);
   readonly selectedEntity = this.store.selectedEntity;
@@ -378,6 +427,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initVisNetwork();
+    this.initDotsBackground();
   }
 
   ngOnDestroy() {
@@ -387,18 +437,95 @@ export class CanvasComponent implements OnInit, OnDestroy {
     }
   }
 
-  onCanvasMouseMove(e: MouseEvent) {
-    const target = e.currentTarget as HTMLElement;
-    const rect = target.getBoundingClientRect();
-    this.mousePos.set({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+  private initDotsBackground() {
+    const canvas = this.dotsCanvasRef.nativeElement;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resize = () => {
+      const parent = canvas.parentElement;
+      if (!parent) return;
+      canvas.width = parent.clientWidth;
+      canvas.height = parent.clientHeight;
+      drawDots();
+    };
+
+    window.addEventListener('resize', resize);
+
+    const parent = this.networkContainer.nativeElement;
+
+    const spacing = 22;
+    const proximity = 110;
+
+    const drawDots = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const cols = Math.ceil(canvas.width / spacing) + 1;
+      const rows = Math.ceil(canvas.height / spacing) + 1;
+
+      for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
+          const dotX = c * spacing;
+          const dotY = r * spacing;
+
+          let radius = 1.0;
+          let alpha = 0.08;
+
+          if (this.isMouseOver) {
+            const dist = Math.hypot(this.mouseX - dotX, this.mouseY - dotY);
+            if (dist < proximity) {
+              const factor = 1 - dist / proximity;
+              alpha = 0.08 + factor * 0.65; // Dots become lighter/brighter
+              radius = 1.0 + factor * 1.3;  // Solid, crisp dot expansion
+            }
+          }
+
+          ctx.beginPath();
+          ctx.arc(dotX, dotY, radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+        }
+      }
+    };
+
+    parent.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      this.mouseX = e.clientX - rect.left;
+      this.mouseY = e.clientY - rect.top;
+      this.isMouseOver = true;
+      requestAnimationFrame(drawDots);
     });
-    this.isMouseOver.set(true);
+
+    parent.addEventListener('mouseleave', () => {
+      this.isMouseOver = false;
+      this.mouseX = -1000;
+      this.mouseY = -1000;
+      requestAnimationFrame(drawDots);
+    });
+
+    resize();
   }
 
-  onCanvasMouseLeave() {
-    this.isMouseOver.set(false);
+  async submitCanvasPrompt() {
+    const prompt = this.topicPrompt().trim();
+    if (!prompt || this.isPromptSubmitting()) return;
+
+    this.isPromptSubmitting.set(true);
+    try {
+      await this.store.exploreTopic(prompt);
+      this.topicPrompt.set('');
+    } catch (err) {
+      console.error('Failed to submit prompt:', err);
+    } finally {
+      this.isPromptSubmitting.set(false);
+    }
+  }
+
+  onPromptKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.submitCanvasPrompt();
+    }
   }
 
   private initVisNetwork() {
@@ -502,14 +629,12 @@ export class CanvasComponent implements OnInit, OnDestroy {
         const textMetrics = ctx.measureText(rel.label);
         const textWidth = textMetrics.width;
 
-        // Generous padding: 12px horizontal, 5px vertical (pill height 22px)
         const pillWidth = Math.max(textWidth + 24, 48);
         const pillHeight = 22;
-        const pillRadius = 11; // Fully rounded capsule
+        const pillRadius = 11;
         const pillX = midX - pillWidth / 2;
         const pillY = midY - pillHeight / 2;
 
-        // Draw fully rounded pill background & subtle border
         ctx.beginPath();
         drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, pillRadius);
         ctx.fillStyle = 'rgba(13, 20, 32, 0.94)';
@@ -518,7 +643,6 @@ export class CanvasComponent implements OnInit, OnDestroy {
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
         ctx.stroke();
 
-        // Draw upright, high-contrast label
         ctx.fillStyle = '#F1F5F9';
         ctx.fillText(rel.label, midX, midY);
       }

@@ -1,12 +1,16 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
-import { Document, Entity, SystemMetrics } from '../models/document.model';
-import { GraphQLService } from '../services/graphql.service';
+import { Document, Entity, SystemMetrics } from '../models/document.model.js';
+import { GraphQLService } from '../services/graphql.service.js';
+import { DEMO_PRESETS } from '../data/demo-presets.js';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DocumentStore {
   private gqlService = inject(GraphQLService);
+
+  // Navigation View State ('home' vs 'canvas')
+  readonly currentView = signal<'home' | 'canvas'>('home');
 
   // State Signals
   readonly documents = signal<Document[]>([]);
@@ -59,6 +63,20 @@ export class DocumentStore {
     });
   }
 
+  navigateToHome() {
+    this.currentView.set('home');
+  }
+
+  navigateToCanvas() {
+    this.currentView.set('canvas');
+  }
+
+  openDocument(id: string) {
+    this.selectedDocumentId.set(id);
+    this.selectedEntity.set(null);
+    this.currentView.set('canvas');
+  }
+
   async loadInitialData() {
     this.isLoading.set(true);
     this.error.set(null);
@@ -100,6 +118,45 @@ export class DocumentStore {
 
   selectEntity(entity: Entity | null) {
     this.selectedEntity.set(entity);
+  }
+
+  async exploreTopic(topicPrompt: string): Promise<Document> {
+    const trimmed = topicPrompt.trim();
+    if (!trimmed) throw new Error('Topic cannot be empty');
+
+    // Check if matching preset exists
+    const matchingPreset = DEMO_PRESETS.find(
+      (p) =>
+        p.title.toLowerCase().includes(trimmed.toLowerCase()) ||
+        trimmed.toLowerCase().includes(p.persona.toLowerCase()) ||
+        p.description.toLowerCase().includes(trimmed.toLowerCase())
+    );
+
+    if (matchingPreset) {
+      // Check if already ingested in documents
+      const existing = this.documents().find(
+        (d) => d.title.toLowerCase() === matchingPreset.title.toLowerCase()
+      );
+      if (existing) {
+        this.openDocument(existing.id);
+        return existing;
+      }
+      const newDoc = await this.ingestDocument(
+        matchingPreset.title,
+        matchingPreset.rawContent
+      );
+      this.openDocument(newDoc.id);
+      return newDoc;
+    }
+
+    // Synthesize structured content for new freeform topic
+    const synthesizedContent = `# ${trimmed}
+Overview: An exploration of the fundamental concepts, core components, architectural relationships, and operational mechanisms governing ${trimmed}.
+Key components include primary driving forces, systemic dependencies, control policies, and feedback interfaces.`;
+
+    const newDoc = await this.ingestDocument(trimmed, synthesizedContent);
+    this.openDocument(newDoc.id);
+    return newDoc;
   }
 
   async ingestDocument(title: string, rawContent: string): Promise<Document> {
@@ -157,9 +214,7 @@ export class DocumentStore {
       this.documents.update((prev) => prev.filter((d) => d.id !== id));
       if (this.selectedDocumentId() === id) {
         const remaining = this.documents();
-        this.selectedDocumentId.set(
-          remaining.length > 0 ? remaining[0].id : null
-        );
+        this.selectedDocumentId.set(remaining[0]?.id ?? null);
         this.selectedEntity.set(null);
       }
       this.gqlService.getMetrics().then((m) => this.metrics.set(m));

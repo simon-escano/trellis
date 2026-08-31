@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SidebarComponent } from './features/sidebar/sidebar.component.js';
+import { HomeComponent } from './features/home/home.component.js';
 import { CanvasComponent } from './features/canvas/canvas.component.js';
 import { InspectorComponent } from './features/inspector/inspector.component.js';
 import { IngestModalComponent } from './features/ingest-modal/ingest-modal.component.js';
@@ -11,7 +11,7 @@ import { DocumentStore } from './core/state/document.store.js';
   standalone: true,
   imports: [
     CommonModule,
-    SidebarComponent,
+    HomeComponent,
     CanvasComponent,
     InspectorComponent,
     IngestModalComponent,
