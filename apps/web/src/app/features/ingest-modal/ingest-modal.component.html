@@ -1,56 +1,57 @@
-<div *ngIf="isOpen" 
-     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl animate-in fade-in duration-200 select-none">
-  
+<div *ngIf="isOpen"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl animate-in fade-in duration-200 select-none">
+
   <!-- Backdrop Click Area -->
   <div (click)="onClose()" class="absolute inset-0"></div>
 
   <!-- Modal Container -->
-  <div class="relative w-full max-w-2xl rounded-3xl apple-glass border border-white/[0.12] shadow-2xl overflow-hidden z-10 max-h-[92vh] flex flex-col animate-in zoom-in-95 duration-200">
-    
+  <div
+    class="relative w-full max-w-2xl rounded-3xl apple-glass border border-white/[0.12] shadow-2xl overflow-hidden z-10 max-h-[92vh] flex flex-col animate-in zoom-in-95 duration-200">
+
     <!-- Modal Header -->
     <div class="p-5 border-b border-white/[0.08] flex items-center justify-between flex-shrink-0">
       <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+        <div
+          class="w-9 h-9 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
           <ng-icon name="lucideSparkles" class="text-base"></ng-icon>
         </div>
         <div>
-          <h2 class="text-base font-bold text-white tracking-tight">Ingest Document &amp; Map Knowledge</h2>
+          <h2 class="text-base font-medium text-white tracking-tight">Ingest Document &amp; Map Knowledge</h2>
           <p class="text-xs text-white/50">Transform raw prose into an interactive visual graph</p>
         </div>
       </div>
 
-      <button (click)="onClose()" 
-              class="w-7 h-7 rounded-full apple-button-secondary flex items-center justify-center text-white/50 hover:text-white transition-all">
+      <button (click)="onClose()"
+        class="w-7 h-7 rounded-full apple-button-secondary flex items-center justify-center text-white/50 hover:text-white transition-all">
         <ng-icon name="lucideX" class="text-xs"></ng-icon>
       </button>
     </div>
 
     <!-- Modal Body (Scrollable) -->
     <div class="p-6 space-y-5 overflow-y-auto flex-1">
-      
+
       <!-- 1-Click Multi-Persona Demo Presets -->
       <div class="space-y-2">
         <div class="flex items-center justify-between">
-          <label class="text-[10px] font-mono uppercase tracking-wider text-white/40 font-semibold">
+          <label class="text-[10px] font-mono uppercase tracking-wider text-white/40 font-medium">
             One-Click Demo Presets
           </label>
           <span class="text-[11px] text-emerald-400 font-medium">Instant Load</span>
         </div>
 
         <div class="grid grid-cols-3 gap-2.5">
-          <button *ngFor="let preset of presets" 
-                  (click)="selectPreset(preset)" 
-                  type="button"
-                  [ngClass]="selectedPresetId() === preset.id ? 'border-emerald-500/50 bg-emerald-500/10 shadow-lg shadow-emerald-500/10' : 'border-white/[0.06] bg-black/20 hover:border-white/[0.12] hover:bg-white/[0.03]'"
-                  class="p-3 rounded-2xl border text-left transition-all flex flex-col justify-between group cursor-pointer">
+          <button *ngFor="let preset of presets" (click)="selectPreset(preset)" type="button"
+            [ngClass]="selectedPresetId() === preset.id ? 'border-emerald-500/50 bg-emerald-500/10 shadow-lg shadow-emerald-500/10' : 'border-white/[0.06] bg-black/20 hover:border-white/[0.12] hover:bg-white/[0.03]'"
+            class="p-3 rounded-2xl border text-left transition-all flex flex-col justify-between group cursor-pointer">
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <ng-icon [name]="preset.iconName" class="text-emerald-400 text-base"></ng-icon>
-                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-white/60">
+                <span
+                  class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-white/60">
                   {{ preset.categoryBadge }}
                 </span>
               </div>
-              <h4 class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-1">
+              <h4 class="text-xs font-medium text-white group-hover:text-emerald-400 transition-colors line-clamp-1">
                 {{ preset.persona }}
               </h4>
             </div>
@@ -63,20 +64,16 @@
 
       <!-- Ingestion Form Fields -->
       <form (ngSubmit)="onSubmit()" id="ingestForm" class="space-y-4">
-        
+
         <!-- Document Title Field -->
         <div class="space-y-1.5">
           <label class="text-[10px] font-mono uppercase tracking-wider text-white/40 flex justify-between">
             <span>Document Title</span>
             <span class="text-white/30">{{ title.length }}/120</span>
           </label>
-          <input type="text" 
-                 [(ngModel)]="title" 
-                 name="title" 
-                 maxlength="120"
-                 placeholder="e.g., Quantum Computing &amp; Superconducting Qubits" 
-                 required
-                 class="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/[0.08] focus:border-emerald-500/50 focus:outline-none text-sm text-white placeholder:text-white/30 transition-all font-sans" />
+          <input type="text" [(ngModel)]="title" name="title" maxlength="120"
+            placeholder="e.g., Quantum Computing &amp; Superconducting Qubits" required
+            class="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/[0.08] focus:border-emerald-500/50 focus:outline-none text-sm text-white placeholder:text-white/30 transition-all font-sans" />
         </div>
 
         <!-- Raw Content Textarea Field -->
@@ -85,12 +82,9 @@
             <span>Raw Text or Article Prose</span>
             <span class="text-white/30">{{ rawContent.length }} chars</span>
           </label>
-          <textarea [(ngModel)]="rawContent" 
-                    name="rawContent" 
-                    rows="6" 
-                    placeholder="Paste article, literature excerpt, study notes, or RFC text here..." 
-                    required
-                    class="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/[0.08] focus:border-emerald-500/50 focus:outline-none text-xs leading-relaxed text-white placeholder:text-white/30 transition-all font-mono"></textarea>
+          <textarea [(ngModel)]="rawContent" name="rawContent" rows="6"
+            placeholder="Paste article, literature excerpt, study notes, or RFC text here..." required
+            class="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/[0.08] focus:border-emerald-500/50 focus:outline-none text-xs leading-relaxed text-white placeholder:text-white/30 transition-all font-mono"></textarea>
         </div>
       </form>
     </div>
@@ -103,16 +97,14 @@
       </span>
 
       <div class="flex items-center space-x-2">
-        <button type="button" 
-                (click)="onClose()" 
-                class="px-4 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white apple-button-secondary transition-all">
+        <button type="button" (click)="onClose()"
+          class="px-4 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white apple-button-secondary transition-all">
           Cancel
         </button>
-        <button type="submit" 
-                form="ingestForm"
-                [disabled]="!title.trim() || !rawContent.trim() || store.isIngesting()"
-                class="px-5 py-2 rounded-xl text-xs font-semibold text-black apple-button-primary disabled:opacity-50 transition-all flex items-center space-x-2 shadow-lg cursor-pointer">
-          <span *ngIf="store.isIngesting()" class="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+        <button type="submit" form="ingestForm" [disabled]="!title.trim() || !rawContent.trim() || store.isIngesting()"
+          class="px-5 py-2 rounded-xl text-xs font-medium text-black apple-button-primary disabled:opacity-50 transition-all flex items-center space-x-2 shadow-lg cursor-pointer">
+          <span *ngIf="store.isIngesting()"
+            class="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
           <span>{{ store.isIngesting() ? 'Synthesizing...' : 'Synthesize Graph' }}</span>
         </button>
       </div>

@@ -1,13 +1,15 @@
-<div class="pointer-events-auto apple-glass-pill rounded-full px-4 py-2 flex items-center justify-between gap-4 max-w-3xl w-full mx-auto shadow-2xl transition-all select-none">
-  
+<div
+  class="pointer-events-auto apple-glass-pill rounded-full px-4 py-2 flex items-center justify-between gap-4 max-w-3xl w-full mx-auto shadow-2xl transition-all select-none">
+
   <!-- Left: Active Document Title & Status Pill -->
   <div class="flex items-center space-x-2.5 truncate max-w-sm">
     <div *ngIf="store.activeDocument() as doc; else noDocActive" class="flex items-center space-x-2 truncate">
       <span [ngClass]="getStatusDotClass(doc.status)" class="w-2 h-2 rounded-full flex-shrink-0"></span>
-      <span class="text-xs font-bold text-white tracking-tight truncate" [title]="doc.title">
+      <span class="text-xs font-medium text-white tracking-tight truncate" [title]="doc.title">
         {{ doc.title }}
       </span>
-      <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/[0.06] text-white/60 border border-white/[0.08] capitalize">
+      <span
+        class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/[0.06] text-white/60 border border-white/[0.08] capitalize">
         {{ doc.status | lowercase }}
       </span>
     </div>
@@ -20,22 +22,24 @@
   <div *ngIf="store.metrics() as m" class="hidden md:flex items-center space-x-2 font-mono text-[11px]">
     <div class="px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.06] flex items-center space-x-1.5">
       <span class="text-white/40">Maps:</span>
-      <span class="font-semibold text-white">{{ m.totalDocuments }}</span>
+      <span class="font-medium text-white">{{ m.totalDocuments }}</span>
     </div>
-    <div class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center space-x-1">
-      <span class="font-semibold">{{ m.processedCount }}</span>
+    <div
+      class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center space-x-1">
+      <span class="font-medium">{{ m.processedCount }}</span>
       <span class="text-emerald-400/60">Ready</span>
     </div>
-    <div *ngIf="m.queuedCount > 0" class="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center space-x-1">
-      <span class="font-semibold">{{ m.queuedCount }}</span>
+    <div *ngIf="m.queuedCount > 0"
+      class="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center space-x-1">
+      <span class="font-medium">{{ m.queuedCount }}</span>
       <span class="text-amber-400/60">Queued</span>
     </div>
   </div>
 
   <!-- Right: Ingestion CTA Button -->
   <div class="flex items-center space-x-2">
-    <button (click)="openIngestModal.emit()" 
-            class="px-3.5 py-1.5 rounded-full apple-button-primary flex items-center space-x-1.5 text-xs font-semibold tracking-tight shadow-md cursor-pointer">
+    <button (click)="openIngestModal.emit()"
+      class="px-3.5 py-1.5 rounded-full apple-button-primary flex items-center space-x-1.5 text-xs font-medium tracking-tight shadow-md cursor-pointer">
       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
       </svg>

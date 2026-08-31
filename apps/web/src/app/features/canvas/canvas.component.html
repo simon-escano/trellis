@@ -1,5 +1,5 @@
 <div class="relative w-full h-full overflow-hidden bg-[#07090E] select-none" (click)="closeMenu()">
-  
+
   <!-- Interactive Hover-Illuminated Dot Field Background Canvas (Lighter Dots Under Cursor) -->
   <canvas #dotsCanvas class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
 
@@ -8,41 +8,40 @@
 
   <!-- Top Navigation & Action Bar -->
   <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none z-40">
-    
+
     <!-- Top Left: Hamburger Button + Separate Floating Topic Title (No border/bg/padding) -->
     <div class="flex items-center space-x-3 pointer-events-auto relative">
-      
+
       <!-- Hamburger Menu Button -->
-      <button (click)="$event.stopPropagation(); toggleMenu()"
-              title="Topic Options Menu"
-              class="w-9 h-9 rounded-2xl apple-glass border border-white/10 flex items-center justify-center text-white/80 hover:text-white shadow-xl transition-all">
+      <button (click)="$event.stopPropagation(); toggleMenu()" title="Topic Options Menu"
+        class="w-9 h-9 rounded-2xl apple-glass border border-white/10 flex items-center justify-center text-white/80 hover:text-white shadow-xl transition-all">
         <ng-icon name="lucideMenu" class="w-4 h-4"></ng-icon>
       </button>
 
       <!-- Separate Floating Topic Title (Directly on Canvas without background/border/padding) -->
-      <h1 class="text-sm md:text-base font-semibold text-white/95 tracking-tight truncate max-w-xs sm:max-w-sm md:max-w-xl drop-shadow-sm">
+      <h1
+        class="text-sm md:text-base font-medium text-white/95 tracking-tight truncate max-w-xs sm:max-w-sm md:max-w-xl drop-shadow-sm">
         {{ store.activeDocument()?.title || 'Concept Map' }}
       </h1>
 
       <!-- Apple Glass Hamburger Dropdown Menu -->
-      <div *ngIf="isMenuOpen()" 
-           (click)="$event.stopPropagation()"
-           class="absolute top-12 left-0 w-56 p-1.5 rounded-2xl apple-glass border border-white/15 shadow-2xl bg-[#0F1420]/95 backdrop-blur-2xl z-50 space-y-0.5 animate-in fade-in zoom-in-95 duration-100">
-        
+      <div *ngIf="isMenuOpen()" (click)="$event.stopPropagation()"
+        class="absolute top-12 left-0 w-56 p-1.5 rounded-2xl apple-glass border border-white/15 shadow-2xl bg-[#0F1420]/95 backdrop-blur-2xl z-50 space-y-0.5 animate-in fade-in zoom-in-95 duration-100">
+
         <button (click)="goHome()"
-                class="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-xs font-medium text-white/90 hover:text-white flex items-center space-x-2.5 transition-all">
+          class="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-xs font-medium text-white/90 hover:text-white flex items-center space-x-2.5 transition-all">
           <ng-icon name="lucideChevronLeft" class="w-3.5 h-3.5 text-white/60"></ng-icon>
           <span>Go to all topics</span>
         </button>
 
         <button (click)="shareTopic()"
-                class="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-xs font-medium text-white/90 hover:text-white flex items-center space-x-2.5 transition-all">
+          class="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-xs font-medium text-white/90 hover:text-white flex items-center space-x-2.5 transition-all">
           <ng-icon name="lucideShare2" class="w-3.5 h-3.5 text-white/60"></ng-icon>
           <span>Share</span>
         </button>
 
         <button (click)="duplicateTopic()"
-                class="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-xs font-medium text-white/90 hover:text-white flex items-center space-x-2.5 transition-all">
+          class="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-xs font-medium text-white/90 hover:text-white flex items-center space-x-2.5 transition-all">
           <ng-icon name="lucideCopy" class="w-3.5 h-3.5 text-white/60"></ng-icon>
           <span>Duplicate Topic</span>
         </button>
@@ -50,7 +49,7 @@
         <div class="w-full h-[1px] bg-white/[0.08] my-1"></div>
 
         <button (click)="deleteTopic()"
-                class="w-full px-3 py-2 rounded-xl hover:bg-rose-500/20 text-xs font-medium text-rose-400 hover:text-rose-300 flex items-center space-x-2.5 transition-all">
+          class="w-full px-3 py-2 rounded-xl hover:bg-rose-500/20 text-xs font-medium text-rose-400 hover:text-rose-300 flex items-center space-x-2.5 transition-all">
           <ng-icon name="lucideTrash2" class="w-3.5 h-3.5 text-rose-400"></ng-icon>
           <span>Delete Topic</span>
         </button>
@@ -61,23 +60,25 @@
 
     <!-- Top Right Utility Actions: Regenerate Map (Emerald) + Export & Share Buttons -->
     <div class="flex items-center space-x-2 pointer-events-auto">
-      
+
       <!-- New Regenerate Map Button (Emerald Background) -->
-      <button (click)="regenerateMap()" 
-              [disabled]="store.activeDocument()?.status === 'PROCESSING'"
-              title="Regenerate Concept Map" 
-              class="h-8 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold flex items-center space-x-1.5 text-xs shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50">
-        <ng-icon name="lucideRotateCw" class="w-3.5 h-3.5 text-black" [ngClass]="store.activeDocument()?.status === 'PROCESSING' ? 'animate-spin' : ''"></ng-icon>
+      <button (click)="regenerateMap()" [disabled]="store.activeDocument()?.status === 'PROCESSING'"
+        title="Regenerate Concept Map"
+        class="h-8 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-medium flex items-center space-x-1.5 text-xs shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50">
+        <ng-icon name="lucideRotateCw" class="w-3.5 h-3.5 text-black"
+          [ngClass]="store.activeDocument()?.status === 'PROCESSING' ? 'animate-spin' : ''"></ng-icon>
         <span class="hidden sm:inline">Regenerate</span>
       </button>
 
       <!-- Export & Share Pills -->
       <div class="apple-glass-pill p-1 rounded-2xl shadow-2xl border border-white/10 flex items-center space-x-1">
-        <button class="h-7 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
+        <button
+          class="h-7 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
           <ng-icon name="lucideDownload" class="w-3.5 h-3.5"></ng-icon>
           <span>Export</span>
         </button>
-        <button (click)="shareTopic()" class="h-7 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
+        <button (click)="shareTopic()"
+          class="h-7 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white flex items-center space-x-1.5 text-xs font-medium transition-all">
           <ng-icon name="lucideShare2" class="w-3.5 h-3.5"></ng-icon>
           <span>Share</span>
         </button>
@@ -89,77 +90,77 @@
 
   <!-- Bottom Center Floating Conversational Prompt Box -->
   <div class="absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-lg px-4 pointer-events-none z-20">
-    <div class="w-full pointer-events-auto rounded-2xl apple-glass border border-white/10 shadow-2xl p-2 flex items-center space-x-2.5">
+    <div
+      class="w-full pointer-events-auto rounded-2xl apple-glass border border-white/10 shadow-2xl p-2 flex items-center space-x-2.5">
       <div class="w-7 h-7 rounded-xl bg-white/[0.04] flex items-center justify-center text-white/40 shrink-0">
         <ng-icon name="lucideSparkles" class="w-4 h-4"></ng-icon>
       </div>
 
-      <input type="text"
-             [ngModel]="topicPrompt()"
-             (ngModelChange)="topicPrompt.set($event)"
-             (keydown)="onPromptKeydown($event)"
-             placeholder="What would you like to explore or add to this map?"
-             class="flex-1 bg-transparent border-0 text-xs text-white/90 placeholder-white/30 focus:outline-none" />
+      <input type="text" [ngModel]="topicPrompt()" (ngModelChange)="topicPrompt.set($event)"
+        (keydown)="onPromptKeydown($event)" placeholder="What would you like to explore or add to this map?"
+        class="flex-1 bg-transparent border-0 text-xs text-white/90 placeholder-white/30 focus:outline-none" />
 
-      <button (click)="submitCanvasPrompt()"
-              [disabled]="!topicPrompt().trim() || isPromptSubmitting()"
-              [ngClass]="topicPrompt().trim() && !isPromptSubmitting() ? 'bg-white text-black hover:bg-white/90 shadow-md cursor-pointer' : 'bg-white/10 text-white/30 cursor-not-allowed'"
-              class="w-7 h-7 rounded-xl flex items-center justify-center transition-all shrink-0">
+      <button (click)="submitCanvasPrompt()" [disabled]="!topicPrompt().trim() || isPromptSubmitting()"
+        [ngClass]="topicPrompt().trim() && !isPromptSubmitting() ? 'bg-white text-black hover:bg-white/90 shadow-md cursor-pointer' : 'bg-white/10 text-white/30 cursor-not-allowed'"
+        class="w-7 h-7 rounded-xl flex items-center justify-center transition-all shrink-0">
         <ng-icon *ngIf="!isPromptSubmitting()" name="lucideArrowUp" class="w-3.5 h-3.5"></ng-icon>
-        <div *ngIf="isPromptSubmitting()" class="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+        <div *ngIf="isPromptSubmitting()"
+          class="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
       </button>
     </div>
   </div>
 
   <!-- Bottom Right Floating Glass Canvas Controls -->
-  <div class="absolute bottom-6 right-6 flex items-center space-x-1.5 apple-glass-pill rounded-full p-1.5 shadow-2xl z-20">
-    <button (click)="zoomIn()" 
-            title="Zoom In"
-            class="w-8 h-8 rounded-full apple-button-secondary flex items-center justify-center text-white/70 hover:text-white transition-all">
+  <div
+    class="absolute bottom-6 right-6 flex items-center space-x-1.5 apple-glass-pill rounded-full p-1.5 shadow-2xl z-20">
+    <button (click)="zoomIn()" title="Zoom In"
+      class="w-8 h-8 rounded-full apple-button-secondary flex items-center justify-center text-white/70 hover:text-white transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
       </svg>
     </button>
-    <button (click)="zoomOut()" 
-            title="Zoom Out"
-            class="w-8 h-8 rounded-full apple-button-secondary flex items-center justify-center text-white/70 hover:text-white transition-all">
+    <button (click)="zoomOut()" title="Zoom Out"
+      class="w-8 h-8 rounded-full apple-button-secondary flex items-center justify-center text-white/70 hover:text-white transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
       </svg>
     </button>
-    <button (click)="fit()" 
-            title="Fit to Viewport"
-            class="w-8 h-8 rounded-full apple-button-secondary flex items-center justify-center text-white/70 hover:text-white transition-all">
+    <button (click)="fit()" title="Fit to Viewport"
+      class="w-8 h-8 rounded-full apple-button-secondary flex items-center justify-center text-white/70 hover:text-white transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
       </svg>
     </button>
     <div class="w-[1px] h-4 bg-white/[0.1] mx-0.5"></div>
-    <button (click)="togglePhysics()" 
-            [title]="isPhysicsEnabled() ? 'Disable Auto Layout' : 'Enable Auto Layout'"
-            [ngClass]="isPhysicsEnabled() ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'text-white/40 hover:text-white'"
-            class="px-3 h-8 rounded-full apple-button-secondary flex items-center space-x-1.5 text-[11px] font-mono transition-all">
-      <span class="w-2 h-2 rounded-full" [ngClass]="isPhysicsEnabled() ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-white/20'"></span>
+    <button (click)="togglePhysics()" [title]="isPhysicsEnabled() ? 'Disable Auto Layout' : 'Enable Auto Layout'"
+      [ngClass]="isPhysicsEnabled() ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'text-white/40 hover:text-white'"
+      class="px-3 h-8 rounded-full apple-button-secondary flex items-center space-x-1.5 text-[11px] font-mono transition-all">
+      <span class="w-2 h-2 rounded-full"
+        [ngClass]="isPhysicsEnabled() ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-white/20'"></span>
       <span>Auto Layout</span>
     </button>
   </div>
 
   <!-- Processing State Overlay -->
-  <div *ngIf="store.activeDocument()?.status === 'PROCESSING' || store.activeDocument()?.status === 'QUEUED'" 
-       class="absolute top-20 left-1/2 -translate-x-1/2 apple-glass-pill px-4 py-2 rounded-full flex items-center space-x-3 text-xs font-mono text-white shadow-2xl z-20 animate-pulse">
+  <div *ngIf="store.activeDocument()?.status === 'PROCESSING' || store.activeDocument()?.status === 'QUEUED'"
+    class="absolute top-20 left-1/2 -translate-x-1/2 apple-glass-pill px-4 py-2 rounded-full flex items-center space-x-3 text-xs font-mono text-white shadow-2xl z-20 animate-pulse">
     <div class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-ping"></div>
     <span>Extracting concepts and mapping relations...</span>
   </div>
 
   <!-- Empty Canvas State -->
-  <div *ngIf="!store.activeDocument() || (store.activeDocument()?.entities?.length === 0 && store.activeDocument()?.status === 'COMPLETED')" 
-       class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-6 text-center z-10">
-    <div class="w-14 h-14 rounded-2xl apple-glass-card flex items-center justify-center text-white/30 mb-4 border border-white/[0.08] shadow-2xl">
-      <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <div
+    *ngIf="!store.activeDocument() || (store.activeDocument()?.entities?.length === 0 && store.activeDocument()?.status === 'COMPLETED')"
+    class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-6 text-center z-10">
+    <div
+      class="w-14 h-14 rounded-2xl apple-glass-card flex items-center justify-center text-white/30 mb-4 border border-white/[0.08] shadow-2xl">
+      <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+        stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
       </svg>
     </div>
-    <h3 class="text-base font-semibold text-white/80 tracking-tight">Interactive Concept Canvas</h3>
+    <h3 class="text-base font-medium text-white/80 tracking-tight">Interactive Concept Canvas</h3>
     <p class="text-xs text-white/40 max-w-sm mt-1.5 leading-relaxed">
       Return to home or ingest a document to generate an interactive knowledge graph.
     </p>
