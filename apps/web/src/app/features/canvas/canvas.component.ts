@@ -24,10 +24,16 @@ import {
   lucideRotateCw,
   lucideCopy,
   lucideTrash2,
+  lucideSun,
+  lucideMoon,
+  lucideSlidersHorizontal,
+  lucideX,
+  lucideInfo,
 } from '@ng-icons/lucide';
 import { DataSet } from 'vis-data';
 import { Network, Options, Node, Edge } from 'vis-network';
 import { DocumentStore } from '../../core/state/document.store.js';
+import { ThemeService } from '../../core/services/theme.service.js';
 import {
   Entity,
   EntityCategory,
@@ -165,51 +171,98 @@ function computeNodeDimensions(
   return { width, height, size, descLines, pillWidth };
 }
 
-function getCategoryColor(cat: EntityCategory): {
+function getCategoryColor(
+  cat: EntityCategory,
+  isDark = true
+): {
   bg: string;
   border: string;
   text: string;
   accent: string;
 } {
-  switch (cat) {
-    case 'CONCEPT':
-      return {
-        bg: 'rgba(255, 255, 255, 0.07)',
-        border: 'rgba(255, 255, 255, 0.18)',
-        text: '#F1F5F9',
-        accent: '#00F5A0',
-      };
-    case 'SERVICE':
-    case 'SYSTEM':
-      return {
-        bg: 'rgba(148, 163, 184, 0.08)',
-        border: 'rgba(148, 163, 184, 0.22)',
-        text: '#CBD5E1',
-        accent: '#00F5A0',
-      };
-    case 'DATA_MODEL':
-      return {
-        bg: 'rgba(203, 213, 225, 0.07)',
-        border: 'rgba(203, 213, 225, 0.18)',
-        text: '#E2E8F0',
-        accent: '#00F5A0',
-      };
-    case 'INFRASTRUCTURE':
-      return {
-        bg: 'rgba(148, 163, 184, 0.07)',
-        border: 'rgba(148, 163, 184, 0.18)',
-        text: '#94A3B8',
-        accent: '#00F5A0',
-      };
-    case 'SECURITY_POLICY':
-    case 'API_ENDPOINT':
-    default:
-      return {
-        bg: 'rgba(226, 232, 240, 0.06)',
-        border: 'rgba(226, 232, 240, 0.16)',
-        text: '#CBD5E1',
-        accent: '#00F5A0',
-      };
+  if (isDark) {
+    switch (cat) {
+      case 'CONCEPT':
+        return {
+          bg: 'rgba(255, 255, 255, 0.07)',
+          border: 'rgba(255, 255, 255, 0.18)',
+          text: '#F1F5F9',
+          accent: '#00F5A0',
+        };
+      case 'SERVICE':
+      case 'SYSTEM':
+        return {
+          bg: 'rgba(148, 163, 184, 0.08)',
+          border: 'rgba(148, 163, 184, 0.22)',
+          text: '#CBD5E1',
+          accent: '#00F5A0',
+        };
+      case 'DATA_MODEL':
+        return {
+          bg: 'rgba(203, 213, 225, 0.07)',
+          border: 'rgba(203, 213, 225, 0.18)',
+          text: '#E2E8F0',
+          accent: '#00F5A0',
+        };
+      case 'INFRASTRUCTURE':
+        return {
+          bg: 'rgba(148, 163, 184, 0.07)',
+          border: 'rgba(148, 163, 184, 0.18)',
+          text: '#94A3B8',
+          accent: '#00F5A0',
+        };
+      case 'SECURITY_POLICY':
+      case 'API_ENDPOINT':
+      default:
+        return {
+          bg: 'rgba(226, 232, 240, 0.06)',
+          border: 'rgba(226, 232, 240, 0.16)',
+          text: '#CBD5E1',
+          accent: '#00F5A0',
+        };
+    }
+  } else {
+    // Crisp light mode category colors
+    switch (cat) {
+      case 'CONCEPT':
+        return {
+          bg: 'rgba(16, 185, 129, 0.12)',
+          border: 'rgba(16, 185, 129, 0.28)',
+          text: '#065F46',
+          accent: '#059669',
+        };
+      case 'SERVICE':
+      case 'SYSTEM':
+        return {
+          bg: 'rgba(59, 130, 246, 0.12)',
+          border: 'rgba(59, 130, 246, 0.28)',
+          text: '#1E40AF',
+          accent: '#2563EB',
+        };
+      case 'DATA_MODEL':
+        return {
+          bg: 'rgba(168, 85, 247, 0.12)',
+          border: 'rgba(168, 85, 247, 0.28)',
+          text: '#6B21A8',
+          accent: '#9333EA',
+        };
+      case 'INFRASTRUCTURE':
+        return {
+          bg: 'rgba(245, 158, 11, 0.12)',
+          border: 'rgba(245, 158, 11, 0.28)',
+          text: '#92400E',
+          accent: '#D97706',
+        };
+      case 'SECURITY_POLICY':
+      case 'API_ENDPOINT':
+      default:
+        return {
+          bg: 'rgba(100, 116, 139, 0.12)',
+          border: 'rgba(100, 116, 139, 0.28)',
+          text: '#334155',
+          accent: '#475569',
+        };
+    }
   }
 }
 
@@ -293,10 +346,13 @@ function createNodeSvg(
   category: EntityCategory,
   description: string,
   dims: NodeDimensions,
-  isSelected = false
+  isSelected = false,
+  isDark = true
 ): string {
-  const color = getCategoryColor(category);
-  const strokeColor = isSelected ? '#00F5A0' : 'rgba(255, 255, 255, 0.12)';
+  const color = getCategoryColor(category, isDark);
+  const strokeColor = isSelected
+    ? (isDark ? '#00F5A0' : '#059669')
+    : (isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(15, 23, 42, 0.12)');
   const strokeWidth = isSelected ? 2.5 : 1.2;
 
   const safeName = escapeXml(name);
@@ -309,27 +365,35 @@ function createNodeSvg(
     color.text
   );
 
+  const titleFill = isDark ? '#FFFFFF' : '#0F172A';
   const descTextElements = dims.descLines
-    .map(
-      (line, idx) =>
-        `<text x="14" y="${78 + idx * 17}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="${idx === dims.descLines.length - 1 ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.78)'}">${escapeXml(line)}</text>`
-    )
+    .map((line, idx) => {
+      const fill = isDark
+        ? (idx === dims.descLines.length - 1 ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.78)')
+        : (idx === dims.descLines.length - 1 ? '#64748B' : '#334155');
+      return `<text x="14" y="${78 + idx * 17}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="${fill}">${escapeXml(line)}</text>`;
+    })
     .join('\n');
+
+  const cardGradStops = isDark
+    ? `<stop offset="0%" stop-color="#141C2E" /><stop offset="100%" stop-color="#080C14" />`
+    : `<stop offset="0%" stop-color="#FFFFFF" /><stop offset="100%" stop-color="#F8FAFC" />`;
+
+  const specGradStops = isDark
+    ? `<stop offset="0%" stop-color="rgba(255,255,255,0.25)" /><stop offset="50%" stop-color="rgba(255,255,255,0.05)" /><stop offset="100%" stop-color="rgba(255,255,255,0.2)" />`
+    : `<stop offset="0%" stop-color="rgba(255,255,255,0.9)" /><stop offset="50%" stop-color="rgba(255,255,255,0.2)" /><stop offset="100%" stop-color="rgba(255,255,255,0.9)" />`;
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${dims.width}" height="${dims.height}" viewBox="0 0 ${dims.width} ${dims.height}">
     <defs>
       <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#141C2E" />
-        <stop offset="100%" stop-color="#080C14" />
+        ${cardGradStops}
       </linearGradient>
       <linearGradient id="specGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="rgba(255,255,255,0.25)" />
-        <stop offset="50%" stop-color="rgba(255,255,255,0.05)" />
-        <stop offset="100%" stop-color="rgba(255,255,255,0.2)" />
+        ${specGradStops}
       </linearGradient>
     </defs>
     
-    <!-- Clean, Robust Rounded Card Background -->
+    <!-- Clean Rounded Card Background -->
     <rect x="2" y="2" width="${dims.width - 4}" height="${dims.height - 4}" rx="18" ry="18" fill="url(#cardGrad)" stroke="${strokeColor}" stroke-width="${strokeWidth}" />
     
     <!-- Top Specular Highlight Line -->
@@ -347,7 +411,7 @@ function createNodeSvg(
     </text>
 
     <!-- Bold Concept Title -->
-    <text x="14" y="58" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="700" fill="#FFFFFF">
+    <text x="14" y="58" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="700" fill="${titleFill}">
       ${truncate(safeName, Math.floor(dims.width / 9))}
     </text>
 
@@ -378,6 +442,11 @@ function createNodeSvg(
       lucideRotateCw,
       lucideCopy,
       lucideTrash2,
+      lucideSun,
+      lucideMoon,
+      lucideSlidersHorizontal,
+      lucideX,
+      lucideInfo,
     }),
   ],
 })
@@ -389,6 +458,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
   dotsCanvasRef!: ElementRef<HTMLCanvasElement>;
 
   readonly store = inject(DocumentStore);
+  readonly themeService = inject(ThemeService);
 
   private network: Network | null = null;
   private nodesDataSet = new DataSet<Node>();
@@ -403,8 +473,9 @@ export class CanvasComponent implements OnInit, OnDestroy {
   readonly topicPrompt = signal<string>('');
   readonly isPromptSubmitting = signal<boolean>(false);
   readonly isMenuOpen = signal<boolean>(false);
+  readonly isMobileInspectorVisible = signal<boolean>(false);
 
-  // Dot field hover tracking (lighter dots under cursor)
+  // Dot field hover tracking
   private mouseX = -1000;
   private mouseY = -1000;
   private isMouseOver = false;
@@ -416,11 +487,28 @@ export class CanvasComponent implements OnInit, OnDestroy {
     effect(() => {
       const activeDoc = this.store.activeDocument();
       const selectedEnt = this.store.selectedEntity();
+      const currentTheme = this.themeService.theme();
+      const isDark = currentTheme === 'dark';
+
+      // Dynamically update network options for theme
+      if (this.network) {
+        this.network.setOptions({
+          edges: {
+            color: {
+              color: isDark ? 'rgba(255, 255, 255, 0.22)' : 'rgba(15, 23, 42, 0.22)',
+              highlight: isDark ? '#00F5A0' : '#059669',
+              hover: isDark ? '#38BDF8' : '#0284C7',
+            },
+          },
+        });
+      }
+
       if (activeDoc) {
         this.renderGraph(
           activeDoc.entities || [],
           activeDoc.relationships || [],
-          selectedEnt?.id
+          selectedEnt?.id,
+          isDark
         );
       } else {
         this.clearGraph();
@@ -446,6 +534,14 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
   closeMenu() {
     this.isMenuOpen.set(false);
+  }
+
+  toggleMobileInspector() {
+    this.isMobileInspectorVisible.update((v) => !v);
+  }
+
+  closeMobileInspector() {
+    this.isMobileInspectorVisible.set(false);
   }
 
   goHome() {
@@ -503,6 +599,9 @@ export class CanvasComponent implements OnInit, OnDestroy {
     const drawDots = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      const isDark = this.themeService.isDark();
+      const dotBaseColor = isDark ? '255, 255, 255' : '15, 23, 42';
+
       const cols = Math.ceil(canvas.width / spacing) + 1;
       const rows = Math.ceil(canvas.height / spacing) + 1;
 
@@ -512,20 +611,20 @@ export class CanvasComponent implements OnInit, OnDestroy {
           const dotY = r * spacing;
 
           let radius = 1.0;
-          let alpha = 0.08;
+          let alpha = isDark ? 0.08 : 0.07;
 
           if (this.isMouseOver) {
             const dist = Math.hypot(this.mouseX - dotX, this.mouseY - dotY);
             if (dist < proximity) {
               const factor = 1 - dist / proximity;
-              alpha = 0.08 + factor * 0.65;
+              alpha = (isDark ? 0.08 : 0.07) + factor * 0.6;
               radius = 1.0 + factor * 1.3;
             }
           }
 
           ctx.beginPath();
           ctx.arc(dotX, dotY, radius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fillStyle = `rgba(${dotBaseColor}, ${alpha})`;
           ctx.fill();
         }
       }
@@ -572,6 +671,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
   }
 
   private initVisNetwork() {
+    const isDark = this.themeService.isDark();
     const data = {
       nodes: this.nodesDataSet,
       edges: this.edgesDataSet,
@@ -604,9 +704,9 @@ export class CanvasComponent implements OnInit, OnDestroy {
       edges: {
         width: 1.8,
         color: {
-          color: 'rgba(255, 255, 255, 0.22)',
-          highlight: '#00F5A0',
-          hover: '#38BDF8',
+          color: isDark ? 'rgba(255, 255, 255, 0.22)' : 'rgba(15, 23, 42, 0.22)',
+          highlight: isDark ? '#00F5A0' : '#059669',
+          hover: isDark ? '#38BDF8' : '#0284C7',
         },
         arrows: {
           to: {
@@ -650,9 +750,11 @@ export class CanvasComponent implements OnInit, OnDestroy {
       options
     );
 
-    // Custom Canvas Render: Fully Rounded Frosted Pills with Generous Padding for Connection Labels
+    // Custom Canvas Render: Edge relationship label pills adapting to theme
     this.network.on('afterDrawing', (ctx: CanvasRenderingContext2D) => {
       if (!this.network || this.activeRelationships.length === 0) return;
+
+      const isCurrentDark = this.themeService.isDark();
 
       ctx.save();
       ctx.font =
@@ -680,13 +782,13 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
         ctx.beginPath();
         drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, pillRadius);
-        ctx.fillStyle = 'rgba(13, 20, 32, 0.94)';
+        ctx.fillStyle = isCurrentDark ? 'rgba(13, 20, 32, 0.94)' : 'rgba(255, 255, 255, 0.96)';
         ctx.fill();
         ctx.lineWidth = 1;
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+        ctx.strokeStyle = isCurrentDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(15, 23, 42, 0.14)';
         ctx.stroke();
 
-        ctx.fillStyle = '#F1F5F9';
+        ctx.fillStyle = isCurrentDark ? '#F1F5F9' : '#0F172A';
         ctx.fillText(rel.label, midX, midY);
       }
 
@@ -700,6 +802,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
         const found = activeDoc?.entities?.find((e) => e.id === nodeId);
         if (found) {
           this.store.selectEntity(found);
+          this.isMobileInspectorVisible.set(true);
         }
       }
     });
@@ -712,7 +815,8 @@ export class CanvasComponent implements OnInit, OnDestroy {
   private renderGraph(
     entities: Entity[],
     relationships: EntityRelationship[],
-    selectedEntityId?: string
+    selectedEntityId?: string,
+    isDark = true
   ) {
     const rawNodes: Node[] = entities.map((ent) => {
       const isSelected = ent.id === selectedEntityId;
@@ -723,7 +827,8 @@ export class CanvasComponent implements OnInit, OnDestroy {
         ent.category,
         desc,
         dims,
-        isSelected
+        isSelected,
+        isDark
       );
 
       return {

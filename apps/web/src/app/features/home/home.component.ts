@@ -14,8 +14,13 @@ import {
   lucideClock,
   lucideChevronRight,
   lucideLayers,
+  lucideSun,
+  lucideMoon,
+  lucideMenu,
+  lucideX,
 } from '@ng-icons/lucide';
 import { DocumentStore } from '../../core/state/document.store.js';
+import { ThemeService } from '../../core/services/theme.service.js';
 import { DEMO_PRESETS, DemoPreset } from '../../core/data/demo-presets.js';
 
 @Component({
@@ -37,16 +42,22 @@ import { DEMO_PRESETS, DemoPreset } from '../../core/data/demo-presets.js';
       lucideClock,
       lucideChevronRight,
       lucideLayers,
+      lucideSun,
+      lucideMoon,
+      lucideMenu,
+      lucideX,
     }),
   ],
 })
 export class HomeComponent {
   readonly store = inject(DocumentStore);
+  readonly themeService = inject(ThemeService);
 
   readonly searchQuery = signal<string>('');
   readonly topicPrompt = signal<string>('');
   readonly isSubmitting = signal<boolean>(false);
-  readonly selectedTab = signal<'my_projects' | 'examples'>('my_projects');
+  readonly selectedTab = signal<'my_topics' | 'examples'>('my_topics');
+  readonly isMobileSidebarOpen = signal<boolean>(false);
 
   readonly presets = DEMO_PRESETS;
 
@@ -72,6 +83,14 @@ export class HomeComponent {
     );
   });
 
+  toggleMobileSidebar() {
+    this.isMobileSidebarOpen.update((v) => !v);
+  }
+
+  closeMobileSidebar() {
+    this.isMobileSidebarOpen.set(false);
+  }
+
   async submitPrompt() {
     const prompt = this.topicPrompt().trim();
     if (!prompt || this.isSubmitting()) return;
@@ -95,10 +114,12 @@ export class HomeComponent {
   }
 
   selectPreset(preset: DemoPreset) {
+    this.closeMobileSidebar();
     this.store.exploreTopic(preset.title);
   }
 
   openDocument(id: string) {
+    this.closeMobileSidebar();
     this.store.openDocument(id);
   }
 
@@ -112,7 +133,7 @@ export class HomeComponent {
 
     const file = input.files[0];
     const title = file.name.replace(/\.[^/.]+$/, '');
-    
+
     const reader = new FileReader();
     reader.onload = async (e) => {
       const content = (e.target?.result as string) || '';

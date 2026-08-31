@@ -4,19 +4,31 @@
 
 :root {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "DM Sans", system-ui, sans-serif;
-  color-scheme: dark;
+  color-scheme: light dark;
 }
 
+/* Base Body Styles */
 body {
   margin: 0;
   padding: 0;
-  background-color: #07090E;
-  color: #F8FAFC;
   overflow: hidden;
   height: 100vh;
   width: 100vw;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html.dark body {
+  background-color: #07090E;
+  color: #F8FAFC;
+  color-scheme: dark;
+}
+
+html.light body {
+  background-color: #F4F6FB;
+  color: #0F172A;
+  color-scheme: light;
 }
 
 /* Subtle Apple Custom Scrollbars */
@@ -29,33 +41,73 @@ body {
   background: transparent;
 }
 
-::-webkit-scrollbar-thumb {
+html.dark ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+html.dark ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* Apple visionOS & macOS Glass Materials */
-.apple-glass {
-  background: rgba(15, 20, 30, 0.65);
+html.light ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 9999px;
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+/* ==========================================================================
+   Apple visionOS & macOS Glass Materials (Dual Dark & Light Mode)
+   ========================================================================== */
+
+/* 1. Main Panels / Modals / Drawers (.apple-glass) */
+html.dark .apple-glass {
+  background: rgba(15, 20, 30, 0.72);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-.apple-glass-pill {
-  background: rgba(22, 28, 42, 0.6);
+html.light .apple-glass {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* Fallback if html has no class */
+.apple-glass {
+  background: rgba(15, 20, 30, 0.72);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* 2. Floating Pills / Mini Bars (.apple-glass-pill) */
+html.dark .apple-glass-pill {
+  background: rgba(22, 28, 42, 0.65);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.09);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.apple-glass-card {
+html.light .apple-glass-pill {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* 3. Cards & Nested Containers (.apple-glass-card) */
+html.dark .apple-glass-card {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -63,11 +115,26 @@ body {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.apple-glass-card:hover {
+html.dark .apple-glass-card:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.14);
 }
 
+html.light .apple-glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+html.light .apple-glass-card:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+}
+
+/* 4. Primary Buttons (.apple-button-primary) */
 .apple-button-primary {
   background: linear-gradient(180deg, #00F5A0 0%, #00D287 100%);
   color: #05140D;
@@ -85,7 +152,8 @@ body {
   transform: scale(0.98);
 }
 
-.apple-button-secondary {
+/* 5. Secondary Glass Buttons (.apple-button-secondary) */
+html.dark .apple-button-secondary {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #E2E8F0;
@@ -95,27 +163,53 @@ body {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.apple-button-secondary:hover {
+html.dark .apple-button-secondary:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.16);
   color: #FFFFFF;
 }
 
-.apple-button-secondary:active {
-  transform: scale(0.98);
+html.light .apple-button-secondary {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #334155;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Glass segmented control */
-.apple-segmented-control {
+html.light .apple-button-secondary:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.14);
+  color: #0F172A;
+}
+
+/* 6. Segmented Controls (.apple-segmented-control) */
+html.dark .apple-segmented-control {
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.06);
   padding: 3px;
   border-radius: 12px;
 }
 
-.apple-segment-active {
+html.light .apple-segmented-control {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 3px;
+  border-radius: 12px;
+}
+
+html.dark .apple-segment-active {
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #FFFFFF;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+html.light .apple-segment-active {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #0F172A;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
 }

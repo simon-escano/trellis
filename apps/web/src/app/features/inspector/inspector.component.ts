@@ -102,32 +102,32 @@ export class InspectorComponent {
   getCategoryBadgeClass(category: EntityCategory): string {
     switch (category) {
       case 'CONCEPT':
-        return 'bg-white/10 text-white border-white/20';
+        return 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30';
       case 'SERVICE':
       case 'SYSTEM':
-        return 'bg-slate-500/10 text-slate-300 border-slate-500/25';
+        return 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30';
       case 'DATA_MODEL':
-        return 'bg-slate-400/10 text-slate-200 border-slate-400/25';
+        return 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30';
       case 'INFRASTRUCTURE':
-        return 'bg-slate-500/10 text-slate-400 border-slate-500/25';
+        return 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30';
       case 'SECURITY_POLICY':
       case 'API_ENDPOINT':
       default:
-        return 'bg-slate-300/10 text-slate-300 border-slate-300/25';
+        return 'bg-slate-500/15 text-slate-700 dark:text-slate-300 border-slate-500/30';
     }
   }
 
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'COMPLETED':
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25';
+        return 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30';
       case 'PROCESSING':
-        return 'bg-sky-500/10 text-sky-400 border-sky-500/25 animate-pulse';
+        return 'bg-sky-500/15 text-sky-700 dark:text-sky-400 border-sky-500/30 animate-pulse';
       case 'QUEUED':
-        return 'bg-amber-500/10 text-amber-400 border-amber-500/25';
+        return 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30';
       case 'FAILED':
       default:
-        return 'bg-rose-500/10 text-rose-400 border-rose-500/25';
+        return 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/30';
     }
   }
 

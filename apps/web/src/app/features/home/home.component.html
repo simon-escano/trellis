@@ -1,57 +1,84 @@
-<div class="flex flex-col w-full h-full min-h-screen bg-[#07090E] text-white relative select-none overflow-hidden">
+<div class="flex flex-col w-full h-full min-h-screen bg-[#F4F6FB] dark:bg-[#07090E] text-slate-900 dark:text-white relative select-none overflow-hidden transition-colors duration-200">
 
   <!-- Pure CSS Hardware-Accelerated Dense Dot Field Background (22px grid) -->
-  <div class="absolute inset-0 pointer-events-none z-0 opacity-30"
-    style="background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px); background-size: 22px 22px;">
+  <div class="absolute inset-0 pointer-events-none z-0 opacity-25 dark:opacity-30"
+    style="background-image: radial-gradient(currentColor 1px, transparent 1px); background-size: 22px 22px;">
   </div>
 
   <!-- Hidden File Input for PDF/Document Upload -->
   <input #fileInput type="file" accept=".pdf,.txt,.md,.json" (change)="onFileSelected($event)" class="hidden" />
 
-  <!-- Top App Navigation Header (Fully Transparent with No Border) -->
-  <header class="h-16 w-full flex items-center justify-between px-8 bg-transparent border-0 z-20 shrink-0">
+  <!-- Top App Navigation Header -->
+  <header class="h-16 w-full flex items-center justify-between px-4 sm:px-8 bg-transparent border-0 z-20 shrink-0">
     <div class="flex items-center space-x-3">
+      <!-- Mobile Sidebar Toggle Button -->
+      <button (click)="toggleMobileSidebar()" title="Toggle Topics Menu"
+        class="md:hidden w-8 h-8 rounded-xl apple-glass flex items-center justify-center text-slate-700 dark:text-white/80 hover:text-slate-900 dark:hover:text-white transition-all">
+        <ng-icon name="lucideMenu" class="w-4 h-4"></ng-icon>
+      </button>
+
       <div
-        class="w-8 h-8 rounded-xl bg-gradient-to-tr from-white/10 to-white/20 border border-white/15 flex items-center justify-center text-white/90 shadow-sm">
-        <ng-icon name="lucideLayers" class="w-5 h-5"></ng-icon>
+        class="w-8 h-8 rounded-xl bg-slate-900/5 dark:bg-white/10 border border-slate-900/10 dark:border-white/15 flex items-center justify-center text-slate-800 dark:text-white/90 shadow-sm">
+        <ng-icon name="lucideLayers" class="w-4 h-4 sm:w-5 sm:h-5"></ng-icon>
       </div>
-      <!-- Logo 24px -->
-      <span class="font-medium text-2xl tracking-tight text-white/95">Trellis</span>
+      <!-- Logo -->
+      <span class="font-medium text-xl sm:text-2xl tracking-tight text-slate-900 dark:text-white/95">Trellis</span>
       <span
-        class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/10 text-white/60 tracking-wider">Beta</span>
+        class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-900/5 dark:bg-white/10 text-slate-600 dark:text-white/60 tracking-wider">Beta</span>
     </div>
 
-    <div class="flex items-center space-x-4">
+    <div class="flex items-center space-x-2 sm:space-x-4">
+      <!-- Dark / Light Theme Toggle Button -->
+      <button (click)="themeService.toggleTheme()" [title]="themeService.isDark() ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+        class="w-8 h-8 rounded-xl apple-button-secondary flex items-center justify-center transition-all cursor-pointer">
+        <ng-icon [name]="themeService.isDark() ? 'lucideSun' : 'lucideMoon'" class="w-4 h-4 text-amber-400 dark:text-amber-300"></ng-icon>
+      </button>
+
       <a href="https://github.com" target="_blank"
-        class="text-xs text-white/50 hover:text-white/80 transition-colors flex items-center space-x-1.5">
+        class="text-xs text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white/80 transition-colors hidden sm:flex items-center space-x-1.5">
         <ng-icon name="lucideGlobe" class="w-3.5 h-3.5"></ng-icon>
         <span>Docs</span>
       </a>
-      <div class="w-[1px] h-3.5 bg-white/10"></div>
+
+      <div class="w-[1px] h-3.5 bg-slate-300 dark:bg-white/10 hidden sm:block"></div>
+
       <div
-        class="w-8 h-8 rounded-full bg-gradient-to-br from-white/20 to-white/5 border border-white/20 flex items-center justify-center text-xs font-medium text-white/80">
+        class="w-8 h-8 rounded-full bg-slate-900/10 dark:bg-white/10 border border-slate-900/10 dark:border-white/20 flex items-center justify-center text-xs font-medium text-slate-700 dark:text-white/80">
         S
       </div>
     </div>
   </header>
 
-  <!-- Main Body Layout: Floating Rounded Left Sidebar + Center Hero Content -->
-  <div class="flex-1 flex overflow-hidden z-10 p-3 md:p-4 gap-4">
+  <!-- Main Body Layout: Floating Left Sidebar + Center Hero Content -->
+  <div class="flex-1 flex overflow-hidden z-10 p-3 sm:p-4 gap-4 relative">
+
+    <!-- Mobile Drawer Backdrop Overlay -->
+    <div *ngIf="isMobileSidebarOpen()" (click)="closeMobileSidebar()"
+      class="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"></div>
 
     <!-- Floating Rounded Left Sidebar: Past Explored Topics & Examples -->
+    <!-- (Desktop: static relative sidebar; Mobile: sliding overlay drawer) -->
     <aside
-      class="w-72 md:w-80 h-full border border-white/10 apple-glass rounded-3xl shadow-2xl flex flex-col p-4 shrink-0 overflow-hidden">
+      [ngClass]="isMobileSidebarOpen() ? 'fixed left-3 top-16 bottom-3 z-50 flex' : 'hidden md:flex'"
+      class="w-72 sm:w-80 h-[calc(100%-1.5rem)] md:h-full border border-slate-200/80 dark:border-white/10 apple-glass rounded-3xl shadow-2xl flex-col p-4 shrink-0 overflow-hidden transition-all duration-200">
+
+      <div class="flex items-center justify-between md:hidden mb-2">
+        <span class="text-xs font-medium text-slate-500 dark:text-white/60">Topics &amp; Examples</span>
+        <button (click)="closeMobileSidebar()" class="text-slate-400 dark:text-white/40 hover:text-slate-900 dark:hover:text-white p-1">
+          <ng-icon name="lucideX" class="w-4 h-4"></ng-icon>
+        </button>
+      </div>
 
       <!-- Top Segmented Tabs -->
-      <div class="flex items-center p-0.5 bg-white/[0.04] border border-white/[0.06] rounded-xl mb-3.5">
-        <button (click)="selectedTab.set('my_projects')"
-          [ngClass]="selectedTab() === 'my_projects' ? 'bg-white/10 text-white font-medium shadow-sm' : 'text-white/40 hover:text-white/70'"
+      <div class="flex items-center p-0.5 apple-segmented-control mb-3.5">
+        <button (click)="selectedTab.set('my_topics')"
+          [ngClass]="selectedTab() === 'my_topics' ? 'apple-segment-active font-medium' : 'text-slate-500 dark:text-white/40 hover:text-slate-800 dark:hover:text-white/70'"
           class="flex-1 py-1.5 text-xs rounded-lg transition-all flex items-center justify-center space-x-1.5">
           <ng-icon name="lucideLayoutGrid" class="w-3.5 h-3.5"></ng-icon>
-          <span>My Projects</span>
+          <span>My Topics</span>
         </button>
         <button (click)="selectedTab.set('examples')"
-          [ngClass]="selectedTab() === 'examples' ? 'bg-white/10 text-white font-medium shadow-sm' : 'text-white/40 hover:text-white/70'"
+          [ngClass]="selectedTab() === 'examples' ? 'apple-segment-active font-medium' : 'text-slate-500 dark:text-white/40 hover:text-slate-800 dark:hover:text-white/70'"
           class="flex-1 py-1.5 text-xs rounded-lg transition-all flex items-center justify-center space-x-1.5">
           <ng-icon name="lucideSparkles" class="w-3.5 h-3.5"></ng-icon>
           <span>Examples</span>
@@ -61,43 +88,43 @@
       <!-- Search Input -->
       <div class="relative mb-3">
         <ng-icon name="lucideSearch"
-          class="w-3.5 h-3.5 text-white/30 absolute left-3 top-1/2 -translate-y-1/2"></ng-icon>
+          class="w-3.5 h-3.5 text-slate-400 dark:text-white/30 absolute left-3 top-1/2 -translate-y-1/2"></ng-icon>
         <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
-          placeholder="Search projects..."
-          class="w-full pl-8 pr-3 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-xl text-xs text-white/80 placeholder-white/25 focus:outline-none focus:border-white/20 focus:bg-white/[0.06] transition-all" />
+          placeholder="Search topics..."
+          class="w-full pl-8 pr-3 py-1.5 bg-slate-100/70 dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] rounded-xl text-xs text-slate-800 dark:text-white/80 placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-emerald-500/50 dark:focus:border-white/20 transition-all" />
       </div>
 
-      <!-- Project List -->
+      <!-- Topic List -->
       <div class="flex-1 space-y-4 overflow-y-auto custom-scrollbar pr-1">
 
-        <!-- My Projects / Recent Section -->
-        <div *ngIf="selectedTab() === 'my_projects'">
+        <!-- My Topics / Recent Section -->
+        <div *ngIf="selectedTab() === 'my_topics'">
           <div
-            class="text-[10px] font-mono uppercase tracking-wider text-white/30 px-2 mb-2 flex items-center justify-between">
+            class="text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-white/30 px-2 mb-2 flex items-center justify-between">
             <span>Recent</span>
             <span>{{ filteredDocuments().length }}</span>
           </div>
 
-          <div *ngIf="filteredDocuments().length === 0" class="p-4 text-center text-xs text-white/30">
-            No projects yet. Ingest a document or start a topic!
+          <div *ngIf="filteredDocuments().length === 0" class="p-4 text-center text-xs text-slate-400 dark:text-white/30">
+            No topics yet. Ingest a document or start a topic!
           </div>
 
           <div class="space-y-1.5">
             <div *ngFor="let doc of filteredDocuments()" (click)="openDocument(doc.id)"
-              class="p-2.5 rounded-2xl border border-white/[0.05] hover:border-white/15 bg-white/[0.02] hover:bg-white/[0.06] transition-all cursor-pointer group flex items-start space-x-3">
+              class="p-2.5 rounded-2xl border border-slate-200/80 dark:border-white/[0.05] hover:border-slate-300 dark:hover:border-white/15 bg-white/60 dark:bg-white/[0.02] hover:bg-white dark:hover:bg-white/[0.06] transition-all cursor-pointer group flex items-start space-x-3 shadow-xs">
               <div
-                class="w-8 h-8 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white/60 group-hover:text-white shrink-0 mt-0.5">
+                class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] flex items-center justify-center text-slate-600 dark:text-white/60 group-hover:text-slate-900 dark:group-hover:text-white shrink-0 mt-0.5">
                 <ng-icon name="lucideFileText" class="w-4 h-4"></ng-icon>
               </div>
               <div class="flex-1 min-w-0">
-                <h4 class="text-xs font-medium text-white/85 group-hover:text-white truncate transition-colors">
+                <h4 class="text-xs font-medium text-slate-800 dark:text-white/85 group-hover:text-slate-900 dark:group-hover:text-white truncate transition-colors">
                   {{ doc.title }}
                 </h4>
-                <div class="flex items-center space-x-2 text-[10px] text-white/40 mt-1">
+                <div class="flex items-center space-x-2 text-[10px] text-slate-500 dark:text-white/40 mt-1">
                   <span>{{ doc.entities ? doc.entities.length : 0 }} concepts</span>
                   <span>•</span>
                   <span class="font-mono text-[9px] uppercase px-1 rounded"
-                    [ngClass]="doc.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'">
+                    [ngClass]="doc.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'">
                     {{ doc.status }}
                   </span>
                 </div>
@@ -108,21 +135,21 @@
 
         <!-- Examples Section -->
         <div *ngIf="selectedTab() === 'examples'">
-          <div class="text-[10px] font-mono uppercase tracking-wider text-white/30 px-2 mb-2">
+          <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-white/30 px-2 mb-2">
             Curated Knowledge Maps
           </div>
           <div class="space-y-1.5">
             <div *ngFor="let preset of filteredPresets()" (click)="selectPreset(preset)"
-              class="p-2.5 rounded-2xl border border-white/[0.05] hover:border-white/15 bg-white/[0.02] hover:bg-white/[0.06] transition-all cursor-pointer group flex items-start space-x-3">
+              class="p-2.5 rounded-2xl border border-slate-200/80 dark:border-white/[0.05] hover:border-slate-300 dark:hover:border-white/15 bg-white/60 dark:bg-white/[0.02] hover:bg-white dark:hover:bg-white/[0.06] transition-all cursor-pointer group flex items-start space-x-3 shadow-xs">
               <div
-                class="w-8 h-8 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white/60 group-hover:text-white shrink-0 mt-0.5">
-                <ng-icon name="lucideSparkles" class="w-4 h-4"></ng-icon>
+                class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] flex items-center justify-center text-slate-600 dark:text-white/60 group-hover:text-slate-900 dark:group-hover:text-white shrink-0 mt-0.5">
+                <ng-icon name="lucideSparkles" class="w-4 h-4 text-emerald-500 dark:text-emerald-400"></ng-icon>
               </div>
               <div class="flex-1 min-w-0">
-                <h4 class="text-xs font-medium text-white/85 group-hover:text-white truncate transition-colors">
+                <h4 class="text-xs font-medium text-slate-800 dark:text-white/85 group-hover:text-slate-900 dark:group-hover:text-white truncate transition-colors">
                   {{ preset.title }}
                 </h4>
-                <p class="text-[10px] text-white/40 line-clamp-1 mt-0.5">{{ preset.description }}</p>
+                <p class="text-[10px] text-slate-500 dark:text-white/40 line-clamp-1 mt-0.5">{{ preset.description }}</p>
               </div>
             </div>
           </div>
@@ -133,43 +160,43 @@
     </aside>
 
     <!-- Center Main Content: LLM Prompt Box & Suggestions -->
-    <main class="flex-1 h-full overflow-y-auto custom-scrollbar p-6 md:p-12 flex flex-col items-center justify-center">
+    <main class="flex-1 h-full overflow-y-auto custom-scrollbar p-3 sm:p-6 md:p-12 flex flex-col items-center justify-center">
 
       <div class="w-full max-w-2xl flex flex-col items-center">
 
-        <!-- Hero Title (56px) -->
-        <div class="w-full text-left mb-6">
-          <h1 class="text-4xl md:text-[56px] font-medium tracking-tight text-white/95 leading-tight">
+        <!-- Hero Title -->
+        <div class="w-full text-left mb-4 sm:mb-6">
+          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-medium tracking-tight text-slate-900 dark:text-white/95 leading-tight">
             Welcome to Trellis..
           </h1>
         </div>
 
         <!-- Big LLM Prompt Box Container -->
         <div
-          class="w-full rounded-3xl border border-white/10 bg-[#0B101B]/95 shadow-2xl p-4 transition-all focus-within:border-white/25 focus-within:bg-[#0D1322]">
+          class="w-full rounded-3xl border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#0B101B]/95 shadow-xl dark:shadow-2xl p-3.5 sm:p-4 transition-all focus-within:border-emerald-500/40 dark:focus-within:border-white/25 focus-within:shadow-2xl">
 
           <!-- Multiline Textarea -->
           <textarea [ngModel]="topicPrompt()" (ngModelChange)="topicPrompt.set($event)" (keydown)="onKeydown($event)"
             rows="4" placeholder="What topic would you like to explore?"
-            class="w-full bg-transparent border-0 text-sm md:text-base text-white/90 placeholder-white/30 focus:outline-none resize-none leading-relaxed"></textarea>
+            class="w-full bg-transparent border-0 text-sm md:text-base text-slate-800 dark:text-white/90 placeholder:text-slate-400 dark:placeholder:text-white/30 focus:outline-none resize-none leading-relaxed font-sans"></textarea>
 
-          <!-- Bottom Action Toolbar (No Separator Line) -->
+          <!-- Bottom Action Toolbar -->
           <div class="flex items-center justify-between mt-3">
 
             <!-- Left Tool: Plus Button to Upload Document / PDF -->
             <button (click)="triggerPdfUpload(fileInput)" title="Upload PDF or Document"
-              class="h-8 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] flex items-center space-x-1.5 text-xs text-white/70 hover:text-white transition-all">
+              class="h-8 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border border-slate-200 dark:border-white/[0.08] flex items-center space-x-1.5 text-xs text-slate-700 dark:text-white/70 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer">
               <ng-icon name="lucidePlus" class="w-4 h-4"></ng-icon>
-              <span>Add PDF / Doc</span>
+              <span class="text-[11px] sm:text-xs">Add PDF / Doc</span>
             </button>
 
             <!-- Right Tool: Send Action Button -->
             <button (click)="submitPrompt()" [disabled]="!topicPrompt().trim() || isSubmitting()"
-              [ngClass]="topicPrompt().trim() && !isSubmitting() ? 'bg-white text-black hover:bg-white/90 shadow-md cursor-pointer' : 'bg-white/10 text-white/30 cursor-not-allowed'"
+              [ngClass]="topicPrompt().trim() && !isSubmitting() ? 'bg-slate-900 text-white dark:bg-white dark:text-black hover:opacity-90 shadow-md cursor-pointer' : 'bg-slate-200 text-slate-400 dark:bg-white/10 dark:text-white/30 cursor-not-allowed'"
               class="w-8 h-8 rounded-xl flex items-center justify-center transition-all">
               <ng-icon *ngIf="!isSubmitting()" name="lucideArrowUp" class="w-4 h-4"></ng-icon>
               <div *ngIf="isSubmitting()"
-                class="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                class="w-3.5 h-3.5 border-2 border-slate-400 dark:border-white/20 border-t-slate-900 dark:border-t-white rounded-full animate-spin"></div>
             </button>
 
           </div>
@@ -179,8 +206,8 @@
         <!-- Suggested Topic Quick Chips Underneath -->
         <div class="w-full flex flex-wrap items-center gap-2 mt-4">
           <button *ngFor="let preset of presets" (click)="selectPreset(preset)"
-            class="px-3.5 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.08] hover:border-white/20 text-xs text-white/60 hover:text-white/90 transition-all truncate max-w-xs flex items-center space-x-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-white/30"></span>
+            class="px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-white/[0.06] bg-white/70 dark:bg-white/[0.02] hover:bg-white dark:hover:bg-white/[0.08] hover:border-slate-300 dark:hover:border-white/20 text-xs text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white/90 transition-all truncate max-w-xs flex items-center space-x-1.5 cursor-pointer shadow-2xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-white/30"></span>
             <span class="truncate">{{ preset.title }}</span>
           </button>
         </div>
