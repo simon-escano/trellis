@@ -212,7 +212,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
 ---
 
 ### Phase 3: Angular 18 Reactive Web Client — `apps/web`
-- [ ] **Task 3.1: Angular 18 Standalone Scaffolding & Tailwind CSS Theme**
+- [x] **Task 3.1: Angular 18 Standalone Scaffolding & Tailwind CSS Theme**
   - **Target Files:** `apps/web/package.json`, `apps/web/angular.json`, `apps/web/tsconfig.json`, `apps/web/tailwind.config.js`, `apps/web/src/styles.css`, `apps/web/src/index.html`
   - **Prerequisites:** Task 0.1
   - **Validation Command:** `npm --prefix apps/web run build`
