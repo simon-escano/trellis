@@ -1,13 +1,13 @@
 <div class="flex w-screen h-screen overflow-hidden bg-[#F4F6FB] dark:bg-[#07090E] text-slate-900 dark:text-white font-sans antialiased select-none relative transition-colors duration-200">
 
   <!-- View 1: Homepage View (with Left Topic History Sidebar & LLM Prompt Container) -->
-  <app-home *ngIf="store.currentView() === 'home'" class="w-full h-full"></app-home>
+  <app-home *ngIf="store.currentView() === 'home'" class="w-full h-full view-enter"></app-home>
 
   <!-- View 2: Fullscreen Topic Concept Map View (Sidebar hidden for maximum immersive room) -->
   <ng-container *ngIf="store.currentView() === 'canvas'">
     
     <!-- Fullscreen Concept Graph Canvas with embedded Top Left Flex Header & Inspector -->
-    <main class="w-full h-full relative z-0">
+    <main class="w-full h-full relative z-0 view-enter">
       <app-canvas></app-canvas>
     </main>
 

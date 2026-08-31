@@ -34,6 +34,7 @@ import { DataSet } from 'vis-data';
 import { Network, Options, Node, Edge } from 'vis-network';
 import { DocumentStore } from '../../core/state/document.store.js';
 import { ThemeService } from '../../core/services/theme.service.js';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service.js';
 import {
   Entity,
   EntityCategory,
@@ -459,6 +460,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
   readonly store = inject(DocumentStore);
   readonly themeService = inject(ThemeService);
+  readonly confirmDialog = inject(ConfirmDialogService);
 
   private network: Network | null = null;
   private nodesDataSet = new DataSet<Node>();
@@ -564,7 +566,15 @@ export class CanvasComponent implements OnInit, OnDestroy {
   async deleteTopic() {
     this.closeMenu();
     const doc = this.store.activeDocument();
-    if (doc && confirm(`Delete "${doc.title}"?`)) {
+    if (!doc) return;
+    const confirmed = await this.confirmDialog.confirm({
+      title: 'Delete Topic',
+      message: `"${doc.title}" will be permanently deleted and cannot be recovered.`,
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      danger: true,
+    });
+    if (confirmed) {
       await this.store.deleteDocument(doc.id);
     }
   }

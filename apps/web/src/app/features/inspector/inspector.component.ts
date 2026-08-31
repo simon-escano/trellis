@@ -13,6 +13,7 @@ import {
   lucideInfo,
 } from '@ng-icons/lucide';
 import { DocumentStore } from '../../core/state/document.store.js';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service.js';
 import {
   Entity,
   EntityCategory,
@@ -41,6 +42,7 @@ import {
 })
 export class InspectorComponent {
   readonly store = inject(DocumentStore);
+  readonly confirmDialog = inject(ConfirmDialogService);
 
   readonly activeTab = signal<'summary' | 'concept' | 'raw'>('summary');
 
@@ -138,9 +140,17 @@ export class InspectorComponent {
     }
   }
 
-  deleteCurrentDocument() {
+  async deleteCurrentDocument() {
     const doc = this.activeDocument();
-    if (doc && confirm(`Delete "${doc.title}"?`)) {
+    if (!doc) return;
+    const confirmed = await this.confirmDialog.confirm({
+      title: 'Delete Topic',
+      message: `"${doc.title}" will be permanently deleted and cannot be recovered.`,
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      danger: true,
+    });
+    if (confirmed) {
       this.store.deleteDocument(doc.id);
     }
   }

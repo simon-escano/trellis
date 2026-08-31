@@ -23,6 +23,7 @@ import {
 } from '@ng-icons/lucide';
 import { DocumentStore } from '../../core/state/document.store.js';
 import { Document } from '../../core/models/document.model.js';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service.js';
 
 @Component({
   selector: 'app-sidebar',
@@ -49,6 +50,7 @@ export class SidebarComponent {
   @Output() openIngestModal = new EventEmitter<void>();
 
   readonly store = inject(DocumentStore);
+  readonly confirmDialog = inject(ConfirmDialogService);
   readonly searchQuery = signal<string>('');
   readonly isCollapsed = signal<boolean>(false);
 
@@ -72,9 +74,16 @@ export class SidebarComponent {
     this.store.selectDocument(id);
   }
 
-  onDelete(e: MouseEvent, doc: Document) {
+  async onDelete(e: MouseEvent, doc: Document) {
     e.stopPropagation();
-    if (confirm(`Delete document "${doc.title}"?`)) {
+    const confirmed = await this.confirmDialog.confirm({
+      title: 'Delete Document',
+      message: `"${doc.title}" will be permanently deleted and cannot be recovered.`,
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      danger: true,
+    });
+    if (confirmed) {
       this.store.deleteDocument(doc.id);
     }
   }
