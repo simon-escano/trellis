@@ -9,16 +9,10 @@ import {
   lucideSparkles,
   lucideArrowUp,
   lucideUpload,
-  lucideCpu,
   lucideGlobe,
   lucideLayoutGrid,
   lucideClock,
-  lucideCompass,
   lucideChevronRight,
-  lucideChevronLeft,
-  lucideFlaskConical,
-  lucideLandmark,
-  lucideBrainCircuit,
   lucideLayers,
 } from '@ng-icons/lucide';
 import { DocumentStore } from '../../core/state/document.store.js';
@@ -38,16 +32,10 @@ import { DEMO_PRESETS, DemoPreset } from '../../core/data/demo-presets.js';
       lucideSparkles,
       lucideArrowUp,
       lucideUpload,
-      lucideCpu,
       lucideGlobe,
       lucideLayoutGrid,
       lucideClock,
-      lucideCompass,
       lucideChevronRight,
-      lucideChevronLeft,
-      lucideFlaskConical,
-      lucideLandmark,
-      lucideBrainCircuit,
       lucideLayers,
     }),
   ],
@@ -58,7 +46,6 @@ export class HomeComponent {
   readonly searchQuery = signal<string>('');
   readonly topicPrompt = signal<string>('');
   readonly isSubmitting = signal<boolean>(false);
-  readonly selectedMode = signal<'doc' | 'web'>('doc');
   readonly selectedTab = signal<'my_projects' | 'examples'>('my_projects');
 
   readonly presets = DEMO_PRESETS;

@@ -1,11 +1,11 @@
 <aside [ngClass]="isCollapsed() ? 'w-12' : 'w-80 md:w-96'" 
-       class="h-full border-l border-white/[0.08] apple-glass flex flex-col transition-all duration-300 relative z-30 flex-shrink-0 select-none">
+       class="h-full border border-white/10 apple-glass rounded-3xl shadow-2xl flex flex-col transition-all duration-300 relative z-30 flex-shrink-0 select-none overflow-hidden">
   
-  <!-- Collapse Toggle Button -->
+  <!-- Collapse Toggle Button on the Right Edge (since inspector is on the left) -->
   <button (click)="toggleCollapsed()" 
           [title]="isCollapsed() ? 'Expand Inspector' : 'Collapse Inspector'"
-          class="absolute -left-3.5 top-6 w-7 h-7 rounded-full apple-glass border border-white/[0.12] flex items-center justify-center text-white/60 hover:text-white transition-all shadow-md z-40">
-    <ng-icon [name]="isCollapsed() ? 'lucideChevronLeft' : 'lucideChevronRight'" class="text-xs"></ng-icon>
+          class="absolute -right-3.5 top-6 w-7 h-7 rounded-full apple-glass border border-white/[0.12] flex items-center justify-center text-white/60 hover:text-white transition-all shadow-md z-40">
+    <ng-icon [name]="isCollapsed() ? 'lucideChevronRight' : 'lucideChevronLeft'" class="text-xs"></ng-icon>
   </button>
 
   <!-- Collapsed Vertical Rail -->
@@ -58,170 +58,155 @@
       </div>
     </div>
 
-    <!-- Scrollable Drawer Body -->
-    <div class="flex-1 overflow-y-auto p-4 space-y-4">
-      
-      <!-- Selected Concept Inspector Mode -->
-      <div *ngIf="selectedEntity() as entity; else standardTabs" class="space-y-4 animate-in fade-in duration-200">
-        <div class="p-4 rounded-2xl apple-glass-card space-y-3">
-          <div class="flex items-start justify-between">
-            <div>
-              <span [ngClass]="getCategoryBadgeClass(entity.category)" 
-                    class="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider border">
-                {{ entity.category }}
+    <!-- Drawer Scrollable Body -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+
+      <!-- ================= TAB: CONCEPT SELECTED ================= -->
+      <div *ngIf="activeTab() === 'concept' || selectedEntity()" class="space-y-4">
+        
+        <div *ngIf="selectedEntity() as entity; else noEntitySelected" class="space-y-4">
+          <!-- Entity Title Card -->
+          <div class="apple-glass-card p-3.5 rounded-2xl border border-white/[0.08] space-y-2">
+            <div class="flex items-center justify-between">
+              <span [ngClass]="getCategoryBadgeClass(entity.category)"
+                    class="px-2 py-0.5 rounded-md text-[10px] font-mono uppercase font-bold tracking-wider">
+                {{ entity.category.replace('_', ' ') }}
               </span>
-              <h3 class="text-base font-bold text-white tracking-tight mt-2">
-                {{ entity.name }}
-              </h3>
+              <button (click)="clearSelectedEntity()" class="text-white/40 hover:text-white text-xs">
+                <ng-icon name="lucideX"></ng-icon>
+              </button>
             </div>
-            <button (click)="closeEntitySelection()" 
-                    title="Close concept view"
-                    class="p-1 text-white/50 hover:text-white apple-button-secondary rounded-lg flex items-center">
-              <ng-icon name="lucideX" class="text-xs"></ng-icon>
+            <h3 class="text-base font-bold text-white tracking-tight">{{ entity.name }}</h3>
+          </div>
+
+          <!-- Extraction Confidence Bar -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="text-white/60 font-medium flex items-center gap-1">
+                <ng-icon name="lucideActivity" class="text-emerald-400"></ng-icon>
+                AI Extraction Confidence
+              </span>
+              <span class="font-mono text-emerald-400 font-bold">
+                {{ formatConfidence(entity.confidenceScore) }}
+              </span>
+            </div>
+            <div class="w-full bg-white/[0.08] rounded-full h-1.5 overflow-hidden">
+              <div class="bg-gradient-to-r from-emerald-500 to-sky-400 h-1.5 rounded-full transition-all duration-500"
+                   [style.width]="(entity.confidenceScore * 100) + '%'"></div>
+            </div>
+          </div>
+
+          <!-- Metadata Attributes -->
+          <div *ngIf="getMetadataEntries(entity.metadata).length > 0" class="space-y-2">
+            <h4 class="text-xs font-semibold text-white/50 uppercase tracking-wider font-mono">Attributes</h4>
+            <div class="apple-glass-card rounded-xl border border-white/[0.06] overflow-hidden text-xs">
+              <div *ngFor="let entry of getMetadataEntries(entity.metadata)" 
+                   class="flex items-start justify-between p-2.5 border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02]">
+                <span class="font-mono text-white/50 capitalize mr-2">{{ entry[0] }}</span>
+                <span class="text-white/90 text-right break-words max-w-[60%] font-mono text-[11px]">{{ entry[1] }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Connected Relationships -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-semibold text-white/50 uppercase tracking-wider font-mono">
+                Connections ({{ connectedRelationships().length }})
+              </h4>
+            </div>
+
+            <div *ngIf="connectedRelationships().length === 0" class="p-3 text-center text-xs text-white/30 apple-glass-card rounded-xl">
+              No direct relationships mapped for this concept.
+            </div>
+
+            <div class="space-y-1.5">
+              <div *ngFor="let rel of connectedRelationships()" 
+                   class="apple-glass-card p-2.5 rounded-xl border border-white/[0.05] hover:border-white/15 transition-all text-xs space-y-1">
+                <div class="flex items-center justify-between text-[10px] font-mono">
+                  <span class="text-emerald-400 font-semibold uppercase">{{ rel.relationType.replace('_', ' ') }}</span>
+                  <span class="text-white/30">{{ formatConfidence(rel.confidenceScore) }}</span>
+                </div>
+                <div class="flex items-center text-white/80 gap-1.5 font-medium">
+                  <span class="truncate">{{ rel.sourceEntity?.name }}</span>
+                  <span class="text-white/30">→</span>
+                  <span class="truncate">{{ rel.targetEntity?.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noEntitySelected>
+          <div class="p-8 text-center space-y-3 apple-glass-card rounded-2xl border border-dashed border-white/10">
+            <div class="w-10 h-10 rounded-full bg-white/[0.04] flex items-center justify-center mx-auto text-white/40">
+              <ng-icon name="lucideSparkles" class="text-lg"></ng-icon>
+            </div>
+            <p class="text-xs text-white/60">Select any concept node in the graph to inspect its properties and connections.</p>
+          </div>
+        </ng-template>
+
+      </div>
+
+      <!-- ================= TAB: DOCUMENT SUMMARY ================= -->
+      <div *ngIf="activeTab() === 'summary' && !selectedEntity()" class="space-y-4">
+        <div *ngIf="activeDocument() as doc">
+          
+          <!-- Summary Card -->
+          <div class="apple-glass-card p-3.5 rounded-2xl border border-white/[0.08] space-y-2">
+            <div class="flex items-center gap-1.5 text-xs font-semibold text-white/70">
+              <ng-icon name="lucideSparkles" class="text-emerald-400"></ng-icon>
+              <span>AI Executive Summary</span>
+            </div>
+            <p class="text-xs text-white/80 leading-relaxed font-sans">
+              {{ doc.summary || 'Summary is being generated by the AI extractor...' }}
+            </p>
+          </div>
+
+          <!-- Document Metrics Grid -->
+          <div class="grid grid-cols-2 gap-2 mt-3">
+            <div class="apple-glass-card p-3 rounded-xl border border-white/[0.06] text-center">
+              <span class="block text-lg font-bold font-mono text-emerald-400">{{ doc.entities?.length || 0 }}</span>
+              <span class="text-[10px] font-mono uppercase text-white/40">Concepts</span>
+            </div>
+            <div class="apple-glass-card p-3 rounded-xl border border-white/[0.06] text-center">
+              <span class="block text-lg font-bold font-mono text-sky-400">{{ doc.relationships?.length || 0 }}</span>
+              <span class="text-[10px] font-mono uppercase text-white/40">Relations</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="pt-3 border-t border-white/[0.06] space-y-2">
+            <button (click)="reprocessCurrentDocument()"
+                    [disabled]="doc.status === 'PROCESSING'"
+                    class="w-full py-2 px-3 rounded-xl apple-button-secondary text-xs flex items-center justify-center gap-2 text-white/80 hover:text-white transition-all disabled:opacity-40">
+              <ng-icon name="lucideRotateCw" [ngClass]="doc.status === 'PROCESSING' ? 'animate-spin' : ''"></ng-icon>
+              <span>Re-Extract Concepts</span>
+            </button>
+
+            <button (click)="deleteCurrentDocument()"
+                    class="w-full py-2 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs flex items-center justify-center gap-2 transition-all">
+              <ng-icon name="lucideTrash2"></ng-icon>
+              <span>Delete Document</span>
             </button>
           </div>
 
-          <!-- Confidence Score Bar -->
-          <div class="space-y-1.5 pt-1">
-            <div class="flex justify-between text-xs font-mono">
-              <span class="text-white/50">Relevance / Confidence</span>
-              <span class="text-emerald-400 font-bold">{{ (entity.confidenceScore * 100) | number:'1.0-1' }}%</span>
-            </div>
-            <div class="w-full h-1.5 rounded-full bg-black/40 overflow-hidden">
-              <div class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-500" [style.width.%]="entity.confidenceScore * 100"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Concept Metadata Attributes -->
-        <div class="space-y-2">
-          <h4 class="text-[10px] font-mono uppercase tracking-wider text-white/40 font-semibold">Concept Attributes</h4>
-          <div class="p-3 rounded-xl bg-black/30 border border-white/[0.06] font-mono text-xs text-white space-y-2 max-h-48 overflow-y-auto">
-            <div *ngFor="let item of formatMetadata(entity.metadata) | keyvalue" class="flex justify-between gap-2 border-b border-white/[0.04] pb-1.5 last:border-0 last:pb-0">
-              <span class="text-sky-400 font-medium">{{ item.key }}:</span>
-              <span class="text-white/60 truncate text-right" [title]="item.value">{{ item.value }}</span>
-            </div>
-            <div *ngIf="(formatMetadata(entity.metadata) | keyvalue).length === 0" class="text-white/40 italic">
-              No additional metadata attributes.
-            </div>
-          </div>
-        </div>
-
-        <!-- Connected Relationships -->
-        <div class="space-y-2">
-          <h4 class="text-[10px] font-mono uppercase tracking-wider text-white/40 font-semibold">
-            Connected Graph Edges ({{ connectedRelationships().length }})
-          </h4>
-          <div class="space-y-1.5">
-            <div *ngFor="let rel of connectedRelationships()" 
-                 class="p-2.5 rounded-xl apple-glass-card flex items-center justify-between text-xs">
-              <div class="flex items-center space-x-2 truncate">
-                <span class="text-white font-medium truncate">
-                  {{ rel.sourceEntity.name || 'Source' }}
-                </span>
-                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
-                  {{ rel.relationType }}
-                </span>
-                <span class="text-white font-medium truncate">
-                  {{ rel.targetEntity.name || 'Target' }}
-                </span>
-              </div>
-              <span class="text-[10px] font-mono text-white/40 ml-2">
-                {{ (rel.confidenceScore * 100) | number:'1.0-0' }}%
-              </span>
-            </div>
-            <div *ngIf="connectedRelationships().length === 0" class="text-xs text-white/40 italic p-2">
-              No direct connections mapped.
-            </div>
-          </div>
         </div>
       </div>
 
-      <!-- Standard Tabs View -->
-      <ng-template #standardTabs>
-        <div *ngIf="activeDocument() as doc; else noDocument">
-          
-          <!-- Summary Tab -->
-          <div *ngIf="activeTab() === 'summary'" class="space-y-4">
-            <div class="p-4 rounded-2xl apple-glass-card space-y-3">
-              <div class="flex items-center space-x-2 text-emerald-400">
-                <ng-icon name="lucideSparkles" class="text-sm"></ng-icon>
-                <h3 class="text-[10px] font-mono uppercase tracking-wider font-bold">Executive Synthesis</h3>
-              </div>
-              
-              <div *ngIf="doc.summary" class="text-xs text-white/80 leading-relaxed space-y-2">
-                <p>{{ doc.summary }}</p>
-              </div>
-              
-              <div *ngIf="!doc.summary && (doc.status === 'PROCESSING' || doc.status === 'QUEUED')" class="text-xs text-white/40 italic py-4 text-center">
-                AI extraction is synthesizing intelligence...
-              </div>
-
-              <div *ngIf="doc.errorMessage" class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs text-rose-400">
-                <strong>Error:</strong> {{ doc.errorMessage }}
-              </div>
-            </div>
-
-            <!-- Concept Counts Breakdown -->
-            <div class="grid grid-cols-2 gap-2">
-              <div class="p-3 rounded-2xl apple-glass-card">
-                <span class="text-[10px] text-white/40 font-mono uppercase tracking-wider">Concepts</span>
-                <p class="text-xl font-bold text-white mt-1">{{ doc.entities.length || 0 }}</p>
-              </div>
-              <div class="p-3 rounded-2xl apple-glass-card">
-                <span class="text-[10px] text-white/40 font-mono uppercase tracking-wider">Connections</span>
-                <p class="text-xl font-bold text-white mt-1">{{ doc.relationships.length || 0 }}</p>
-              </div>
-            </div>
+      <!-- ================= TAB: RAW SOURCE ================= -->
+      <div *ngIf="activeTab() === 'raw' && !selectedEntity()" class="space-y-2">
+        <div *ngIf="activeDocument() as doc">
+          <div class="flex items-center justify-between text-xs text-white/50 mb-1">
+            <span>Raw Ingested Content</span>
+            <span class="font-mono text-[10px]">{{ doc.rawContent ? doc.rawContent.length : 0 }} bytes</span>
           </div>
-
-          <!-- Concept List Tab -->
-          <div *ngIf="activeTab() === 'concept'" class="space-y-2">
-            <h4 class="text-[10px] font-mono uppercase tracking-wider text-white/40 font-semibold">Document Concepts</h4>
-            <div *ngFor="let ent of doc.entities" 
-                 (click)="store.selectEntity(ent)"
-                 class="p-2.5 rounded-xl apple-glass-card hover:border-emerald-500/30 cursor-pointer transition-all flex items-center justify-between">
-              <div class="flex items-center space-x-2 truncate">
-                <span [ngClass]="getCategoryBadgeClass(ent.category)" class="px-1.5 py-0.5 rounded text-[9px] font-mono border">
-                  {{ ent.category }}
-                </span>
-                <span class="text-xs font-semibold text-white truncate">{{ ent.name }}</span>
-              </div>
-              <ng-icon name="lucideChevronRight" class="text-xs text-white/40 flex-shrink-0"></ng-icon>
-            </div>
-          </div>
-
-          <!-- Source Raw Text Tab -->
-          <div *ngIf="activeTab() === 'raw'" class="space-y-2">
-            <h4 class="text-[10px] font-mono uppercase tracking-wider text-white/40 font-semibold">Original Text Prose</h4>
-            <div class="p-3.5 rounded-2xl bg-black/30 border border-white/[0.06] font-mono text-xs text-white/70 leading-relaxed max-h-96 overflow-y-auto whitespace-pre-wrap select-text">
-              {{ doc.rawContent }}
-            </div>
-          </div>
+          <pre class="p-3 bg-black/40 border border-white/[0.06] rounded-xl text-[11px] font-mono text-white/70 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-96 custom-scrollbar">{{ doc.rawContent }}</pre>
         </div>
+      </div>
 
-        <ng-template #noDocument>
-          <div class="flex flex-col items-center justify-center py-12 text-center text-white/40 space-y-2">
-            <p class="text-xs">Select a concept map from the sidebar to view synthesis.</p>
-          </div>
-        </ng-template>
-      </ng-template>
     </div>
 
-    <!-- Drawer Footer Actions -->
-    <div *ngIf="activeDocument() as doc" class="p-3 border-t border-white/[0.06] bg-black/20 flex items-center justify-between gap-2">
-      <button (click)="reprocessActive()" 
-              [disabled]="doc.status === 'PROCESSING' || doc.status === 'QUEUED'"
-              class="flex-1 py-2 px-3 rounded-xl text-xs font-medium apple-button-secondary disabled:opacity-40 transition-all flex items-center justify-center space-x-1.5">
-        <ng-icon name="lucideRotateCw" class="text-xs"></ng-icon>
-        <span>Reprocess</span>
-      </button>
-
-      <button (click)="deleteActive()" 
-              title="Delete Document"
-              class="py-2 px-3 rounded-xl text-xs font-medium text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/25 transition-all flex items-center justify-center">
-        <ng-icon name="lucideTrash2" class="text-xs"></ng-icon>
-      </button>
-    </div>
   </div>
+
 </aside>
