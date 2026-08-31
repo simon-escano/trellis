@@ -100,17 +100,41 @@ impl QueryRoot {
 
     async fn get_document(&self, ctx: &Context<'_>, id: ID) -> Result<Option<DocumentGql>> {
         let pool = ctx.data::<PgPool>()?;
+        let auth_user_opt = ctx.data_opt::<Option<AuthUser>>().and_then(|o| o.as_ref());
         let doc_id = Uuid::parse_str(&id.0)
             .map_err(|e| async_graphql::Error::new(format!("Invalid UUID: {}", e)))?;
 
-        let doc = sqlx::query_as::<_, Document>(
-            "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
-             FROM documents
-             WHERE id = $1",
-        )
-        .bind(doc_id)
-        .fetch_optional(pool)
-        .await?;
+        let doc = if let Some(auth_user) = auth_user_opt {
+            if !auth_user.is_guest {
+                sqlx::query_as::<_, Document>(
+                    "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
+                     FROM documents
+                     WHERE id = $1 AND (user_id = $2 OR user_id IS NULL)",
+                )
+                .bind(doc_id)
+                .bind(auth_user.id)
+                .fetch_optional(pool)
+                .await?
+            } else {
+                sqlx::query_as::<_, Document>(
+                    "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
+                     FROM documents
+                     WHERE id = $1 AND user_id IS NULL",
+                )
+                .bind(doc_id)
+                .fetch_optional(pool)
+                .await?
+            }
+        } else {
+            sqlx::query_as::<_, Document>(
+                "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
+                 FROM documents
+                 WHERE id = $1 AND user_id IS NULL",
+            )
+            .bind(doc_id)
+            .fetch_optional(pool)
+            .await?
+        };
 
         Ok(doc.map(DocumentGql))
     }

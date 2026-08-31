@@ -188,19 +188,49 @@ impl MutationRoot {
     async fn reprocess_document(&self, ctx: &Context<'_>, id: ID) -> Result<DocumentGql> {
         let pool = ctx.data::<PgPool>()?;
         let dispatcher = ctx.data::<QueueDispatcher>()?;
+        let auth_user_opt = ctx.data_opt::<Option<AuthUser>>().and_then(|o| o.as_ref());
         let doc_id = Uuid::parse_str(&id.0)
             .map_err(|e| async_graphql::Error::new(format!("Invalid UUID: {}", e)))?;
 
-        let doc = sqlx::query_as::<_, Document>(
-            "UPDATE documents
-             SET status = $2, summary = NULL, error_message = NULL, updated_at = NOW()
-             WHERE id = $1
-             RETURNING id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at",
-        )
-        .bind(doc_id)
-        .bind(ProcessingStatus::Queued)
-        .fetch_one(pool)
-        .await?;
+        let doc = if let Some(auth_user) = auth_user_opt {
+            if !auth_user.is_guest {
+                sqlx::query_as::<_, Document>(
+                    "UPDATE documents
+                     SET status = $2, summary = NULL, error_message = NULL, updated_at = NOW()
+                     WHERE id = $1 AND (user_id = $3 OR user_id IS NULL)
+                     RETURNING id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at",
+                )
+                .bind(doc_id)
+                .bind(ProcessingStatus::Queued)
+                .bind(auth_user.id)
+                .fetch_optional(pool)
+                .await?
+            } else {
+                sqlx::query_as::<_, Document>(
+                    "UPDATE documents
+                     SET status = $2, summary = NULL, error_message = NULL, updated_at = NOW()
+                     WHERE id = $1 AND user_id IS NULL
+                     RETURNING id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at",
+                )
+                .bind(doc_id)
+                .bind(ProcessingStatus::Queued)
+                .fetch_optional(pool)
+                .await?
+            }
+        } else {
+            sqlx::query_as::<_, Document>(
+                "UPDATE documents
+                 SET status = $2, summary = NULL, error_message = NULL, updated_at = NOW()
+                 WHERE id = $1 AND user_id IS NULL
+                 RETURNING id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at",
+            )
+            .bind(doc_id)
+            .bind(ProcessingStatus::Queued)
+            .fetch_optional(pool)
+            .await?
+        };
+
+        let doc = doc.ok_or_else(|| async_graphql::Error::new("Document not found or permission denied."))?;
 
         let job = QueueJob::new(doc.id, doc.title.clone(), doc.raw_content.clone());
         let _ = dispatcher.dispatch(job);
@@ -210,13 +240,29 @@ impl MutationRoot {
 
     async fn delete_document(&self, ctx: &Context<'_>, id: ID) -> Result<bool> {
         let pool = ctx.data::<PgPool>()?;
+        let auth_user_opt = ctx.data_opt::<Option<AuthUser>>().and_then(|o| o.as_ref());
         let doc_id = Uuid::parse_str(&id.0)
             .map_err(|e| async_graphql::Error::new(format!("Invalid UUID: {}", e)))?;
 
-        let result = sqlx::query("DELETE FROM documents WHERE id = $1")
-            .bind(doc_id)
-            .execute(pool)
-            .await?;
+        let result = if let Some(auth_user) = auth_user_opt {
+            if !auth_user.is_guest {
+                sqlx::query("DELETE FROM documents WHERE id = $1 AND (user_id = $2 OR user_id IS NULL)")
+                    .bind(doc_id)
+                    .bind(auth_user.id)
+                    .execute(pool)
+                    .await?
+            } else {
+                sqlx::query("DELETE FROM documents WHERE id = $1 AND user_id IS NULL")
+                    .bind(doc_id)
+                    .execute(pool)
+                    .await?
+            }
+        } else {
+            sqlx::query("DELETE FROM documents WHERE id = $1 AND user_id IS NULL")
+                .bind(doc_id)
+                .execute(pool)
+                .await?
+        };
 
         Ok(result.rows_affected() > 0)
     }
