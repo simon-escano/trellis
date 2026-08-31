@@ -10,6 +10,7 @@
     "dev:server": "cargo run --manifest-path apps/server/Cargo.toml",
     "dev:worker": "npm --prefix apps/worker run dev",
     "dev:web": "npm --prefix apps/web start",
+    "build": "npm --prefix apps/web run build",
     "build:all": "npm --prefix apps/worker run build && npm --prefix apps/web run build && cargo build --manifest-path apps/server/Cargo.toml"
   },
   "keywords": [

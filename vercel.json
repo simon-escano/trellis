@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "outputDirectory": "dist/trellis-web/browser",
+  "buildCommand": "npm run build",
+  "outputDirectory": "apps/web/dist/trellis-web/browser",
   "rewrites": [
     {
       "source": "/((?!assets/|.*\\..*).*)",
