@@ -70,17 +70,41 @@
     <div *ngIf="!isCollapsed()"
       class="px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-white/40 font-medium flex items-center justify-between">
       <span>Uploaded Documents</span>
-      <span class="text-white/30">{{ filteredDocuments().length }}</span>
+      <span *ngIf="!store.isLoading()" class="text-white/30">{{ filteredDocuments().length }}</span>
+      <span *ngIf="store.isLoading()" class="w-4 h-2 rounded skeleton-shimmer"></span>
     </div>
 
-    <!-- Empty State -->
-    <div *ngIf="filteredDocuments().length === 0 && !isCollapsed()" class="py-8 px-4 text-center text-white/40 text-xs">
+    <!-- Skeletons (When Loading) -->
+    <div *ngIf="store.isLoading()" class="space-y-2 animate-in fade-in duration-200">
+      <div *ngFor="let i of [1, 2, 3, 4]" [ngClass]="isCollapsed() ? 'p-2.5 flex items-center justify-center' : 'p-3.5 space-y-2'"
+        class="rounded-2xl border border-white/[0.05] bg-white/[0.02] skeleton-card">
+        <div *ngIf="!isCollapsed()" class="space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center space-x-2 w-3/4">
+              <div class="w-2 h-2 rounded-full skeleton-shimmer shrink-0"></div>
+              <div class="h-3 w-4/5 rounded-md skeleton-shimmer"></div>
+            </div>
+            <div class="h-3.5 w-12 rounded-full skeleton-shimmer shrink-0"></div>
+          </div>
+          <div class="h-2.5 w-full rounded skeleton-shimmer"></div>
+          <div class="flex items-center justify-between pt-1">
+            <div class="h-2 w-16 rounded skeleton-shimmer"></div>
+            <div class="h-2 w-10 rounded skeleton-shimmer"></div>
+          </div>
+        </div>
+        <div *ngIf="isCollapsed()" class="w-8 h-8 rounded-xl skeleton-shimmer"></div>
+      </div>
+    </div>
+
+    <!-- Empty State (Only when NOT loading) -->
+    <div *ngIf="!store.isLoading() && filteredDocuments().length === 0 && !isCollapsed()" class="py-8 px-4 text-center text-white/40 text-xs animate-in fade-in duration-200">
       <p *ngIf="searchQuery()">No matching maps found.</p>
       <p *ngIf="!searchQuery()">No documents ingested yet. Click above to start!</p>
     </div>
 
     <!-- Document Card Items with Generous Padding & Apple Styling -->
-    <div *ngFor="let doc of filteredDocuments()" (click)="selectDoc(doc.id)" [title]="doc.title" [ngClass]="[
+    <ng-container *ngIf="!store.isLoading()">
+      <div *ngFor="let doc of filteredDocuments()" (click)="selectDoc(doc.id)" [title]="doc.title" [ngClass]="[
            store.selectedDocumentId() === doc.id ? 'apple-segment-active bg-white/[0.09] border-white/[0.14]' : 'apple-glass-card hover:bg-white/[0.06] text-white/70 hover:text-white',
            isCollapsed() ? 'p-2.5 flex items-center justify-center' : 'p-3.5 space-y-2'
          ]" class="rounded-2xl cursor-pointer transition-all duration-150 relative group">
@@ -135,6 +159,7 @@
         <span [ngClass]="getStatusBadge(doc.status).dotClass" class="w-1.5 h-1.5 rounded-full"></span>
       </div>
     </div>
+    </ng-container>
   </div>
 
   <!-- Bottom Workspace Status Footer -->
