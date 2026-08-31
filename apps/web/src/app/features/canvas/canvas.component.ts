@@ -120,11 +120,11 @@ function computeNodeDimensions(
   const titleLength = name.length;
   const descLength = description ? description.length : 0;
 
-  let width = 260;
+  let width = 250;
   if (titleLength > 28 || descLength > 120) {
-    width = 295;
+    width = 285;
   } else if (titleLength < 16 && descLength < 60) {
-    width = 230;
+    width = 225;
   }
 
   const maxCharsPerLine = Math.floor((width - 28) / 7.2);
@@ -270,28 +270,32 @@ function createNodeSvg(
   const color = getCategoryColor(category);
   const strokeColor = isSelected ? '#FFFFFF' : color.border;
   const strokeWidth = isSelected ? 2.5 : 1.2;
-  const glow = isSelected
-    ? `filter="drop-shadow(0 0 20px ${color.accent})"`
-    : `filter="drop-shadow(0 10px 25px rgba(0,0,0,0.65))"`;
 
   const safeName = escapeXml(name);
   const safeCat = escapeXml(category.replace(/_/g, ' '));
 
+  // Generous 14px outer margin inside SVG viewport so drop shadow never clips
+  const pad = 14;
+  const svgWidth = dims.width + pad * 2;
+  const svgHeight = dims.height + pad * 2;
+  const cardX = pad;
+  const cardY = pad;
+
   const iconGeometry = getCategoryIconSvgGeometry(
     category,
-    20,
-    16.5,
+    cardX + 20,
+    cardY + 16.5,
     color.text
   );
 
   const descTextElements = dims.descLines
     .map(
       (line, idx) =>
-        `<text x="14" y="${78 + idx * 17}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="${idx === dims.descLines.length - 1 ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.74)'}">${escapeXml(line)}</text>`
+        `<text x="${cardX + 14}" y="${cardY + 78 + idx * 17}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="${idx === dims.descLines.length - 1 ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.74)'}">${escapeXml(line)}</text>`
     )
     .join('\n');
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${dims.width}" height="${dims.height}" viewBox="0 0 ${dims.width} ${dims.height}">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}" style="background: transparent;">
     <defs>
       <linearGradient id="cardGrad-${safeName.replace(/\W/g, '')}" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#141C2C" stop-opacity="0.97" />
@@ -302,27 +306,33 @@ function createNodeSvg(
         <stop offset="50%" stop-color="rgba(255,255,255,0.05)" />
         <stop offset="100%" stop-color="rgba(255,255,255,0.25)" />
       </linearGradient>
+      <filter id="shadow-${safeName.replace(/\W/g, '')}" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="rgba(0,0,0,0.6)" />
+      </filter>
+      <filter id="glow-${safeName.replace(/\W/g, '')}" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="${color.accent}" flood-opacity="0.8" />
+      </filter>
     </defs>
     
-    <!-- Outer Card Background with Dynamic Responsive Bounds -->
-    <rect x="2" y="2" width="${dims.width - 4}" height="${dims.height - 4}" rx="16" ry="16" fill="url(#cardGrad-${safeName.replace(/\W/g, '')})" stroke="${strokeColor}" stroke-width="${strokeWidth}" ${glow} />
+    <!-- Outer Rounded Card Background (rx=18, ry=18) with smooth transparent margins -->
+    <rect x="${cardX}" y="${cardY}" width="${dims.width}" height="${dims.height}" rx="18" ry="18" fill="url(#cardGrad-${safeName.replace(/\W/g, '')})" stroke="${strokeColor}" stroke-width="${strokeWidth}" filter="${isSelected ? `url(#glow-${safeName.replace(/\W/g, '')})` : `url(#shadow-${safeName.replace(/\W/g, '')})`}" />
     
     <!-- Top Specular Highlight Line -->
-    <path d="M 22 3.5 L ${dims.width - 22} 3.5" stroke="url(#specularGrad)" stroke-width="1.2" stroke-linecap="round" />
+    <path d="M ${cardX + 22} ${cardY + 3.5} L ${cardX + dims.width - 22} ${cardY + 3.5}" stroke="url(#specularGrad)" stroke-width="1.2" stroke-linecap="round" />
 
     <!-- Responsive Auto-Sized Category Pill -->
-    <rect x="14" y="14" width="${dims.pillWidth}" height="22" rx="11" ry="11" fill="${color.bg}" stroke="${color.border}" stroke-width="0.8" />
+    <rect x="${cardX + 14}" y="${cardY + 14}" width="${dims.pillWidth}" height="22" rx="11" ry="11" fill="${color.bg}" stroke="${color.border}" stroke-width="0.8" />
     
     <!-- Vector Category Icon -->
     ${iconGeometry}
     
     <!-- Category Label with generous spacing from icon -->
-    <text x="42" y="29" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="9.5" font-weight="700" fill="${color.text}" letter-spacing="0.5">
+    <text x="${cardX + 42}" y="${cardY + 29}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="9.5" font-weight="700" fill="${color.text}" letter-spacing="0.5">
       ${safeCat}
     </text>
 
     <!-- Bold Concept Title -->
-    <text x="14" y="58" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="700" fill="#FFFFFF">
+    <text x="${cardX + 14}" y="${cardY + 58}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="700" fill="#FFFFFF">
       ${truncate(safeName, Math.floor(dims.width / 9))}
     </text>
 
@@ -359,7 +369,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
     label: string;
   }> = [];
 
-  // Reactive interactive dot field background state
+  // Dense, neutral interactive dot field background state
   private dotsAnimId: number | null = null;
   private mouseX = -1000;
   private mouseY = -1000;
@@ -429,8 +439,9 @@ export class CanvasComponent implements OnInit, OnDestroy {
       this.mouseY = -1000;
     });
 
-    const spacing = 36;
-    const proximityRadius = 150;
+    // Dense grid: 20px spacing
+    const spacing = 20;
+    const proximityRadius = 120;
 
     const renderDots = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -445,8 +456,8 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
           let renderX = dotX;
           let renderY = dotY;
-          let dotRadius = 1.2;
-          let alpha = 0.08;
+          let dotRadius = 0.9;
+          let alpha = 0.055;
           let isHovered = false;
 
           if (this.isMouseOver) {
@@ -454,13 +465,13 @@ export class CanvasComponent implements OnInit, OnDestroy {
             if (dist < proximityRadius) {
               isHovered = true;
               const factor = 1 - dist / proximityRadius;
-              const displace = factor * 7;
+              const displace = factor * 4.5;
               const angle = Math.atan2(dotY - this.mouseY, dotX - this.mouseX);
 
               renderX = dotX + Math.cos(angle) * displace;
               renderY = dotY + Math.sin(angle) * displace;
-              dotRadius = 1.2 + factor * 2.2;
-              alpha = 0.15 + factor * 0.75;
+              dotRadius = 0.9 + factor * 1.5;
+              alpha = 0.08 + factor * 0.35;
             }
           }
 
@@ -468,9 +479,10 @@ export class CanvasComponent implements OnInit, OnDestroy {
           ctx.arc(renderX, renderY, dotRadius, 0, Math.PI * 2);
 
           if (isHovered) {
-            ctx.fillStyle = `rgba(0, 245, 160, ${alpha})`;
-            ctx.shadowColor = 'rgba(0, 245, 160, 0.5)';
-            ctx.shadowBlur = 8;
+            // Neutral soft frosted white glow
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.35)';
+            ctx.shadowBlur = 4;
           } else {
             ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
             ctx.shadowColor = 'transparent';
@@ -540,12 +552,12 @@ export class CanvasComponent implements OnInit, OnDestroy {
         enabled: true,
         solver: 'forceAtlas2Based',
         forceAtlas2Based: {
-          gravitationalConstant: -320, // Strong anti-clustering repulsion
-          centralGravity: 0.0025,
-          springLength: 320, // Generous breathing room
-          springConstant: 0.035,
-          damping: 0.8,
-          avoidOverlap: 1.0, // Maximum overlap prevention
+          gravitationalConstant: -160, // Balanced spacing
+          centralGravity: 0.006,
+          springLength: 230, // Optimal breathing room
+          springConstant: 0.04,
+          damping: 0.75,
+          avoidOverlap: 0.9, // Anti-collision without extreme sprawl
         },
         stabilization: {
           iterations: 180,
@@ -649,7 +661,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
         id: ent.id,
         image: imageUri,
         shape: 'image',
-        size: isSelected ? Math.round(dims.size * 1.1) : dims.size,
+        size: isSelected ? Math.round(dims.size * 1.08) : dims.size,
       };
     });
 
