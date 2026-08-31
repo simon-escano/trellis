@@ -25,6 +25,7 @@ pub enum ProcessingStatus {
 #[derive(sqlx::FromRow, Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub struct Document {
     pub id: Uuid,
+    pub user_id: Option<Uuid>,
     pub title: String,
     pub raw_content: String,
     pub summary: Option<String>,

@@ -1,0 +1,4 @@
+/* Auth Modal styling additions */
+:host {
+  display: block;
+}

@@ -36,7 +36,7 @@
     </div>
   </div>
 
-  <!-- Right: Ingestion CTA Button -->
+  <!-- Right: Ingestion CTA Button & User Profile Pill -->
   <div class="flex items-center space-x-2">
     <button (click)="openIngestModal.emit()"
       class="px-3.5 py-1.5 rounded-full apple-button-primary flex items-center space-x-1.5 text-xs font-medium tracking-tight shadow-md cursor-pointer">
@@ -44,6 +44,14 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
       </svg>
       <span>+ Ingest</span>
+    </button>
+
+    <!-- User Profile Initial / Sign In Button -->
+    <button
+      (click)="authStore.openAuthModal()"
+      [title]="authStore.isAuthenticated() ? (authStore.currentUser()?.email || 'Account') : 'Sign In'"
+      class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 flex items-center justify-center text-[10px] font-medium text-white/90 transition-all cursor-pointer">
+      {{ authStore.userInitial() }}
     </button>
   </div>
 </div>

@@ -2,14 +2,49 @@ use async_graphql::{Context, Object, Result, ID};
 use sqlx::PgPool;
 use uuid::Uuid;
 
-use crate::graphql::types::{DocumentGql, SystemMetricsGql};
-use crate::models::Document;
+use crate::auth::AuthUser;
+use crate::graphql::types::{DocumentGql, SystemMetricsGql, UserGql};
+use crate::models::{Document, User};
 
 #[derive(Default)]
 pub struct QueryRoot;
 
 #[Object]
 impl QueryRoot {
+    async fn me(&self, ctx: &Context<'_>) -> Result<Option<UserGql>> {
+        let pool = ctx.data::<PgPool>()?;
+        let auth_user_opt = ctx.data_opt::<Option<AuthUser>>().and_then(|o| o.as_ref());
+
+        if let Some(auth_user) = auth_user_opt {
+            if !auth_user.is_guest {
+                let user = sqlx::query_as::<_, User>(
+                    "SELECT id, email, password_hash, created_at FROM users WHERE id = $1",
+                )
+                .bind(auth_user.id)
+                .fetch_optional(pool)
+                .await?;
+
+                if let Some(u) = user {
+                    return Ok(Some(UserGql {
+                        id: ID(u.id.to_string()),
+                        email: u.email,
+                        created_at: u.created_at.to_rfc3339(),
+                        is_guest: false,
+                    }));
+                }
+            } else {
+                return Ok(Some(UserGql {
+                    id: ID(Uuid::nil().to_string()),
+                    email: "guest@trellis.local".to_string(),
+                    created_at: chrono::Utc::now().to_rfc3339(),
+                    is_guest: true,
+                }));
+            }
+        }
+
+        Ok(None)
+    }
+
     async fn get_documents(
         &self,
         ctx: &Context<'_>,
@@ -19,17 +54,46 @@ impl QueryRoot {
         let pool = ctx.data::<PgPool>()?;
         let limit = limit.clamp(1, 100) as i64;
         let offset = offset.max(0) as i64;
+        let auth_user_opt = ctx.data_opt::<Option<AuthUser>>().and_then(|o| o.as_ref());
 
-        let docs = sqlx::query_as::<_, Document>(
-            "SELECT id, title, raw_content, summary, status, error_message, created_at, updated_at
-             FROM documents
-             ORDER BY created_at DESC
-             LIMIT $1 OFFSET $2",
-        )
-        .bind(limit)
-        .bind(offset)
-        .fetch_all(pool)
-        .await?;
+        let docs = if let Some(auth_user) = auth_user_opt {
+            if !auth_user.is_guest {
+                sqlx::query_as::<_, Document>(
+                    "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
+                     FROM documents
+                     WHERE user_id = $1 OR user_id IS NULL
+                     ORDER BY created_at DESC
+                     LIMIT $2 OFFSET $3",
+                )
+                .bind(auth_user.id)
+                .bind(limit)
+                .bind(offset)
+                .fetch_all(pool)
+                .await?
+            } else {
+                sqlx::query_as::<_, Document>(
+                    "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
+                     FROM documents
+                     ORDER BY created_at DESC
+                     LIMIT $1 OFFSET $2",
+                )
+                .bind(limit)
+                .bind(offset)
+                .fetch_all(pool)
+                .await?
+            }
+        } else {
+            sqlx::query_as::<_, Document>(
+                "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
+                 FROM documents
+                 ORDER BY created_at DESC
+                 LIMIT $1 OFFSET $2",
+            )
+            .bind(limit)
+            .bind(offset)
+            .fetch_all(pool)
+            .await?
+        };
 
         Ok(docs.into_iter().map(DocumentGql).collect())
     }
@@ -40,7 +104,7 @@ impl QueryRoot {
             .map_err(|e| async_graphql::Error::new(format!("Invalid UUID: {}", e)))?;
 
         let doc = sqlx::query_as::<_, Document>(
-            "SELECT id, title, raw_content, summary, status, error_message, created_at, updated_at
+            "SELECT id, user_id, title, raw_content, summary, status, error_message, created_at, updated_at
              FROM documents
              WHERE id = $1",
         )
@@ -53,17 +117,46 @@ impl QueryRoot {
 
     async fn get_metrics(&self, ctx: &Context<'_>) -> Result<SystemMetricsGql> {
         let pool = ctx.data::<PgPool>()?;
+        let auth_user_opt = ctx.data_opt::<Option<AuthUser>>().and_then(|o| o.as_ref());
 
-        let row: (i64, i64, i64, i64) = sqlx::query_as(
-            "SELECT
-                COUNT(*)::BIGINT as total_documents,
-                COUNT(*) FILTER (WHERE status = 'COMPLETED')::BIGINT as processed_count,
-                COUNT(*) FILTER (WHERE status = 'QUEUED')::BIGINT as queued_count,
-                COUNT(*) FILTER (WHERE status = 'FAILED')::BIGINT as failed_count
-             FROM documents",
-        )
-        .fetch_one(pool)
-        .await?;
+        let row: (i64, i64, i64, i64) = if let Some(auth_user) = auth_user_opt {
+            if !auth_user.is_guest {
+                sqlx::query_as(
+                    "SELECT
+                        COUNT(*)::BIGINT as total_documents,
+                        COUNT(*) FILTER (WHERE status = 'COMPLETED')::BIGINT as processed_count,
+                        COUNT(*) FILTER (WHERE status = 'QUEUED')::BIGINT as queued_count,
+                        COUNT(*) FILTER (WHERE status = 'FAILED')::BIGINT as failed_count
+                     FROM documents
+                     WHERE user_id = $1 OR user_id IS NULL",
+                )
+                .bind(auth_user.id)
+                .fetch_one(pool)
+                .await?
+            } else {
+                sqlx::query_as(
+                    "SELECT
+                        COUNT(*)::BIGINT as total_documents,
+                        COUNT(*) FILTER (WHERE status = 'COMPLETED')::BIGINT as processed_count,
+                        COUNT(*) FILTER (WHERE status = 'QUEUED')::BIGINT as queued_count,
+                        COUNT(*) FILTER (WHERE status = 'FAILED')::BIGINT as failed_count
+                     FROM documents",
+                )
+                .fetch_one(pool)
+                .await?
+            }
+        } else {
+            sqlx::query_as(
+                "SELECT
+                    COUNT(*)::BIGINT as total_documents,
+                    COUNT(*) FILTER (WHERE status = 'COMPLETED')::BIGINT as processed_count,
+                    COUNT(*) FILTER (WHERE status = 'QUEUED')::BIGINT as queued_count,
+                    COUNT(*) FILTER (WHERE status = 'FAILED')::BIGINT as failed_count
+                 FROM documents",
+            )
+            .fetch_one(pool)
+            .await?
+        };
 
         Ok(SystemMetricsGql {
             total_documents: row.0 as i32,

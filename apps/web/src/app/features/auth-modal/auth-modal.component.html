@@ -1,0 +1,170 @@
+<div
+  (click)="onBackdropClick($event)"
+  class="auth-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
+
+  <!-- Obsidian Glassmorphic Dialog Box -->
+  <div
+    class="relative w-full max-w-md bg-[#070A0F]/90 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] backdrop-blur-2xl text-white overflow-hidden select-none animate-in zoom-in-95 duration-200">
+
+    <!-- Ambient Emerald Glow Behind Modal Header -->
+    <div
+      class="absolute -top-24 -left-24 w-56 h-56 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div
+      class="absolute -bottom-24 -right-24 w-56 h-56 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Close Button -->
+    <button
+      (click)="close()"
+      title="Close modal"
+      class="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-white/60 hover:text-white transition-all cursor-pointer">
+      <ng-icon name="lucideX" class="w-4 h-4"></ng-icon>
+    </button>
+
+    <!-- Header Section -->
+    <div class="flex flex-col items-center text-center space-y-2 mb-6">
+      <div
+        class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)] mb-1">
+        <ng-icon
+          [name]="activeTab() === 'guest' ? 'lucideUser' : (activeTab() === 'register' ? 'lucideUserPlus' : 'lucideLogIn')"
+          class="w-6 h-6"></ng-icon>
+      </div>
+
+      <h3 class="text-xl font-semibold tracking-tight text-white">
+        {{ activeTab() === 'signin' ? 'Sign In to Trellis' : (activeTab() === 'register' ? 'Create Your Account' : 'Guest & Demo Access') }}
+      </h3>
+      <p class="text-xs text-white/50 max-w-xs">
+        {{ activeTab() === 'signin' ? 'Access your concept maps and document graphs.' : (activeTab() === 'register' ? 'Save and manage your knowledge graphs across sessions.' : 'Instant exploration with full access to knowledge graph features.') }}
+      </p>
+    </div>
+
+    <!-- Segmented Tab Navigation -->
+    <div class="flex items-center p-1 bg-white/[0.04] border border-white/[0.08] rounded-xl mb-6">
+      <button
+        (click)="setTab('signin')"
+        [ngClass]="activeTab() === 'signin' ? 'bg-white/10 text-white shadow-sm font-medium' : 'text-white/40 hover:text-white/70'"
+        class="flex-1 py-1.5 text-xs rounded-lg transition-all text-center cursor-pointer">
+        Sign In
+      </button>
+      <button
+        (click)="setTab('register')"
+        [ngClass]="activeTab() === 'register' ? 'bg-white/10 text-white shadow-sm font-medium' : 'text-white/40 hover:text-white/70'"
+        class="flex-1 py-1.5 text-xs rounded-lg transition-all text-center cursor-pointer">
+        Register
+      </button>
+      <button
+        (click)="setTab('guest')"
+        [ngClass]="activeTab() === 'guest' ? 'bg-white/10 text-white shadow-sm font-medium' : 'text-white/40 hover:text-white/70'"
+        class="flex-1 py-1.5 text-xs rounded-lg transition-all text-center cursor-pointer">
+        Guest Mode
+      </button>
+    </div>
+
+    <!-- Error Banner -->
+    <div
+      *ngIf="validationError() || authStore.error() as err"
+      class="mb-4 px-3.5 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center space-x-2 animate-in fade-in duration-150">
+      <span class="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0"></span>
+      <span class="leading-snug">{{ validationError() || err }}</span>
+    </div>
+
+    <!-- Sign In / Register Form -->
+    <form *ngIf="activeTab() !== 'guest'" (ngSubmit)="onSubmit()" class="space-y-4">
+      <!-- Email Field -->
+      <div class="space-y-1.5">
+        <label class="text-[11px] font-mono text-white/50 uppercase tracking-wider block">Email Address</label>
+        <div class="relative">
+          <input
+            type="email"
+            [ngModel]="email()"
+            (ngModelChange)="email.set($event)"
+            name="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+            class="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-black/40 border border-white/[0.08] focus:border-emerald-500/60 focus:outline-none text-xs text-white placeholder:text-white/30 transition-all" />
+          <ng-icon name="lucideMail" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/30"></ng-icon>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="space-y-1.5">
+        <label class="text-[11px] font-mono text-white/50 uppercase tracking-wider block">Password</label>
+        <div class="relative">
+          <input
+            type="password"
+            [ngModel]="password()"
+            (ngModelChange)="password.set($event)"
+            name="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+            class="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-black/40 border border-white/[0.08] focus:border-emerald-500/60 focus:outline-none text-xs text-white placeholder:text-white/30 transition-all" />
+          <ng-icon name="lucideLock" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/30"></ng-icon>
+        </div>
+      </div>
+
+      <!-- Confirm Password Field (Register Only) -->
+      <div *ngIf="activeTab() === 'register'" class="space-y-1.5 animate-in fade-in duration-150">
+        <label class="text-[11px] font-mono text-white/50 uppercase tracking-wider block">Confirm Password</label>
+        <div class="relative">
+          <input
+            type="password"
+            [ngModel]="confirmPassword()"
+            (ngModelChange)="confirmPassword.set($event)"
+            name="confirmPassword"
+            placeholder="••••••••"
+            autocomplete="new-password"
+            required
+            class="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-black/40 border border-white/[0.08] focus:border-emerald-500/60 focus:outline-none text-xs text-white placeholder:text-white/30 transition-all" />
+          <ng-icon name="lucideShieldCheck" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/30"></ng-icon>
+        </div>
+      </div>
+
+      <!-- Submit CTA Button -->
+      <button
+        type="submit"
+        [disabled]="authStore.loading()"
+        class="w-full mt-2 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-medium text-xs tracking-tight shadow-[0_0_20px_rgba(16,185,129,0.35)] flex items-center justify-center space-x-2 transition-all cursor-pointer disabled:opacity-50">
+        <span *ngIf="!authStore.loading()">
+          {{ activeTab() === 'signin' ? 'Sign In' : 'Create Account' }}
+        </span>
+        <span *ngIf="authStore.loading()" class="flex items-center space-x-2">
+          <span class="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></span>
+          <span>Authenticating...</span>
+        </span>
+        <ng-icon *ngIf="!authStore.loading()" name="lucideArrowRight" class="w-3.5 h-3.5"></ng-icon>
+      </button>
+    </form>
+
+    <!-- Guest Mode Tab Panel -->
+    <div *ngIf="activeTab() === 'guest'" class="space-y-4 animate-in fade-in duration-150">
+      <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] space-y-2.5 text-xs text-white/70">
+        <div class="flex items-start space-x-2.5">
+          <ng-icon name="lucideSparkles" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></ng-icon>
+          <p class="leading-relaxed">
+            Guest mode grants instant access to ingest documents, explore topics, and view the AI knowledge graph.
+          </p>
+        </div>
+        <div class="flex items-start space-x-2.5">
+          <ng-icon name="lucideShieldCheck" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></ng-icon>
+          <p class="leading-relaxed">
+            No password or email required. You can upgrade to a permanent account at any time.
+          </p>
+        </div>
+      </div>
+
+      <button
+        (click)="onGuestSubmit()"
+        [disabled]="authStore.loading()"
+        class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white font-medium text-xs tracking-tight shadow-md flex items-center justify-center space-x-2 transition-all cursor-pointer disabled:opacity-50">
+        <span *ngIf="!authStore.loading()">Continue as Guest</span>
+        <span *ngIf="authStore.loading()" class="flex items-center space-x-2">
+          <span class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <span>Preparing guest session...</span>
+        </span>
+        <ng-icon *ngIf="!authStore.loading()" name="lucideArrowRight" class="w-3.5 h-3.5"></ng-icon>
+      </button>
+    </div>
+
+  </div>
+</div>

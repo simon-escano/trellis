@@ -4,6 +4,8 @@ use std::env;
 pub struct Config {
     pub database_url: String,
     pub port: u16,
+    pub jwt_secret: String,
+    pub cors_origin: Option<String>,
 }
 
 impl Config {
@@ -20,6 +22,16 @@ impl Config {
             .and_then(|p| p.parse::<u16>().ok())
             .unwrap_or(8080);
 
-        Self { database_url, port }
+        let jwt_secret = env::var("JWT_SECRET")
+            .unwrap_or_else(|_| "trellis-super-secret-jwt-signing-key-production-hardening".to_string());
+
+        let cors_origin = env::var("CORS_ORIGIN").ok();
+
+        Self {
+            database_url,
+            port,
+            jwt_secret,
+            cors_origin,
+        }
     }
 }

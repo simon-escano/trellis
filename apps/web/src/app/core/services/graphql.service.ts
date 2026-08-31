@@ -1,7 +1,62 @@
 import { Injectable } from '@angular/core';
 import { ApolloClient, InMemoryCache, HttpLink, gql } from '@apollo/client/core';
+import { setContext } from '@apollo/client/link/context';
 import { Document, SystemMetrics } from '../models/document.model';
+import { User, AuthPayload } from '../models/user.model';
 import { environment } from '../../../environments/environment';
+
+export const ME_QUERY = gql`
+  query Me {
+    me {
+      id
+      email
+      createdAt
+      isGuest
+    }
+  }
+`;
+
+export const REGISTER_MUTATION = gql`
+  mutation Register($input: RegisterInput!) {
+    register(input: $input) {
+      token
+      user {
+        id
+        email
+        createdAt
+        isGuest
+      }
+    }
+  }
+`;
+
+export const LOGIN_MUTATION = gql`
+  mutation Login($input: LoginInput!) {
+    login(input: $input) {
+      token
+      user {
+        id
+        email
+        createdAt
+        isGuest
+      }
+    }
+  }
+`;
+
+export const GUEST_SESSION_MUTATION = gql`
+  mutation GuestSession {
+    guestSession {
+      token
+      user {
+        id
+        email
+        createdAt
+        isGuest
+      }
+    }
+  }
+`;
 
 export const GET_DOCUMENTS_QUERY = gql`
   query GetDocuments($limit: Int, $offset: Int) {
@@ -194,16 +249,72 @@ export class GraphQLService {
   private client: ApolloClient<any>;
 
   constructor() {
+    const httpLink = new HttpLink({
+      uri: resolveGraphQLUri(),
+    });
+
+    const authLink = setContext((_, { headers }) => {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('trellis_token') : null;
+      return {
+        headers: {
+          ...headers,
+          authorization: token ? `Bearer ${token}` : '',
+        },
+      };
+    });
+
     this.client = new ApolloClient({
-      link: new HttpLink({
-        uri: resolveGraphQLUri(),
-      }),
+      link: authLink.concat(httpLink),
       cache: new InMemoryCache(),
       defaultOptions: {
         watchQuery: { fetchPolicy: 'no-cache' },
         query: { fetchPolicy: 'no-cache' },
       },
     });
+  }
+
+  async getMe(): Promise<User | null> {
+    try {
+      const res = await this.client.query<{ me: User | null }>({
+        query: ME_QUERY,
+        fetchPolicy: 'network-only',
+      });
+      return res.data?.me ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  async register(input: { email: string; password: string }): Promise<AuthPayload> {
+    const res = await this.client.mutate<{ register: AuthPayload }>({
+      mutation: REGISTER_MUTATION,
+      variables: { input },
+    });
+    if (!res.data?.register) {
+      throw new Error('Registration failed');
+    }
+    return res.data.register;
+  }
+
+  async login(input: { email: string; password: string }): Promise<AuthPayload> {
+    const res = await this.client.mutate<{ login: AuthPayload }>({
+      mutation: LOGIN_MUTATION,
+      variables: { input },
+    });
+    if (!res.data?.login) {
+      throw new Error('Login failed');
+    }
+    return res.data.login;
+  }
+
+  async createGuestSession(): Promise<AuthPayload> {
+    const res = await this.client.mutate<{ guestSession: AuthPayload }>({
+      mutation: GUEST_SESSION_MUTATION,
+    });
+    if (!res.data?.guestSession) {
+      throw new Error('Guest session creation failed');
+    }
+    return res.data.guestSession;
   }
 
   async getDocuments(limit = 20, offset = 0): Promise<Document[]> {

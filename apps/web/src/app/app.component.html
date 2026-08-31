@@ -21,4 +21,7 @@
     (closeModal)="closeIngestModal()">
   </app-ingest-modal>
 
+  <!-- Global Modal: Authentication & Account Dialog -->
+  <app-auth-modal *ngIf="authStore.isAuthModalOpen()"></app-auth-modal>
+
 </div>

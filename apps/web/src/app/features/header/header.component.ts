@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DocumentStore } from '../../core/state/document.store.js';
+import { AuthStore } from '../../core/state/auth.store.js';
 
 @Component({
   selector: 'app-header',
@@ -17,6 +18,7 @@ export class HeaderComponent {
   @Output() togglePhysics = new EventEmitter<void>();
 
   readonly store = inject(DocumentStore);
+  readonly authStore = inject(AuthStore);
 
   getStatusDotClass(status: string): string {
     switch (status) {

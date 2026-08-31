@@ -43,9 +43,52 @@
 
       <div class="w-[1px] h-3.5 bg-slate-300 dark:bg-white/10 hidden sm:block"></div>
 
-      <div
-        class="w-8 h-8 rounded-full bg-slate-900/10 dark:bg-white/10 border border-slate-900/10 dark:border-white/20 flex items-center justify-center text-xs font-medium text-slate-700 dark:text-white/80">
-        S
+      <!-- User Auth State & Profile Dropdown -->
+      <div class="relative">
+        <!-- Case 1: Authenticated User Pill -->
+        <div *ngIf="authStore.isAuthenticated(); else guestAuthBlock">
+          <button
+            (click)="toggleUserMenu()"
+            title="User Account"
+            class="h-8 px-2.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 flex items-center space-x-2 text-xs font-medium text-emerald-400 transition-all cursor-pointer">
+            <span class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-[10px] font-bold text-emerald-300">
+              {{ authStore.userInitial() }}
+            </span>
+            <span class="hidden md:inline max-w-[120px] truncate text-slate-800 dark:text-white/90">
+              {{ authStore.currentUser()?.email }}
+            </span>
+          </button>
+        </div>
+
+        <!-- Case 2: Guest / Sign In Prompt Pill -->
+        <ng-template #guestAuthBlock>
+          <button
+            (click)="openAuthModal()"
+            title="Sign In or Register"
+            class="h-8 px-3 rounded-full bg-slate-900/5 hover:bg-slate-900/10 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-900/10 dark:border-white/10 flex items-center space-x-1.5 text-xs font-medium text-slate-700 dark:text-white/80 transition-all cursor-pointer">
+            <ng-icon name="lucideLogIn" class="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400"></ng-icon>
+            <span>Sign In</span>
+          </button>
+        </ng-template>
+
+        <!-- User Dropdown Menu -->
+        <div
+          *ngIf="isUserMenuOpen()"
+          class="absolute right-0 top-10 w-56 p-2 rounded-2xl bg-white dark:bg-[#0D1420] border border-slate-200 dark:border-white/10 shadow-2xl backdrop-blur-xl z-50 animate-in fade-in zoom-in-95 duration-150">
+          <div class="px-3 py-2 border-b border-slate-100 dark:border-white/5 mb-1">
+            <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-white/40">Signed In As</div>
+            <div class="text-xs font-medium text-slate-900 dark:text-white truncate" [title]="authStore.currentUser()?.email">
+              {{ authStore.currentUser()?.email }}
+            </div>
+          </div>
+
+          <button
+            (click)="logout()"
+            class="w-full px-3 py-2 rounded-xl text-left text-xs text-rose-500 hover:bg-rose-500/10 dark:hover:bg-rose-500/15 flex items-center space-x-2 transition-all cursor-pointer">
+            <ng-icon name="lucideLogOut" class="w-3.5 h-3.5"></ng-icon>
+            <span>Sign Out</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>

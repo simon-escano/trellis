@@ -122,6 +122,10 @@ impl DocumentGql {
         self.0.updated_at.to_rfc3339()
     }
 
+    async fn user_id(&self) -> Option<ID> {
+        self.0.user_id.map(|uid| ID(uid.to_string()))
+    }
+
     async fn entities(&self, ctx: &Context<'_>) -> async_graphql::Result<Vec<EntityGql>> {
         let loader = ctx.data::<DataLoader<EntityLoader>>()?;
         let entities = loader
@@ -139,6 +143,32 @@ impl DocumentGql {
             .unwrap_or_default();
         Ok(rels.into_iter().map(EntityRelationshipGql).collect())
     }
+}
+
+#[derive(Clone, Debug, SimpleObject)]
+pub struct UserGql {
+    pub id: ID,
+    pub email: String,
+    pub created_at: String,
+    pub is_guest: bool,
+}
+
+#[derive(Clone, Debug, SimpleObject)]
+pub struct AuthPayloadGql {
+    pub token: String,
+    pub user: UserGql,
+}
+
+#[derive(InputObject)]
+pub struct RegisterInput {
+    pub email: String,
+    pub password: String,
+}
+
+#[derive(InputObject)]
+pub struct LoginInput {
+    pub email: String,
+    pub password: String,
 }
 
 #[derive(InputObject)]

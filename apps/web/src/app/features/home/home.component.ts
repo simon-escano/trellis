@@ -28,8 +28,13 @@ import {
   lucideMoon,
   lucideMenu,
   lucideX,
+  lucideUser,
+  lucideLogIn,
+  lucideLogOut,
+  lucideShieldCheck,
 } from '@ng-icons/lucide';
 import { DocumentStore } from '../../core/state/document.store.js';
+import { AuthStore } from '../../core/state/auth.store.js';
 import { ThemeService } from '../../core/services/theme.service.js';
 import { DEMO_PRESETS, DemoPreset } from '../../core/data/demo-presets.js';
 
@@ -56,6 +61,10 @@ import { DEMO_PRESETS, DemoPreset } from '../../core/data/demo-presets.js';
       lucideMoon,
       lucideMenu,
       lucideX,
+      lucideUser,
+      lucideLogIn,
+      lucideLogOut,
+      lucideShieldCheck,
     }),
   ],
 })
@@ -64,6 +73,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   dotsCanvasRef!: ElementRef<HTMLCanvasElement>;
 
   readonly store = inject(DocumentStore);
+  readonly authStore = inject(AuthStore);
   readonly themeService = inject(ThemeService);
 
   readonly searchQuery = signal<string>('');
@@ -71,6 +81,26 @@ export class HomeComponent implements OnInit, OnDestroy {
   readonly isSubmitting = signal<boolean>(false);
   readonly selectedTab = signal<'my_topics' | 'examples'>('my_topics');
   readonly isMobileSidebarOpen = signal<boolean>(false);
+  readonly isUserMenuOpen = signal<boolean>(false);
+
+  toggleUserMenu() {
+    this.isUserMenuOpen.update((v) => !v);
+  }
+
+  closeUserMenu() {
+    this.isUserMenuOpen.set(false);
+  }
+
+  openAuthModal() {
+    this.closeUserMenu();
+    this.authStore.openAuthModal();
+  }
+
+  logout() {
+    this.closeUserMenu();
+    this.authStore.logout();
+    this.store.loadInitialData();
+  }
 
   // Maximum character limit evaluated based on LLM performance (~1,000 tokens)
   readonly maxChars = 4000;
