@@ -2,7 +2,11 @@ const fs = require('fs');
 const path = require('path');
 
 const targetPath = path.join(__dirname, 'src/environments/environment.prod.ts');
-const apiUrl = process.env.TRELLIS_API_URL || '';
+let apiUrl = process.env.TRELLIS_API_URL || '';
+if (apiUrl && !apiUrl.endsWith('/graphql')) {
+  // Ensure the URL points to the GraphQL endpoint, not just the root domain
+  apiUrl = apiUrl.replace(/\/$/, '') + '/graphql';
+}
 
 const envConfigFile = `export const environment = {
   production: true,
