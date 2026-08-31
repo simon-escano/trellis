@@ -1,7 +1,7 @@
 # ==========================================
 # Stage 1: Build Rust GraphQL Server
 # ==========================================
-FROM rust:1.80-slim-bullseye AS server-builder
+FROM rust:1.80-slim-bookworm AS server-builder
 WORKDIR /usr/src/server
 
 RUN apt-get update && apt-get install -y pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
@@ -33,7 +33,7 @@ FROM node:20-slim AS runner
 WORKDIR /app
 
 # Install OpenSSL & CA certificates for Postgres & HTTPS
-RUN apt-get update && apt-get install -y ca-certificates libssl1.1 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y ca-certificates libssl3 && rm -rf /var/lib/apt/lists/*
 
 # Copy Rust server binary
 WORKDIR /app/server
