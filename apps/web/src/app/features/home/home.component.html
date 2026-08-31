@@ -1,9 +1,7 @@
 <div class="flex flex-col w-full h-full min-h-screen bg-[#F4F6FB] dark:bg-[#07090E] text-slate-900 dark:text-white relative select-none overflow-hidden transition-colors duration-200">
 
-  <!-- Pure CSS Hardware-Accelerated Dense Dot Field Background (22px grid) -->
-  <div class="absolute inset-0 pointer-events-none z-0 opacity-25 dark:opacity-30"
-    style="background-image: radial-gradient(currentColor 1px, transparent 1px); background-size: 22px 22px;">
-  </div>
+  <!-- Interactive Hover-Illuminated Dot Field Background Canvas -->
+  <canvas #dotsCanvas class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
 
   <!-- Hidden File Input for PDF/Document Upload -->
   <input #fileInput type="file" accept=".pdf,.txt,.md,.json" (change)="onFileSelected($event)" class="hidden" />

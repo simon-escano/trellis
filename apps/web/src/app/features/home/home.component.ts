@@ -1,4 +1,14 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -49,7 +59,10 @@ import { DEMO_PRESETS, DemoPreset } from '../../core/data/demo-presets.js';
     }),
   ],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
+  @ViewChild('dotsCanvas', { static: true })
+  dotsCanvasRef!: ElementRef<HTMLCanvasElement>;
+
   readonly store = inject(DocumentStore);
   readonly themeService = inject(ThemeService);
 
@@ -60,6 +73,14 @@ export class HomeComponent {
   readonly isMobileSidebarOpen = signal<boolean>(false);
 
   readonly presets = DEMO_PRESETS;
+
+  // Dot field hover tracking (exact same as CanvasComponent)
+  private mouseX = -1000;
+  private mouseY = -1000;
+  private isMouseOver = false;
+  private resizeListener?: () => void;
+  private mouseMoveListener?: (e: MouseEvent) => void;
+  private mouseLeaveListener?: () => void;
 
   readonly filteredDocuments = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
@@ -82,6 +103,107 @@ export class HomeComponent {
         p.persona.toLowerCase().includes(q)
     );
   });
+
+  constructor() {
+    effect(() => {
+      // Re-render dots immediately upon theme change
+      this.themeService.theme();
+      this.drawDots();
+    });
+  }
+
+  ngOnInit() {
+    this.initDotsBackground();
+  }
+
+  ngOnDestroy() {
+    if (this.resizeListener) {
+      window.removeEventListener('resize', this.resizeListener);
+    }
+    if (this.mouseMoveListener) {
+      window.removeEventListener('mousemove', this.mouseMoveListener);
+    }
+    if (this.mouseLeaveListener) {
+      window.removeEventListener('mouseleave', this.mouseLeaveListener);
+    }
+  }
+
+  private drawDots() {
+    const canvas = this.dotsCanvasRef?.nativeElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const isDark = this.themeService.isDark();
+    const dotBaseColor = isDark ? '255, 255, 255' : '15, 23, 42';
+    const spacing = 22;
+    const proximity = 110;
+
+    const cols = Math.ceil(canvas.width / spacing) + 1;
+    const rows = Math.ceil(canvas.height / spacing) + 1;
+
+    for (let c = 0; c < cols; c++) {
+      for (let r = 0; r < rows; r++) {
+        const dotX = c * spacing;
+        const dotY = r * spacing;
+
+        let radius = 1.0;
+        let alpha = isDark ? 0.08 : 0.07;
+
+        if (this.isMouseOver) {
+          const dist = Math.hypot(this.mouseX - dotX, this.mouseY - dotY);
+          if (dist < proximity) {
+            const factor = 1 - dist / proximity;
+            alpha = (isDark ? 0.08 : 0.07) + factor * 0.6;
+            radius = 1.0 + factor * 1.3;
+          }
+        }
+
+        ctx.beginPath();
+        ctx.arc(dotX, dotY, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${dotBaseColor}, ${alpha})`;
+        ctx.fill();
+      }
+    }
+  }
+
+  private initDotsBackground() {
+    const canvas = this.dotsCanvasRef.nativeElement;
+    if (!canvas) return;
+
+    const resize = () => {
+      const parent = canvas.parentElement;
+      if (!parent) return;
+      canvas.width = parent.clientWidth;
+      canvas.height = parent.clientHeight;
+      this.drawDots();
+    };
+
+    this.resizeListener = resize;
+    window.addEventListener('resize', resize);
+
+    this.mouseMoveListener = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      this.mouseX = e.clientX - rect.left;
+      this.mouseY = e.clientY - rect.top;
+      this.isMouseOver = true;
+      requestAnimationFrame(() => this.drawDots());
+    };
+
+    this.mouseLeaveListener = () => {
+      this.isMouseOver = false;
+      this.mouseX = -1000;
+      this.mouseY = -1000;
+      requestAnimationFrame(() => this.drawDots());
+    };
+
+    window.addEventListener('mousemove', this.mouseMoveListener);
+    window.addEventListener('mouseleave', this.mouseLeaveListener);
+
+    resize();
+  }
 
   toggleMobileSidebar() {
     this.isMobileSidebarOpen.update((v) => !v);
