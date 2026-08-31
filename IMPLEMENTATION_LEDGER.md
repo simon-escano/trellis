@@ -203,7 +203,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `npm --prefix apps/worker run build`
   - **Git Commit Message:** `feat(worker): implement transactional knowledge graph batch persistence with rollback`
 
-- [ ] **Task 2.5: Resilient Queue Polling Consumer & Lifecycle**
+- [x] **Task 2.5: Resilient Queue Polling Consumer & Lifecycle**
   - **Target Files:** `apps/worker/src/queue/types.ts`, `apps/worker/src/queue/consumer.ts`, `apps/worker/src/index.ts`
   - **Prerequisites:** Task 2.4
   - **Validation Command:** `npm --prefix apps/worker run build`
