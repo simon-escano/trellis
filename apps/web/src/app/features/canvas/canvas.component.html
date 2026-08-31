@@ -1,0 +1,69 @@
+<div class="relative w-full h-full bg-[#070A0F] overflow-hidden">
+  <!-- Interactive Vis Network Container -->
+  <div #networkContainer class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+  <!-- Empty State Banner -->
+  <div *ngIf="!store.activeDocument() || (store.activeDocument()?.entities?.length === 0 && store.activeDocument()?.status === 'COMPLETED')" 
+       class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-6 text-center">
+    <div class="w-14 h-14 rounded-2xl bg-trellis-surface border border-trellis-border flex items-center justify-center mb-4 text-trellis-accent shadow-xl shadow-trellis-accent/5">
+      <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    </div>
+    <h2 class="text-xl font-bold text-trellis-text-primary mb-1">No Knowledge Graph Selected</h2>
+    <p class="text-sm text-trellis-text-muted max-w-sm">
+      Ingest a document or select an existing document from the explorer to map out concepts and connections.
+    </p>
+  </div>
+
+  <!-- Processing State Overlay -->
+  <div *ngIf="store.activeDocument()?.status === 'PROCESSING' || store.activeDocument()?.status === 'QUEUED'" 
+       class="absolute inset-0 flex flex-col items-center justify-center bg-trellis-bg/80 backdrop-blur-sm z-10 pointer-events-none p-6 text-center">
+    <div class="relative flex items-center justify-center w-16 h-16 mb-4">
+      <div class="absolute inset-0 rounded-full border-2 border-trellis-accent/20 border-t-trellis-accent animate-spin"></div>
+      <div class="w-8 h-8 rounded-full bg-trellis-accent/10 border border-trellis-accent/30 flex items-center justify-center text-trellis-accent">
+        <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      </div>
+    </div>
+    <h2 class="text-lg font-bold text-trellis-text-primary mb-1">Synthesizing Knowledge Architecture...</h2>
+    <p class="text-xs text-trellis-text-muted font-mono tracking-wide">
+      {{ store.activeDocument()?.status === 'QUEUED' ? 'Waiting in background worker queue' : 'Extracting concepts and mapping directional edges' }}
+    </p>
+  </div>
+
+  <!-- Floating Canvas Navigation Controls -->
+  <div class="absolute bottom-6 right-6 flex items-center space-x-1.5 p-1.5 rounded-xl glass-panel shadow-2xl z-10">
+    <button (click)="zoomIn()" 
+            title="Zoom In" 
+            class="p-2 rounded-lg text-trellis-text-muted hover:text-trellis-text-primary hover:bg-trellis-surface transition-all">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+    </button>
+    <button (click)="zoomOut()" 
+            title="Zoom Out" 
+            class="p-2 rounded-lg text-trellis-text-muted hover:text-trellis-text-primary hover:bg-trellis-surface transition-all">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+      </svg>
+    </button>
+    <div class="w-px h-4 bg-trellis-border"></div>
+    <button (click)="fitView()" 
+            title="Fit to Screen" 
+            class="p-2 rounded-lg text-trellis-text-muted hover:text-trellis-text-primary hover:bg-trellis-surface transition-all">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+      </svg>
+    </button>
+    <button (click)="togglePhysics()" 
+            [title]="isPhysicsEnabled ? 'Pause Physics' : 'Enable Physics'" 
+            [ngClass]="isPhysicsEnabled ? 'text-trellis-accent bg-trellis-accent/10 border border-trellis-accent/20' : 'text-trellis-text-muted hover:text-trellis-text-primary hover:bg-trellis-surface'"
+            class="p-2 rounded-lg transition-all">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+      </svg>
+    </button>
+  </div>
+</div>

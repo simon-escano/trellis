@@ -224,7 +224,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `npm --prefix apps/web run build`
   - **Git Commit Message:** `feat(web): configure apollo graphql client and reactive angular signal store`
 
-- [ ] **Task 3.3: Obsidian Canvas Mind Map Engine (`vis-network`)**
+- [x] **Task 3.3: Obsidian Canvas Mind Map Engine (`vis-network`)**
   - **Target Files:** `apps/web/src/app/features/canvas/canvas.component.ts`, `apps/web/src/app/features/canvas/canvas.component.html`, `apps/web/src/app/features/canvas/canvas.component.css`
   - **Prerequisites:** Task 3.2
   - **Validation Command:** `npm --prefix apps/web run build`
