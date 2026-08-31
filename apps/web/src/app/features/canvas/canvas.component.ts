@@ -37,29 +37,23 @@ function escapeXml(unsafe: string): string {
   });
 }
 
-function truncate(str: string, len: number): string {
-  if (!str) return '';
-  return str.length > len ? str.substring(0, len - 1) + '…' : str;
-}
-
-function getCategoryIcon(cat: EntityCategory): string {
+function getCategorySvgIcon(cat: EntityCategory): string {
   switch (cat) {
     case 'CONCEPT':
-      return '🧠';
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#00F5A0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4c0 1.5.8 2.8 2 3.5V11a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.5c1.2-.7 2-2 2-3.5a4 4 0 0 0-4-4z"/><path d="M9 18h6m-4 3h2"/></svg>`;
     case 'SYSTEM':
-      return '⚡';
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2m-6-2v2m6 16v2m-6-2v2M2 15h2M2 9h2m16 6h2m-2-6h2"/></svg>`;
     case 'SERVICE':
-      return '⚙️';
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
     case 'DATA_MODEL':
-      return '🗄️';
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`;
     case 'INFRASTRUCTURE':
-      return '🏗️';
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FB7185" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>`;
     case 'SECURITY_POLICY':
-      return '🛡️';
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C084FC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
     case 'API_ENDPOINT':
-      return '🌐';
     default:
-      return '💡';
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C084FC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`;
   }
 }
 
@@ -133,7 +127,7 @@ function extractEntityDescription(entity: Entity): string {
       }
     }
   }
-  return `Core ${entity.category.toLowerCase().replace('_', ' ')} node`;
+  return `Core ${entity.category.toLowerCase().replace(/_/g, ' ')} node synthesizing key domain relationships.`;
 }
 
 function createNodeSvg(
@@ -142,58 +136,89 @@ function createNodeSvg(
   description: string,
   isSelected = false
 ): string {
-  const icon = getCategoryIcon(category);
+  const iconSvg = getCategorySvgIcon(category);
   const color = getCategoryColor(category);
   const strokeColor = isSelected ? '#FFFFFF' : color.border;
-  const strokeWidth = isSelected ? 2.5 : 1.2;
+  const strokeWidth = isSelected ? '2.5px' : '1px';
   const glow = isSelected
-    ? `filter="drop-shadow(0 0 16px ${color.accent})"`
-    : `filter="drop-shadow(0 8px 20px rgba(0,0,0,0.6))"`;
+    ? `0 0 24px ${color.accent}`
+    : '0 10px 30px rgba(0,0,0,0.6)';
 
   const safeName = escapeXml(name);
-  const safeDesc = escapeXml(description || 'Core concept');
-  const safeCat = escapeXml(category.replace('_', ' '));
+  const safeDesc = escapeXml(description);
+  const safeCat = escapeXml(category.replace(/_/g, ' '));
 
-  const firstLine = truncate(safeDesc, 32);
-  const secondLine =
-    safeDesc.length > 32 ? truncate(safeDesc.substring(32), 34) : '';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="280" height="135" viewBox="0 0 280 135">
+    <foreignObject width="280" height="135">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="
+        width: 280px;
+        height: 135px;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: linear-gradient(180deg, #131A28 0%, #090D15 100%);
+        border: ${strokeWidth} solid ${strokeColor};
+        box-shadow: ${glow}, inset 0 1px 0 rgba(255,255,255,0.18);
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        user-select: none;
+        overflow: hidden;
+      ">
+        <!-- Responsive Auto-Sized Category Badge with Crisp Vector Icon -->
+        <div style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 6px;">
+          <span style="
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            background: ${color.bg};
+            border: 1px solid ${color.border};
+            color: ${color.text};
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+          ">
+            ${iconSvg}
+            ${safeCat}
+          </span>
+        </div>
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="250" height="116" viewBox="0 0 250 116">
-    <defs>
-      <linearGradient id="grad-${safeName}" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#121826" stop-opacity="0.96" />
-        <stop offset="100%" stop-color="#090D15" stop-opacity="0.96" />
-      </linearGradient>
-      <linearGradient id="specular" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="rgba(255,255,255,0.25)" />
-        <stop offset="50%" stop-color="rgba(255,255,255,0.05)" />
-        <stop offset="100%" stop-color="rgba(255,255,255,0.2)" />
-      </linearGradient>
-    </defs>
-    
-    <!-- Card Container -->
-    <rect x="3" y="3" width="244" height="110" rx="16" ry="16" fill="url(#grad-${safeName})" stroke="${strokeColor}" stroke-width="${strokeWidth}" ${glow} />
-    
-    <!-- Top Specular Highlight Line -->
-    <path d="M 20 4 L 230 4" stroke="url(#specular)" stroke-width="1.2" stroke-linecap="round" />
+        <!-- Bold Concept Title -->
+        <div style="
+          color: #FFFFFF;
+          font-size: 13.5px;
+          font-weight: 700;
+          letter-spacing: -0.2px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          line-height: 1.2;
+          margin-bottom: 5px;
+        ">
+          ${safeName}
+        </div>
 
-    <!-- Category Pill with Icon -->
-    <rect x="14" y="14" width="84" height="20" rx="10" ry="10" fill="${color.bg}" stroke="${color.border}" stroke-width="0.8" />
-    <text x="21" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11">${icon}</text>
-    <text x="37" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="8.5" font-weight="700" fill="${color.text}" letter-spacing="0.4">${safeCat}</text>
-
-    <!-- Title -->
-    <text x="14" y="55" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">
-      ${truncate(safeName, 26)}
-    </text>
-
-    <!-- Description Lines -->
-    <text x="14" y="76" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="rgba(255,255,255,0.65)">
-      ${firstLine}
-    </text>
-    <text x="14" y="93" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="rgba(255,255,255,0.4)">
-      ${secondLine}
-    </text>
+        <!-- Substantive Multiline Description -->
+        <div style="
+          color: rgba(255, 255, 255, 0.72);
+          font-size: 11px;
+          line-height: 1.35;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-weight: 400;
+        ">
+          ${safeDesc}
+        </div>
+      </div>
+    </foreignObject>
   </svg>`;
 
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
@@ -255,7 +280,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
     const options: Options = {
       nodes: {
         shape: 'image',
-        size: 55,
+        size: 65,
         borderWidth: 0,
         shadow: false,
       },
@@ -290,12 +315,12 @@ export class CanvasComponent implements OnInit, OnDestroy {
         enabled: true,
         solver: 'forceAtlas2Based',
         forceAtlas2Based: {
-          gravitationalConstant: -70,
+          gravitationalConstant: -80,
           centralGravity: 0.008,
-          springLength: 170,
-          springConstant: 0.05,
+          springLength: 190,
+          springConstant: 0.045,
           damping: 0.6,
-          avoidOverlap: 0.8,
+          avoidOverlap: 0.85,
         },
         stabilization: {
           iterations: 120,
@@ -346,7 +371,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
         id: ent.id,
         image: imageUri,
         shape: 'image',
-        size: isSelected ? 62 : 55,
+        size: isSelected ? 72 : 65,
       };
     });
 

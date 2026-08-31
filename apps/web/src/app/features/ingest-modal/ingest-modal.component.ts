@@ -8,13 +8,32 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import {
+  lucideFlaskConical,
+  lucideLandmark,
+  lucideCpu,
+  lucidePlus,
+  lucideX,
+  lucideSparkles,
+} from '@ng-icons/lucide';
 import { DocumentStore } from '../../core/state/document.store.js';
 import { DEMO_PRESETS, DemoPreset } from '../../core/data/demo-presets.js';
 
 @Component({
   selector: 'app-ingest-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgIconComponent],
+  providers: [
+    provideIcons({
+      lucideFlaskConical,
+      lucideLandmark,
+      lucideCpu,
+      lucidePlus,
+      lucideX,
+      lucideSparkles,
+    }),
+  ],
   templateUrl: './ingest-modal.component.html',
   styleUrls: ['./ingest-modal.component.css'],
 })

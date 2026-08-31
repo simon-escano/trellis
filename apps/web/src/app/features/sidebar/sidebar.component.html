@@ -2,15 +2,13 @@
        class="h-full apple-glass border-r border-white/[0.08] flex flex-col transition-all duration-300 relative z-30 flex-shrink-0 select-none">
   
   <!-- Sidebar Header: Logo & New Concept Map Button -->
-  <div class="p-4 border-b border-white/[0.06] flex flex-col space-y-3 flex-shrink-0">
+  <div class="p-3.5 border-b border-white/[0.06] flex flex-col space-y-3 flex-shrink-0">
     <div class="flex items-center justify-between">
       
       <!-- Brand Logo -->
-      <div class="flex items-center space-x-2.5 overflow-hidden">
+      <div class="flex items-center space-x-2.5 overflow-hidden" [ngClass]="isCollapsed() ? 'justify-center w-full' : ''">
         <div class="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.25)] flex-shrink-0">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-          </svg>
+          <ng-icon name="lucideNetwork" class="text-base"></ng-icon>
         </div>
         <div *ngIf="!isCollapsed()" class="flex flex-col truncate animate-in fade-in duration-200">
           <span class="font-bold text-sm tracking-tight text-white flex items-center gap-1.5">
@@ -22,13 +20,21 @@
         </div>
       </div>
 
-      <!-- Collapse Toggle Button -->
-      <button (click)="toggleCollapsed()" 
-              [title]="isCollapsed() ? 'Expand Sidebar' : 'Collapse Sidebar'"
+      <!-- Collapse Toggle Button (When Expanded) -->
+      <button *ngIf="!isCollapsed()"
+              (click)="toggleCollapsed()" 
+              title="Collapse Sidebar"
               class="w-7 h-7 rounded-lg apple-button-secondary flex items-center justify-center text-white/60 hover:text-white transition-all">
-        <svg [ngClass]="isCollapsed() ? 'rotate-180' : ''" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-        </svg>
+        <ng-icon name="lucideChevronLeft" class="text-sm"></ng-icon>
+      </button>
+    </div>
+
+    <!-- Collapse Toggle Button (When Collapsed) -->
+    <div *ngIf="isCollapsed()" class="flex justify-center">
+      <button (click)="toggleCollapsed()" 
+              title="Expand Sidebar"
+              class="w-8 h-8 rounded-lg apple-button-secondary flex items-center justify-center text-white/60 hover:text-white transition-all">
+        <ng-icon name="lucideChevronRight" class="text-sm"></ng-icon>
       </button>
     </div>
 
@@ -36,9 +42,7 @@
     <button *ngIf="!isCollapsed()" 
             (click)="openIngestModal.emit()"
             class="w-full py-2.5 px-3.5 rounded-xl apple-button-primary flex items-center justify-center space-x-2 text-xs font-semibold tracking-tight shadow-md cursor-pointer animate-in fade-in duration-200">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
+      <ng-icon name="lucidePlus" class="text-sm"></ng-icon>
       <span>New Concept Map</span>
     </button>
 
@@ -46,46 +50,45 @@
             (click)="openIngestModal.emit()"
             title="New Concept Map"
             class="w-9 h-9 mx-auto rounded-xl apple-button-primary flex items-center justify-center text-xs font-semibold shadow-md cursor-pointer">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
+      <ng-icon name="lucidePlus" class="text-base"></ng-icon>
     </button>
   </div>
 
   <!-- Search Filter Input (When Expanded) -->
-  <div *ngIf="!isCollapsed()" class="px-4 py-2 border-b border-white/[0.04] flex-shrink-0 animate-in fade-in duration-200">
+  <div *ngIf="!isCollapsed()" class="px-3.5 py-2 border-b border-white/[0.04] flex-shrink-0 animate-in fade-in duration-200">
     <div class="relative">
       <input type="text" 
              [ngModel]="searchQuery()" 
              (ngModelChange)="searchQuery.set($event)"
              placeholder="Search maps..." 
              class="w-full pl-8 pr-3 py-1.5 rounded-lg bg-black/30 border border-white/[0.08] focus:border-emerald-500/50 focus:outline-none text-xs text-white placeholder:text-white/40 transition-all font-sans" />
-      <svg class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
+      <ng-icon name="lucideSearch" class="text-xs absolute left-2.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></ng-icon>
     </div>
   </div>
 
   <!-- Documents List (Scrollable) -->
-  <div class="flex-1 overflow-y-auto p-2.5 space-y-1.5">
+  <div class="flex-1 overflow-y-auto p-2 space-y-1">
     
-    <!-- Section Label -->
+    <!-- Section Label (When Expanded) -->
     <div *ngIf="!isCollapsed()" class="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-white/40 font-semibold flex items-center justify-between">
       <span>Uploaded Documents</span>
       <span class="text-white/30">{{ filteredDocuments().length }}</span>
     </div>
 
     <!-- Empty State -->
-    <div *ngIf="filteredDocuments().length === 0" class="py-8 px-4 text-center text-white/40 text-xs">
+    <div *ngIf="filteredDocuments().length === 0 && !isCollapsed()" class="py-8 px-4 text-center text-white/40 text-xs">
       <p *ngIf="searchQuery()">No matching maps found.</p>
-      <p *ngIf="!searchQuery() && !isCollapsed()">No documents ingested yet. Click above to start!</p>
+      <p *ngIf="!searchQuery()">No documents ingested yet. Click above to start!</p>
     </div>
 
     <!-- Document Card Items -->
     <div *ngFor="let doc of filteredDocuments()" 
          (click)="selectDoc(doc.id)"
+         [title]="doc.title"
          [ngClass]="store.selectedDocumentId() === doc.id ? 'apple-segment-active bg-white/[0.08]' : 'hover:bg-white/[0.04] text-white/70 hover:text-white'"
-         class="p-2.5 rounded-xl cursor-pointer transition-all duration-150 relative group border border-transparent hover:border-white/[0.06]">
+         class="rounded-xl cursor-pointer transition-all duration-150 relative group border border-transparent hover:border-white/[0.06]"
+         [class.p-2.5]="!isCollapsed()"
+         [class.p-2]="isCollapsed()">
       
       <!-- Expanded Card Content -->
       <div *ngIf="!isCollapsed()" class="space-y-1">
@@ -111,37 +114,37 @@
         </div>
 
         <!-- Quick Hover Actions -->
-        <div class="absolute right-2 top-2 hidden group-hover:flex items-center space-x-1 bg-[#0D1420]/90 backdrop-blur-md px-1 py-0.5 rounded-lg border border-white/[0.08]">
+        <div class="absolute right-2 top-2 hidden group-hover:flex items-center space-x-1 bg-[#0D1420]/95 backdrop-blur-md px-1.5 py-0.5 rounded-lg border border-white/[0.08]">
           <button (click)="onReprocess($event, doc)" 
                   title="Reprocess Knowledge Graph"
-                  class="p-1 text-white/60 hover:text-emerald-400 hover:bg-white/[0.08] rounded">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
+                  class="p-1 text-white/60 hover:text-emerald-400 hover:bg-white/[0.08] rounded flex items-center">
+            <ng-icon name="lucideRotateCw" class="text-xs"></ng-icon>
           </button>
           <button (click)="onDelete($event, doc)" 
                   title="Delete Document"
-                  class="p-1 text-white/60 hover:text-rose-400 hover:bg-white/[0.08] rounded">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
+                  class="p-1 text-white/60 hover:text-rose-400 hover:bg-white/[0.08] rounded flex items-center">
+            <ng-icon name="lucideTrash2" class="text-xs"></ng-icon>
           </button>
         </div>
       </div>
 
       <!-- Collapsed Icon Mode -->
-      <div *ngIf="isCollapsed()" class="flex flex-col items-center py-1">
-        <span [ngClass]="getStatusBadge(doc.status).dotClass" class="w-2.5 h-2.5 rounded-full"></span>
+      <div *ngIf="isCollapsed()" class="flex flex-col items-center justify-center py-1 space-y-1">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white/70 group-hover:text-white"
+             [ngClass]="store.selectedDocumentId() === doc.id ? 'bg-emerald-500/15 text-emerald-400' : 'bg-white/[0.03]'">
+          <ng-icon name="lucideFileText" class="text-sm"></ng-icon>
+        </div>
+        <span [ngClass]="getStatusBadge(doc.status).dotClass" class="w-1.5 h-1.5 rounded-full"></span>
       </div>
     </div>
   </div>
 
   <!-- Bottom Workspace Status Footer -->
-  <div *ngIf="!isCollapsed()" class="p-3 border-t border-white/[0.06] bg-black/20 flex-shrink-0 flex items-center justify-between text-[11px] font-mono text-white/40">
-    <div class="flex items-center space-x-1.5">
-      <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-      <span class="text-white/60">Neon Cloud DB</span>
+  <div class="p-3 border-t border-white/[0.06] bg-black/20 flex-shrink-0 flex items-center justify-between text-[11px] font-mono text-white/40">
+    <div class="flex items-center space-x-1.5" [ngClass]="isCollapsed() ? 'justify-center w-full' : ''">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]"></span>
+      <span *ngIf="!isCollapsed()" class="text-white/60">Neon Cloud DB</span>
     </div>
-    <span *ngIf="store.metrics() as m">{{ m.totalDocuments }} maps active</span>
+    <span *ngIf="!isCollapsed() && store.metrics() as m">{{ m.totalDocuments }} maps</span>
   </div>
 </aside>

@@ -1,7 +1,7 @@
 export interface DemoPreset {
   id: string;
   persona: string;
-  personaIcon: string;
+  iconName: string;
   categoryBadge: string;
   title: string;
   description: string;
@@ -12,7 +12,7 @@ export const DEMO_PRESETS: DemoPreset[] = [
   {
     id: 'science-caffeine',
     persona: 'Everyday Science',
-    personaIcon: '☕',
+    iconName: 'lucideFlaskConical',
     categoryBadge: 'Casual Learner',
     title: 'How Caffeine Affects Sleep Architecture',
     description:
@@ -28,7 +28,7 @@ Furthermore, caffeine impairs the quality of subsequent sleep by suppressing slo
   {
     id: 'history-steam',
     persona: 'World History',
-    personaIcon: '🚂',
+    iconName: 'lucideLandmark',
     categoryBadge: 'Humanities Student',
     title: 'The Industrial Revolution & Steam Power (1760-1840)',
     description:
@@ -44,7 +44,7 @@ This industrial shift catalyzed massive demographic urbanization as rural labore
   {
     id: 'tech-rfc',
     persona: 'Technical RFC',
-    personaIcon: '⚙️',
+    iconName: 'lucideCpu',
     categoryBadge: 'Software Engineer',
     title: 'Distributed Event Broker Architecture (Kafka vs RabbitMQ)',
     description:

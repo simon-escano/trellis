@@ -1,5 +1,19 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import {
+  lucideChevronRight,
+  lucideChevronLeft,
+  lucideFileText,
+  lucideSparkles,
+  lucideLayers,
+  lucideX,
+  lucideRotateCw,
+  lucideTrash2,
+  lucideActivity,
+  lucideZap,
+  lucideInfo,
+} from '@ng-icons/lucide';
 import { DocumentStore } from '../../core/state/document.store.js';
 import {
   Entity,
@@ -10,7 +24,22 @@ import {
 @Component({
   selector: 'app-inspector',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgIconComponent],
+  providers: [
+    provideIcons({
+      lucideChevronRight,
+      lucideChevronLeft,
+      lucideFileText,
+      lucideSparkles,
+      lucideLayers,
+      lucideX,
+      lucideRotateCw,
+      lucideTrash2,
+      lucideActivity,
+      lucideZap,
+      lucideInfo,
+    }),
+  ],
   templateUrl: './inspector.component.html',
   styleUrls: ['./inspector.component.css'],
 })

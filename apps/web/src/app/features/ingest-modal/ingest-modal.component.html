@@ -11,9 +11,7 @@
     <div class="p-5 border-b border-white/[0.08] flex items-center justify-between flex-shrink-0">
       <div class="flex items-center space-x-3">
         <div class="w-9 h-9 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
+          <ng-icon name="lucideSparkles" class="text-base"></ng-icon>
         </div>
         <div>
           <h2 class="text-base font-bold text-white tracking-tight">Ingest Document &amp; Map Knowledge</h2>
@@ -23,9 +21,7 @@
 
       <button (click)="onClose()" 
               class="w-7 h-7 rounded-full apple-button-secondary flex items-center justify-center text-white/50 hover:text-white transition-all">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
+        <ng-icon name="lucideX" class="text-xs"></ng-icon>
       </button>
     </div>
 
@@ -49,7 +45,7 @@
                   class="p-3 rounded-2xl border text-left transition-all flex flex-col justify-between group cursor-pointer">
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <span class="text-lg">{{ preset.personaIcon }}</span>
+                <ng-icon [name]="preset.iconName" class="text-emerald-400 text-base"></ng-icon>
                 <span class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-white/60">
                   {{ preset.categoryBadge }}
                 </span>

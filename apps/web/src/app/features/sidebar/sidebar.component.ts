@@ -8,13 +8,40 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import {
+  lucidePlus,
+  lucideSearch,
+  lucideChevronLeft,
+  lucideChevronRight,
+  lucideFileText,
+  lucideRotateCw,
+  lucideTrash2,
+  lucideDatabase,
+  lucideNetwork,
+  lucideSparkles,
+} from '@ng-icons/lucide';
 import { DocumentStore } from '../../core/state/document.store.js';
 import { Document } from '../../core/models/document.model.js';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgIconComponent],
+  providers: [
+    provideIcons({
+      lucidePlus,
+      lucideSearch,
+      lucideChevronLeft,
+      lucideChevronRight,
+      lucideFileText,
+      lucideRotateCw,
+      lucideTrash2,
+      lucideDatabase,
+      lucideNetwork,
+      lucideSparkles,
+    }),
+  ],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
