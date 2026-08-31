@@ -50,6 +50,13 @@ export const ExtractedRelationshipSchema = z.object({
 });
 
 export const DocumentAnalysisOutputSchema = z.object({
+  topicTitle: z
+    .string()
+    .max(120)
+    .optional()
+    .describe(
+      "A punchy, professional, human-readable title summarizing the explored topic (3-7 words, e.g. 'The Gut-Brain Axis & Microbiome Dynamics', 'Microservices Distributed Tracing', 'AI Ethics & Governance Framework')"
+    ),
   summary: z
     .string()
     .min(10)

@@ -15,16 +15,29 @@ export async function saveAnalysisResults(
     client = await pool.connect();
     await client.query("BEGIN;");
 
-    // 1. Update document status and summary
-    await client.query(
-      `UPDATE documents
-       SET summary = $1,
-           status = 'COMPLETED',
-           error_message = NULL,
-           updated_at = NOW()
-       WHERE id = $2;`,
-      [data.summary, documentId]
-    );
+    // 1. Update document status, summary, and generated topic title if available
+    if (data.topicTitle && data.topicTitle.trim().length > 0) {
+      await client.query(
+        `UPDATE documents
+         SET title = $1,
+             summary = $2,
+             status = 'COMPLETED',
+             error_message = NULL,
+             updated_at = NOW()
+         WHERE id = $3;`,
+        [data.topicTitle.trim().slice(0, 250), data.summary, documentId]
+      );
+    } else {
+      await client.query(
+        `UPDATE documents
+         SET summary = $1,
+             status = 'COMPLETED',
+             error_message = NULL,
+             updated_at = NOW()
+         WHERE id = $2;`,
+        [data.summary, documentId]
+      );
+    }
 
     // 2. Clear existing child records for idempotency (e.g. reprocessing)
     await client.query("DELETE FROM entities WHERE document_id = $1;", [

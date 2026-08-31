@@ -390,8 +390,6 @@ export class CanvasComponent implements OnInit, OnDestroy {
     label: string;
   }> = [];
 
-  readonly topicPrompt = signal<string>('');
-  readonly isPromptSubmitting = signal<boolean>(false);
   readonly isMenuOpen = signal<boolean>(false);
   readonly isMobileInspectorVisible = signal<boolean>(false);
 
@@ -574,28 +572,6 @@ export class CanvasComponent implements OnInit, OnDestroy {
     });
 
     resize();
-  }
-
-  async submitCanvasPrompt() {
-    const prompt = this.topicPrompt().trim();
-    if (!prompt || this.isPromptSubmitting()) return;
-
-    this.isPromptSubmitting.set(true);
-    try {
-      await this.store.exploreTopic(prompt);
-      this.topicPrompt.set('');
-    } catch (err) {
-      console.error('Failed to submit prompt:', err);
-    } finally {
-      this.isPromptSubmitting.set(false);
-    }
-  }
-
-  onPromptKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      this.submitCanvasPrompt();
-    }
   }
 
   private initVisNetwork() {
