@@ -164,7 +164,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
   - **Git Commit Message:** `feat(server): implement asynchronous in-memory queue dispatcher`
 
-- [ ] **Task 1.5: Batch DataLoaders & GraphQL Schema Resolvers**
+- [x] **Task 1.5: Batch DataLoaders & GraphQL Schema Resolvers**
   - **Target Files:** `apps/server/src/graphql/mod.rs`, `apps/server/src/graphql/types.rs`, `apps/server/src/graphql/dataloaders.rs`, `apps/server/src/graphql/query.rs`, `apps/server/src/graphql/mutation.rs`
   - **Prerequisites:** Task 1.4
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
