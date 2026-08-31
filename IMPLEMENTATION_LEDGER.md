@@ -140,7 +140,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
 ---
 
 ### Phase 1: Rust GraphQL Gateway — `apps/server`
-- [ ] **Task 1.1: Cargo Workspace & Dependency Scaffolding**
+- [x] **Task 1.1: Cargo Workspace & Dependency Scaffolding**
   - **Target Files:** `apps/server/Cargo.toml`, `apps/server/.env.example`
   - **Prerequisites:** Task 0.2
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
