@@ -120,11 +120,11 @@ function computeNodeDimensions(
   const titleLength = name.length;
   const descLength = description ? description.length : 0;
 
-  let width = 250;
+  let width = 255;
   if (titleLength > 28 || descLength > 120) {
-    width = 285;
+    width = 290;
   } else if (titleLength < 16 && descLength < 60) {
-    width = 225;
+    width = 230;
   }
 
   const maxCharsPerLine = Math.floor((width - 28) / 7.2);
@@ -206,7 +206,7 @@ function getCategoryIconSvgGeometry(
     case 'SERVICE':
       return `<g transform="translate(${x}, ${y}) scale(0.65)">
         <circle cx="12" cy="12" r="3" fill="none" stroke="${color}" stroke-width="2.5"/>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="${color}" stroke-width="2"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="${color}" stroke-width="2"/>
       </g>`;
     case 'DATA_MODEL':
       return `<g transform="translate(${x}, ${y}) scale(0.65)">
@@ -274,65 +274,52 @@ function createNodeSvg(
   const safeName = escapeXml(name);
   const safeCat = escapeXml(category.replace(/_/g, ' '));
 
-  // Generous 14px outer margin inside SVG viewport so drop shadow never clips
-  const pad = 14;
-  const svgWidth = dims.width + pad * 2;
-  const svgHeight = dims.height + pad * 2;
-  const cardX = pad;
-  const cardY = pad;
-
   const iconGeometry = getCategoryIconSvgGeometry(
     category,
-    cardX + 20,
-    cardY + 16.5,
+    20,
+    16.5,
     color.text
   );
 
   const descTextElements = dims.descLines
     .map(
       (line, idx) =>
-        `<text x="${cardX + 14}" y="${cardY + 78 + idx * 17}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="${idx === dims.descLines.length - 1 ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.74)'}">${escapeXml(line)}</text>`
+        `<text x="14" y="${78 + idx * 17}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="${idx === dims.descLines.length - 1 ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.76)'}">${escapeXml(line)}</text>`
     )
     .join('\n');
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}" style="background: transparent;">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${dims.width}" height="${dims.height}" viewBox="0 0 ${dims.width} ${dims.height}">
     <defs>
-      <linearGradient id="cardGrad-${safeName.replace(/\W/g, '')}" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#141C2C" stop-opacity="0.97" />
-        <stop offset="100%" stop-color="#080C14" stop-opacity="0.97" />
+      <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#141C2E" />
+        <stop offset="100%" stop-color="#080C14" />
       </linearGradient>
-      <linearGradient id="specularGrad" x1="0" y1="0" x2="1" y2="0">
+      <linearGradient id="specGrad" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0%" stop-color="rgba(255,255,255,0.3)" />
         <stop offset="50%" stop-color="rgba(255,255,255,0.05)" />
-        <stop offset="100%" stop-color="rgba(255,255,255,0.25)" />
+        <stop offset="100%" stop-color="rgba(255,255,255,0.2)" />
       </linearGradient>
-      <filter id="shadow-${safeName.replace(/\W/g, '')}" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="rgba(0,0,0,0.6)" />
-      </filter>
-      <filter id="glow-${safeName.replace(/\W/g, '')}" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="${color.accent}" flood-opacity="0.8" />
-      </filter>
     </defs>
     
-    <!-- Outer Rounded Card Background (rx=18, ry=18) with smooth transparent margins -->
-    <rect x="${cardX}" y="${cardY}" width="${dims.width}" height="${dims.height}" rx="18" ry="18" fill="url(#cardGrad-${safeName.replace(/\W/g, '')})" stroke="${strokeColor}" stroke-width="${strokeWidth}" filter="${isSelected ? `url(#glow-${safeName.replace(/\W/g, '')})` : `url(#shadow-${safeName.replace(/\W/g, '')})`}" />
+    <!-- Clean, Robust Rounded Card Background -->
+    <rect x="2" y="2" width="${dims.width - 4}" height="${dims.height - 4}" rx="18" ry="18" fill="url(#cardGrad)" stroke="${strokeColor}" stroke-width="${strokeWidth}" />
     
     <!-- Top Specular Highlight Line -->
-    <path d="M ${cardX + 22} ${cardY + 3.5} L ${cardX + dims.width - 22} ${cardY + 3.5}" stroke="url(#specularGrad)" stroke-width="1.2" stroke-linecap="round" />
+    <path d="M 22 3.5 L ${dims.width - 22} 3.5" stroke="url(#specGrad)" stroke-width="1.2" stroke-linecap="round" />
 
     <!-- Responsive Auto-Sized Category Pill -->
-    <rect x="${cardX + 14}" y="${cardY + 14}" width="${dims.pillWidth}" height="22" rx="11" ry="11" fill="${color.bg}" stroke="${color.border}" stroke-width="0.8" />
+    <rect x="14" y="14" width="${dims.pillWidth}" height="22" rx="11" ry="11" fill="${color.bg}" stroke="${color.border}" stroke-width="0.8" />
     
     <!-- Vector Category Icon -->
     ${iconGeometry}
     
     <!-- Category Label with generous spacing from icon -->
-    <text x="${cardX + 42}" y="${cardY + 29}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="9.5" font-weight="700" fill="${color.text}" letter-spacing="0.5">
+    <text x="42" y="29" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="9.5" font-weight="700" fill="${color.text}" letter-spacing="0.5">
       ${safeCat}
     </text>
 
     <!-- Bold Concept Title -->
-    <text x="${cardX + 14}" y="${cardY + 58}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="700" fill="#FFFFFF">
+    <text x="14" y="58" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="700" fill="#FFFFFF">
       ${truncate(safeName, Math.floor(dims.width / 9))}
     </text>
 
@@ -354,9 +341,6 @@ export class CanvasComponent implements OnInit, OnDestroy {
   @ViewChild('networkContainer', { static: true })
   networkContainer!: ElementRef<HTMLDivElement>;
 
-  @ViewChild('dotsCanvas', { static: true })
-  dotsCanvasRef!: ElementRef<HTMLCanvasElement>;
-
   readonly store = inject(DocumentStore);
 
   private network: Network | null = null;
@@ -369,11 +353,9 @@ export class CanvasComponent implements OnInit, OnDestroy {
     label: string;
   }> = [];
 
-  // Dense, neutral interactive dot field background state
-  private dotsAnimId: number | null = null;
-  private mouseX = -1000;
-  private mouseY = -1000;
-  private isMouseOver = false;
+  // Hardware-accelerated sub-pixel cursor spotlight tracking
+  readonly mousePos = signal<{ x: number; y: number }>({ x: -1000, y: -1000 });
+  readonly isMouseOver = signal<boolean>(false);
 
   readonly isPhysicsEnabled = signal<boolean>(true);
   readonly selectedEntity = this.store.selectedEntity;
@@ -396,7 +378,6 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initVisNetwork();
-    this.initDotsBackground();
   }
 
   ngOnDestroy() {
@@ -404,99 +385,20 @@ export class CanvasComponent implements OnInit, OnDestroy {
       this.network.destroy();
       this.network = null;
     }
-    if (this.dotsAnimId) {
-      cancelAnimationFrame(this.dotsAnimId);
-      this.dotsAnimId = null;
-    }
   }
 
-  private initDotsBackground() {
-    const canvas = this.dotsCanvasRef.nativeElement;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const resize = () => {
-      const parent = canvas.parentElement;
-      if (!parent) return;
-      canvas.width = parent.clientWidth;
-      canvas.height = parent.clientHeight;
-    };
-
-    window.addEventListener('resize', resize);
-    resize();
-
-    const parent = this.networkContainer.nativeElement;
-    parent.addEventListener('mousemove', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      this.mouseX = e.clientX - rect.left;
-      this.mouseY = e.clientY - rect.top;
-      this.isMouseOver = true;
+  onCanvasMouseMove(e: MouseEvent) {
+    const target = e.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    this.mousePos.set({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
     });
+    this.isMouseOver.set(true);
+  }
 
-    parent.addEventListener('mouseleave', () => {
-      this.isMouseOver = false;
-      this.mouseX = -1000;
-      this.mouseY = -1000;
-    });
-
-    // Dense grid: 20px spacing
-    const spacing = 20;
-    const proximityRadius = 120;
-
-    const renderDots = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const cols = Math.ceil(canvas.width / spacing) + 1;
-      const rows = Math.ceil(canvas.height / spacing) + 1;
-
-      for (let c = 0; c < cols; c++) {
-        for (let r = 0; r < rows; r++) {
-          const dotX = c * spacing;
-          const dotY = r * spacing;
-
-          let renderX = dotX;
-          let renderY = dotY;
-          let dotRadius = 0.9;
-          let alpha = 0.055;
-          let isHovered = false;
-
-          if (this.isMouseOver) {
-            const dist = Math.hypot(this.mouseX - dotX, this.mouseY - dotY);
-            if (dist < proximityRadius) {
-              isHovered = true;
-              const factor = 1 - dist / proximityRadius;
-              const displace = factor * 4.5;
-              const angle = Math.atan2(dotY - this.mouseY, dotX - this.mouseX);
-
-              renderX = dotX + Math.cos(angle) * displace;
-              renderY = dotY + Math.sin(angle) * displace;
-              dotRadius = 0.9 + factor * 1.5;
-              alpha = 0.08 + factor * 0.35;
-            }
-          }
-
-          ctx.beginPath();
-          ctx.arc(renderX, renderY, dotRadius, 0, Math.PI * 2);
-
-          if (isHovered) {
-            // Neutral soft frosted white glow
-            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-            ctx.shadowColor = 'rgba(255, 255, 255, 0.35)';
-            ctx.shadowBlur = 4;
-          } else {
-            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-            ctx.shadowColor = 'transparent';
-            ctx.shadowBlur = 0;
-          }
-
-          ctx.fill();
-        }
-      }
-
-      this.dotsAnimId = requestAnimationFrame(renderDots);
-    };
-
-    this.dotsAnimId = requestAnimationFrame(renderDots);
+  onCanvasMouseLeave() {
+    this.isMouseOver.set(false);
   }
 
   private initVisNetwork() {
@@ -552,12 +454,12 @@ export class CanvasComponent implements OnInit, OnDestroy {
         enabled: true,
         solver: 'forceAtlas2Based',
         forceAtlas2Based: {
-          gravitationalConstant: -160, // Balanced spacing
+          gravitationalConstant: -160,
           centralGravity: 0.006,
-          springLength: 230, // Optimal breathing room
+          springLength: 230,
           springConstant: 0.04,
           damping: 0.75,
-          avoidOverlap: 0.9, // Anti-collision without extreme sprawl
+          avoidOverlap: 0.9,
         },
         stabilization: {
           iterations: 180,
