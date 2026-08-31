@@ -8,21 +8,19 @@
 
   <!-- Top App Navigation Header -->
   <header class="h-16 w-full flex items-center justify-between px-4 sm:px-8 bg-transparent border-0 z-20 shrink-0">
-    <div class="flex items-center space-x-3">
+    <div class="flex items-center space-x-2.5">
       <!-- Mobile Sidebar Toggle Button -->
       <button (click)="toggleMobileSidebar()" title="Toggle Topics Menu"
         class="md:hidden w-8 h-8 rounded-xl apple-glass flex items-center justify-center text-slate-700 dark:text-white/80 hover:text-slate-900 dark:hover:text-white transition-all">
         <ng-icon name="lucideMenu" class="w-4 h-4"></ng-icon>
       </button>
 
-      <div
-        class="w-8 h-8 rounded-xl bg-slate-900/5 dark:bg-white/10 border border-slate-900/10 dark:border-white/15 flex items-center justify-center text-slate-800 dark:text-white/90 shadow-sm">
-        <ng-icon name="lucideLayers" class="w-4 h-4 sm:w-5 sm:h-5"></ng-icon>
-      </div>
+      <!-- Freestanding Trellis Logo matching text height -->
+      <svg viewBox="0 0 1080 812.94" fill="currentColor" class="h-5 sm:h-6 w-auto text-emerald-500 dark:text-emerald-400 shrink-0">
+        <path d="m1070.02,109.66c-27.08-75.16-105.85-121.08-184.52-107.19-64.8,11.44-112.65,57.53-130.42,114.32-12.95,41.39-45.75,73.54-87.41,85.56l-91.89,26.5c-23.37,6.74-48.18,6.74-71.55,0l-91.9-26.5c-41.56-11.99-74.48-43.95-87.32-85.26C307.16,59.67,258.61,13.23,193.14,2.24,114.15-11.02,35.59,35.83,9.33,111.49c-31.74,91.44,20.46,189.29,112.27,214.89,54.9,15.31,111.04,1.18,151.63-32.9,33.4-28.05,77.9-38.98,119.8-26.9l20.09,5.79c55.28,15.94,93.34,66.53,93.34,124.07v3.83c0,43.34-21.75,83.77-57.91,107.65-49.79,32.87-80.85,91.82-73.74,157.39,8.62,79.47,74.79,142.33,154.58,147.29,96.61,6.01,176.83-70.57,176.83-165.88,0-57.36-29.06-107.93-73.25-137.8-36.44-24.63-59.41-64.7-59.41-108.69v-3.79c0-57.53,38.06-108.12,93.35-124.07l19.33-5.57c42.22-12.18,87.09-1.28,120.81,26.91,41.08,34.34,97.97,48.25,153.24,32.14,91.51-26.68,142.57-125.13,109.76-216.2Z"/>
+      </svg>
       <!-- Logo -->
       <span class="font-medium text-xl sm:text-2xl tracking-tight text-slate-900 dark:text-white/95">Trellis</span>
-      <span
-        class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-900/5 dark:bg-white/10 text-slate-600 dark:text-white/60 tracking-wider">Beta</span>
     </div>
 
     <div class="flex items-center space-x-2 sm:space-x-4">
@@ -162,10 +160,14 @@
 
       <div class="w-full max-w-2xl flex flex-col items-center">
 
-        <!-- Hero Title -->
+        <!-- Hero Title with Trellis Logo in between "to" and "Trellis" -->
         <div class="w-full text-left mb-4 sm:mb-6">
-          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-medium tracking-tight text-slate-900 dark:text-white/95 leading-tight">
-            Welcome to Trellis..
+          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-medium tracking-tight text-slate-900 dark:text-white/95 leading-tight flex items-center flex-wrap gap-x-2 sm:gap-x-3">
+            <span>Welcome to</span>
+            <svg viewBox="0 0 1080 812.94" fill="currentColor" class="h-[0.75em] w-auto text-emerald-500 dark:text-emerald-400 shrink-0 inline-block align-middle">
+              <path d="m1070.02,109.66c-27.08-75.16-105.85-121.08-184.52-107.19-64.8,11.44-112.65,57.53-130.42,114.32-12.95,41.39-45.75,73.54-87.41,85.56l-91.89,26.5c-23.37,6.74-48.18,6.74-71.55,0l-91.9-26.5c-41.56-11.99-74.48-43.95-87.32-85.26C307.16,59.67,258.61,13.23,193.14,2.24,114.15-11.02,35.59,35.83,9.33,111.49c-31.74,91.44,20.46,189.29,112.27,214.89,54.9,15.31,111.04,1.18,151.63-32.9,33.4-28.05,77.9-38.98,119.8-26.9l20.09,5.79c55.28,15.94,93.34,66.53,93.34,124.07v3.83c0,43.34-21.75,83.77-57.91,107.65-49.79,32.87-80.85,91.82-73.74,157.39,8.62,79.47,74.79,142.33,154.58,147.29,96.61,6.01,176.83-70.57,176.83-165.88,0-57.36-29.06-107.93-73.25-137.8-36.44-24.63-59.41-64.7-59.41-108.69v-3.79c0-57.53,38.06-108.12,93.35-124.07l19.33-5.57c42.22-12.18,87.09-1.28,120.81,26.91,41.08,34.34,97.97,48.25,153.24,32.14,91.51-26.68,142.57-125.13,109.76-216.2Z"/>
+            </svg>
+            <span>Trellis..</span>
           </h1>
         </div>
 
