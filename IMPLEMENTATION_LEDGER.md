@@ -146,7 +146,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
   - **Git Commit Message:** `chore(server): scaffold cargo workspace and dependencies`
 
-- [ ] **Task 1.2: Environment Config & Database Pool**
+- [x] **Task 1.2: Environment Config & Database Pool**
   - **Target Files:** `apps/server/src/config.rs`, `apps/server/src/db.rs`
   - **Prerequisites:** Task 1.1
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
