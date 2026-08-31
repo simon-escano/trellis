@@ -158,7 +158,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
   - **Git Commit Message:** `feat(server): define domain models and screaming snake case enum mappings`
 
-- [ ] **Task 1.4: Asynchronous Queue Dispatcher**
+- [x] **Task 1.4: Asynchronous Queue Dispatcher**
   - **Target Files:** `apps/server/src/queue.rs`
   - **Prerequisites:** Task 1.3
   - **Validation Command:** `cargo check --manifest-path apps/server/Cargo.toml`
