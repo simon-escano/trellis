@@ -185,7 +185,7 @@ Payload transferred between Rust Gateway Ingestion $\rightarrow$ In-Memory / DB 
   - **Validation Command:** `npm --prefix apps/worker run build`
   - **Git Commit Message:** `chore(worker): scaffold typescript worker workspace and runtime config`
 
-- [ ] **Task 2.2: Database Pool & Zod Extraction Contracts**
+- [x] **Task 2.2: Database Pool & Zod Extraction Contracts**
   - **Target Files:** `apps/worker/src/db.ts`, `apps/worker/src/contracts/extraction.ts`
   - **Prerequisites:** Task 2.1
   - **Validation Command:** `npm --prefix apps/worker run build`
